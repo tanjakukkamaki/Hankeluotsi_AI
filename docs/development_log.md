@@ -85,7 +85,7 @@
 ## 2026-11-08 — PR5 Streamlit prototype vertical slice
 
 - **Task:** Implement the fictional project-idea-to-validated-concept flow with SQLite save/reload, mocked AppTest coverage, and launch instructions. No PR6 or later work was started.
-- **Implementation:** The Streamlit form validates `ProjectIdea`, sends a size-bounded concept request to the existing `LLMClient` with `ConceptPaper` as its response model and one attempt only, then validates and saves the concept through `ProjectRepository`. Saved projects can be reopened from the selector. Stable idea-derived operation IDs, form-submit handling, and a saved-concept check prevent reruns or repeat submissions from triggering duplicate generation. Model failures leave the valid idea in `created` state and display an actionable error. The default DB is `hankeluotsi.sqlite3`; `HANKELUOTSI_DB_PATH` can override it.
+- **Implementation:** The Streamlit form validates `ProjectIdea`, sends a size-bounded concept request to the existing `LLMClient` with `ConceptPaper` as its response model and one attempt only, then validates and saves the concept through `ProjectRepository`. Saved projects can be reopened from the selector. Per-submission operation IDs, form-submit handling, and a saved-concept check prevent reruns from triggering duplicate generation. Model failures leave the valid idea in `created` state and display an actionable error. The default DB is `hankeluotsi.sqlite3`; `HANKELUOTSI_DB_PATH` can override it.
 - **Offline validation:** `tests/test_app.py` AppTest/repository integration cases passed (5 tests). The full offline suite passed: `python -m pytest -q` (96 tests, 2.32 s). The mocked AppTest verified one generation call across reruns, validation-before-generation, timeout preservation, concept persistence, and reopening.
 - **Live local workflow:** LM Studio exposed `qwen3.5-4b` at `http://127.0.0.1:1234/v1`. The first two `ConceptPaper` requests using only idea JSON were rejected as truncated (`finish_reason=length`, 512-token cap); neither wrote a concept. The app prompt was then bounded to one objective, activity, result, and indicator. One real AppTest form submission subsequently passed in 6.03 s: JSON/Pydantic-valid `ConceptPaper`, `finish_reason=stop`, saved as `concept_ready`, then reloaded from a temporary SQLite database with one linked objective/activity/result/indicator. No retry was used by the app.
 - **Documentation:** README now describes LM Studio setup, the prototype launch command, fictional-data-only manual flow, offline tests, and the local database path.
@@ -93,3 +93,19 @@
 - **Safety and version control:** All model/test inputs were fictional. No external API or paid service was used. Tests used temporary SQLite databases. No dependency, `AGENTS.md`, or `PLANS.md` changes; no commit or push.
 - **Owner actual hours:** Not recorded by the agent; owner should enter their actual time.
 - **Next action:** Owner reviews the PR5 prototype and live output before approving any commit or starting PR6.
+
+### PR5 follow-up — operation-ID collision fix
+
+- **Root cause:** The UI derived `create_project` and `save_concept` operation IDs from a hash of the idea content. Repository operation IDs are globally unique and intentionally reject reuse for a different project, operation type, or payload. A later explicit submission of the same idea therefore reused an old key; when it reached a different project or generated concept payload, the repository correctly raised `IdempotencyConflict` with “operation_id was already used for a different operation.”
+- **Fix:** The UI now generates a UUID for each explicit form submission and uses that token for both operation IDs. Streamlit reruns do not re-enter the submission branch, so they reuse no new key and trigger no duplicate model request. The repository’s payload checks and idempotency/approval protections are unchanged.
+- **Regression tests:** AppTest seeds the database with the exact legacy content-derived concept key on another project, then verifies a new submission succeeds. Another test changes the idea and confirms a distinct project and generation; the existing rerun test still asserts one generation call.
+- **Validation:** Focused AppTest suite passed (7 tests). Full offline suite passed: `python -m pytest -q` (98 tests, 2.61 s). No external API or live model call was used for this fix.
+- **Next action:** Owner repeats the manual browser test with a fresh fictional submission and reviews the PR5 follow-up before any commit.
+
+### PR5 follow-up — readable ConceptPaper presentation
+
+- **Implementation:** Replaced JSON-first concept display with labeled sections for background, objectives, target groups, activities, expected results, indicators, assumptions, and open questions. Original field text and IDs render as plain text; objective/activity/result/indicator relationships display their stored reference IDs. Project-idea values are also readable. Raw project and concept JSON remain available in collapsed expanders for debugging.
+- **Rendering consistency:** Generated and reopened concepts both pass through the same saved-project renderer; schemas, stored data, prompts, and database behavior were not changed.
+- **Tests:** AppTest verifies each section, exact fixture text, IDs and relationship labels, and raw JSON expanders. Focused UI tests passed (7 tests); full offline suite passed: `python -m pytest -q` (98 tests, 2.83 s).
+- **Limitations:** No change to model output or assessment; this is presentation-only. No live model call was needed.
+- **Next action:** Owner reviews the human-readable concept view before approving any commit or further PR5 changes.

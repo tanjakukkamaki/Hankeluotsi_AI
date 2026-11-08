@@ -1,6 +1,5 @@
-import hashlib
-import json
 import os
+import uuid
 from pathlib import Path
 
 import streamlit as st
@@ -14,10 +13,8 @@ from hankeluotsi.schemas import ConceptPaper, ProjectIdea
 DEFAULT_DATABASE_PATH = Path(os.getenv("HANKELUOTSI_DB_PATH", "hankeluotsi.sqlite3"))
 
 
-def _operation_id(operation: str, payload: dict) -> str:
-    serialized = json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
-    digest = hashlib.sha256(serialized.encode("utf-8")).hexdigest()
-    return f"pr5:{operation}:{digest}"
+def _operation_id(operation: str, submission_id: str) -> str:
+    return f"pr5:{operation}:{submission_id}"
 
 
 def _project_label(project: ProjectRecord) -> str:
@@ -38,12 +35,76 @@ def _concept_generation_input(idea: ProjectIdea) -> str:
 def _render_saved_project(project: ProjectRecord) -> None:
     st.subheader("Saved project")
     st.caption(f"Status: {project.state.value}")
-    st.json(project.idea.model_dump(mode="json"))
+    st.subheader("Project idea")
+    for label, value in (
+        ("Title", project.idea.title),
+        ("Development need", project.idea.development_need),
+        ("Expected change", project.idea.expected_change),
+        ("Geography", project.idea.geography),
+    ):
+        st.markdown(f"**{label}**")
+        st.text(value)
+    st.markdown("**Target groups**")
+    for target_group in project.idea.target_groups:
+        st.text(target_group)
+    if project.idea.partners:
+        st.markdown("**Potential partners**")
+        for partner in project.idea.partners:
+            st.text(partner)
+    if project.idea.funding_context:
+        st.markdown("**Funding context**")
+        st.text(project.idea.funding_context)
+    with st.expander("Raw project idea JSON", expanded=False):
+        st.json(project.idea.model_dump(mode="json"))
+
     if project.concept is None:
         st.info("No concept has been saved for this project yet.")
     else:
+        concept = project.concept
         st.subheader("Validated concept paper")
-        st.json(project.concept.model_dump(mode="json"))
+
+        st.markdown("#### Background")
+        st.text(concept.background_need)
+
+        st.markdown("#### Objectives")
+        for objective in concept.objectives:
+            st.markdown(f"**{objective.id}**")
+            st.text(objective.description)
+
+        st.markdown("#### Target groups")
+        for target_group in concept.target_groups:
+            st.text(target_group)
+
+        st.markdown("#### Activities")
+        for activity in concept.preliminary_activities:
+            linked_objectives = ", ".join(activity.objective_ids)
+            st.markdown(f"**{activity.id} | Linked objectives: {linked_objectives}**")
+            st.text(activity.description)
+
+        st.markdown("#### Expected results")
+        for result in concept.expected_results:
+            linked_activities = ", ".join(result.activity_ids)
+            st.markdown(f"**{result.id} | Linked activities: {linked_activities}**")
+            st.text(result.description)
+
+        st.markdown("#### Indicators")
+        for indicator in concept.proposed_indicators:
+            linked_results = ", ".join(indicator.result_ids)
+            st.markdown(f"**{indicator.id} | Linked results: {linked_results}**")
+            st.text(indicator.description)
+            st.markdown("**Measurement method**")
+            st.text(indicator.measurement_method)
+
+        st.markdown("#### Assumptions")
+        for assumption in concept.assumptions:
+            st.text(assumption)
+
+        st.markdown("#### Open questions")
+        for question in concept.open_questions:
+            st.text(question)
+
+        with st.expander("Raw ConceptPaper JSON", expanded=False):
+            st.json(concept.model_dump(mode="json"))
 
 
 st.set_page_config(page_title="HankeLuotsi AI")
@@ -121,9 +182,9 @@ if submitted:
         )
         st.error(f"Please correct the project idea: {details}")
     else:
-        idea_data = idea.model_dump(mode="json")
-        idea_operation_id = _operation_id("create", idea_data)
-        concept_operation_id = _operation_id("concept", idea_data)
+        submission_id = uuid.uuid4().hex
+        idea_operation_id = _operation_id("create", submission_id)
+        concept_operation_id = _operation_id("concept", submission_id)
         try:
             project = repository.create_project(idea, operation_id=idea_operation_id)
             if project.concept is not None:
