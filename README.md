@@ -42,13 +42,25 @@ The offline AppTest suite mocks generation and makes no live model calls. For a 
 
 ## Optional funding research
 
+Open a saved fictional project and expand **Find Funding Opportunities (optional)**. Choose **Search Live Funding Calls** to retrieve published records from Interreg Aurora's official timetable and the EU Funding & Tenders Portal's Horizon Europe API. This is an explicit online action; project information is not sent to either source. Inspect a record to see its identifier, source wording, dates/precision, official and locally checked status, evidence links, retrieval time and uncertainty. No funding eligibility is confirmed.
+
+The Horizon search retrieves at most two pages of ten source-labelled open grant topics and shows a partial-results notice. Date-only API values do not establish a precise submission time; multi-stage/ambiguous deadlines remain unknown. Aurora includes historical closed calls, uses the currently linked official timetable and preserves its update date. Current statuses become unknown after six hours until another explicit search. No network request is triggered by reruns or selecting an already retrieved call.
+
 Open a saved project and expand **Find Funding Opportunities (optional)**. Submit **Find Funding Opportunities** to compare its saved idea locally with six official programme guides: EURA 2021 EAKR/ESR+/JTF, Interreg Aurora, the EU Funding & Tenders Portal, and Business Finland. A concept is not required.
 
-The initial version provides **programme guidance, not verified individual calls**. Call titles, dates and open/closed status are unknown. Guides were checked on 8 November 2026 and may become outdated. Source links, geographic/applicant conditions to check and uncertainty are visible. Business Finland instruments are not necessarily EU-funded.
+The separate **general programme suggestions** contain no verified individual calls. Their call titles, dates and open/closed status remain unknown. Guides were checked on 8 November 2026 and may become outdated. Source links, geographic/applicant conditions to check and uncertainty are visible. Business Finland instruments are not necessarily EU-funded.
 
 An optional checkbox retrieves descriptions from four fixed public pages. Requests contain no project information or keywords, use normal TLS validation and do not bypass restrictions. A successful page fetch does not update or verify current calls or the reviewed guidance. Network errors, certificate errors and JavaScript-only pages leave the offline guidance available. Opening the section or rerunning the app does not make requests.
 
 Comparison uses a small English/Finnish topic vocabulary, without AI or eligibility scores. It cannot establish applicant, partnership or geographic eligibility. Results are temporary for the app session and do not change SQLite or approval. See [source investigation and limitations](docs/funding_sources.md).
+
+See [live source contracts, limitations and manual checks](docs/live_funding_search.md). Offline tests skip public-source integration checks. To run those checks separately in PowerShell:
+
+```powershell
+$env:HANKELUOTSI_LIVE_FUNDING = "1"
+.\.venv\Scripts\python.exe -m pytest -q tests/integration/test_live_funding_sources.py
+Remove-Item Env:HANKELUOTSI_LIVE_FUNDING
+```
 
 ## Fictional example
 

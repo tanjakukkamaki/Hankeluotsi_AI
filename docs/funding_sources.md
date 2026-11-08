@@ -2,6 +2,8 @@
 
 Official information reviewed on **8 November 2026**. General programme guidance is paraphrased in `hankeluotsi/funding.py`. It is not a list of current calls. The owner authorized this optional scope addition after the PR6 consistency changes were committed; PR7 is not started.
 
+**Next slice:** After funding research was committed as `3a26045`, the owner authorized a separate Live Funding Search implementation. Aurora's official linked CSV and the Portal's multipart API have now been verified at call level. The decisions below describe the earlier programme-guidance slice; see [current live adapters and verification](live_funding_search.md) for the subsequent implementation. The six general programme guides retain their original unknown call details.
+
 ## Source investigation
 
 | Source | Official evidence | Retrieval decision |

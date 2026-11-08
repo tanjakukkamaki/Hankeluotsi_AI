@@ -1,6 +1,7 @@
 import os
 import uuid
 from contextlib import contextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterator
 
@@ -13,6 +14,8 @@ from hankeluotsi.consistency import (
     check_concept_consistency,
 )
 from hankeluotsi.funding import compare_locally, retrieve_funding_opportunities
+from hankeluotsi.funding_calls import assess_call_status, compare_call_locally
+from hankeluotsi.live_funding import search_live_funding_calls
 from hankeluotsi.llm_client import LLMClient
 from hankeluotsi.pdf_exporter import concept_pdf_filename, generate_concept_pdf
 from hankeluotsi.repository import ProjectRecord, ProjectRepository
@@ -108,12 +111,93 @@ def _render_consistency_check(concept: ConceptPaper) -> None:
                 st.caption(details)
 
 
+def _render_live_funding_calls(project: ProjectRecord) -> None:
+    st.markdown("#### Live funding calls from official sources")
+    st.caption(
+        "Search the official Aurora timetable and Horizon Europe grant topics. "
+        "Only fixed public requests are sent; project text stays local."
+    )
+    if st.button("Search Live Funding Calls", key=f"live-funding-search-{project.project_id}"):
+        with st.spinner("Reading official funding sources..."):
+            result = search_live_funding_calls()
+        st.session_state["live_funding_result"] = (
+            project.project_id, project.idea.model_dump_json(), result, datetime.now(timezone.utc),
+        )
+    cached = st.session_state.get("live_funding_result")
+    if not cached or cached[:2] != (project.project_id, project.idea.model_dump_json()):
+        st.caption("No live search has been run for this saved idea. General programme suggestions are available below.")
+        return
+    result, attempted_at = cached[2:]
+    st.caption(f"Last explicit search completed: {attempted_at.isoformat()}. Results last for this app session.")
+    for notice in result.notices:
+        st.warning(notice)
+    if not result.calls:
+        st.info("No live call records could be verified. Use the official sources and general programme guidance below.")
+        st.link_button("Official Aurora calls", "https://www.interregaurora.eu/projects/calls-for-applications-2/")
+        st.link_button("Official EU funding calls", "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/calls-for-proposals")
+        return
+    now = datetime.now(timezone.utc)
+    statuses = {f"{item.source}:{item.identifier}": assess_call_status(item, now=now) for item in result.calls}
+    st.caption(
+        f"{len(result.calls)} published call/topic records. "
+        + "; ".join(f"{status}: {sum(value[0] == status for value in statuses.values())}" for status in ("open", "upcoming", "closed", "unknown"))
+    )
+    st.caption(
+        "Statuses are checked locally against official labels and dates. Date-only boundaries "
+        "remain conservative; snapshots older than six hours become unknown. Refresh explicitly."
+    )
+    by_id = {f"{item.source}:{item.identifier}": item for item in result.calls}
+    order = {"open": 0, "upcoming": 1, "closed": 2, "unknown": 3}
+    options = sorted(by_id, key=lambda key: (order[statuses[key][0]], by_id[key].identifier))
+    selected = st.selectbox(
+        "Inspect a live call",
+        options=options,
+        format_func=lambda key: f"{statuses[key][0]} | {by_id[key].identifier} | {by_id[key].title}",
+        key=f"live-call-selection-{project.project_id}",
+    )
+    call = by_id[selected]
+    with st.container(border=True):
+        st.text(call.title)
+        st.text(f"Programme: {call.programme}")
+        st.text(f"Official identifier: {call.identifier}")
+        if call.call_identifier:
+            st.text(f"Parent call identifier: {call.call_identifier}")
+        st.text(f"Current status: {statuses[selected][0]}")
+        st.text(statuses[selected][1])
+        st.text(f"Published source status: {call.official_status}")
+        st.text("Opening: " + (call.opening.display if call.opening else "Unknown"))
+        st.text("Deadline: " + (call.deadline.display if call.deadline else "Unknown"))
+        for label, value in (("Opening source value", call.opening), ("Deadline source value", call.deadline)):
+            if value:
+                st.text(f"{label}: {value.raw}")
+        st.link_button("Official call page", call.source_url)
+        st.link_button("Retrieved source evidence", call.evidence_url)
+        st.caption(f"Call record retrieved: {call.retrieved_at.isoformat()}")
+        st.caption("Source updated: " + (call.source_updated_on.isoformat() if call.source_updated_on else "Unknown"))
+        st.markdown("**Local comparison and requirements to check**")
+        topics = compare_call_locally(project.idea, call)
+        st.text("Shared vocabulary topics: " + (", ".join(topics) or "No overlap detected"))
+        st.caption("Topics overlap in the saved idea and call title/objectives. This does not establish suitability or eligibility.")
+        for label, value in (
+            ("Funding objectives / source excerpt", call.objectives),
+            ("Geographical area", call.geographic_area),
+            ("Applicant requirements / source excerpt", call.applicant_requirements),
+        ):
+            st.markdown(f"**{label}**")
+            st.text(value or "Unknown — check the official call documents.")
+        for uncertainty in call.uncertainties:
+            st.text(uncertainty)
+        st.caption("Source excerpts may be incomplete. Verify all requirements and exact submission deadlines in the official call documents.")
+
+
 def _render_funding_research(project: ProjectRecord) -> None:
     with st.expander("Find Funding Opportunities (optional)", expanded=False):
         st.caption(
-            "Preliminary programme research. This version does not discover individual calls "
-            "or assess funding eligibility. Project information stays local."
+            "Official live calls and preliminary programme research. "
+            "This does not assess funding eligibility. Project information stays local."
         )
+        _render_live_funding_calls(project)
+        st.markdown("#### General programme suggestions")
         with st.form(f"funding-search-{project.project_id}"):
             retrieve_live = st.checkbox(
                 "Retrieve public programme page descriptions online",
@@ -136,7 +220,7 @@ def _render_funding_research(project: ProjectRecord) -> None:
             return
         records = saved_research[2]
         st.warning(
-            "Programme guidance only — no verified current calls. Call titles, dates and "
+            "Programme guidance only — these general suggestions contain no verified current calls. Call titles, dates and "
             "open/closed status are unknown. General guidance was checked on 8 November 2026 "
             "and may become outdated."
         )
