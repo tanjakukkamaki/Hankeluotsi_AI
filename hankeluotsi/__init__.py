@@ -1,0 +1,1 @@
+"""HankeLuotsi AI application package."""

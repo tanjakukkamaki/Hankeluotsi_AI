@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "title": "Digital practice labs for community arts groups",
+  "development_need": "Fictional small community arts groups in Finland and Sweden have limited time and confidence to adopt useful digital practices.",
+  "target_groups": [
+    "Staff and volunteers at fictional community arts groups in Finland and Sweden"
+  ],
+  "expected_change": "Participants use at least one suitable digital practice in their organization.",
+  "geography": "Fictional communities in western Finland and eastern Sweden",
+  "partners": [
+    "Fictional North Shore Arts Network",
+    "Fictional South Coast Culture Hub"
+  ],
+  "funding_context": "Possible cross-border cooperation; no funding programme has been selected."
+}

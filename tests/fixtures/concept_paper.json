@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "background_need": "Fictional community arts groups across two neighboring regions report limited capacity to choose, test, and maintain basic digital tools. The idea is to build practical confidence through short peer-supported activities.",
+  "objectives": [
+    {
+      "id": "O1",
+      "description": "Improve participants' ability to select and use a digital tool for a routine organizational task."
+    },
+    {
+      "id": "O2",
+      "description": "Help participating groups establish a realistic plan for continuing one new digital practice."
+    }
+  ],
+  "target_groups": [
+    "Staff and volunteers at fictional community arts groups"
+  ],
+  "preliminary_activities": [
+    {
+      "id": "A1",
+      "description": "Run a short introductory workshop using fictional organizational scenarios.",
+      "objective_ids": ["O1"]
+    },
+    {
+      "id": "A2",
+      "description": "Facilitate a peer lab where participants try selected tools and discuss accessibility.",
+      "objective_ids": ["O1", "O2"]
+    },
+    {
+      "id": "A3",
+      "description": "Support each group to outline a small follow-up practice and review date.",
+      "objective_ids": ["O2"]
+    }
+  ],
+  "expected_results": [
+    {
+      "id": "R1",
+      "description": "Participants demonstrate one practical digital task in a workshop or peer-lab exercise.",
+      "activity_ids": ["A1", "A2"]
+    },
+    {
+      "id": "R2",
+      "description": "Participating groups produce a brief plan to continue one selected digital practice.",
+      "activity_ids": ["A3"]
+    }
+  ],
+  "proposed_indicators": [
+    {
+      "id": "I1",
+      "description": "Number of participants who complete a practical digital task to an agreed checklist.",
+      "result_ids": ["R1"],
+      "measurement_method": "Count completed checklists at the end of the fictional workshop exercises."
+    },
+    {
+      "id": "I2",
+      "description": "Number of participating groups with a written follow-up practice plan.",
+      "result_ids": ["R2"],
+      "measurement_method": "Count plans reviewed against a short completeness checklist."
+    }
+  ],
+  "assumptions": [
+    "Participating groups can set aside time for short learning activities."
+  ],
+  "open_questions": [
+    "Which digital tasks are most relevant to the participating groups?",
+    "What lightweight follow-up support would be practical?"
+  ]
+}
