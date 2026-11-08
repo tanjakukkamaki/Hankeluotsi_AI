@@ -81,3 +81,15 @@
 - **Safety and version control:** No external APIs, paid services, production database, commits, or pushes were used. `AGENTS.md` and `PLANS.md` were not modified.
 - **Owner actual hours:** Not recorded by the agent; owner should enter their actual time.
 - **Next action:** Owner reviews PR4 repository behavior, tests, and limitations before approving any commit or starting PR5.
+
+## 2026-11-08 — PR5 Streamlit prototype vertical slice
+
+- **Task:** Implement the fictional project-idea-to-validated-concept flow with SQLite save/reload, mocked AppTest coverage, and launch instructions. No PR6 or later work was started.
+- **Implementation:** The Streamlit form validates `ProjectIdea`, sends a size-bounded concept request to the existing `LLMClient` with `ConceptPaper` as its response model and one attempt only, then validates and saves the concept through `ProjectRepository`. Saved projects can be reopened from the selector. Stable idea-derived operation IDs, form-submit handling, and a saved-concept check prevent reruns or repeat submissions from triggering duplicate generation. Model failures leave the valid idea in `created` state and display an actionable error. The default DB is `hankeluotsi.sqlite3`; `HANKELUOTSI_DB_PATH` can override it.
+- **Offline validation:** `tests/test_app.py` AppTest/repository integration cases passed (5 tests). The full offline suite passed: `python -m pytest -q` (96 tests, 2.32 s). The mocked AppTest verified one generation call across reruns, validation-before-generation, timeout preservation, concept persistence, and reopening.
+- **Live local workflow:** LM Studio exposed `qwen3.5-4b` at `http://127.0.0.1:1234/v1`. The first two `ConceptPaper` requests using only idea JSON were rejected as truncated (`finish_reason=length`, 512-token cap); neither wrote a concept. The app prompt was then bounded to one objective, activity, result, and indicator. One real AppTest form submission subsequently passed in 6.03 s: JSON/Pydantic-valid `ConceptPaper`, `finish_reason=stop`, saved as `concept_ready`, then reloaded from a temporary SQLite database with one linked objective/activity/result/indicator. No retry was used by the app.
+- **Documentation:** README now describes LM Studio setup, the prototype launch command, fictional-data-only manual flow, offline tests, and the local database path.
+- **Limitations:** The successful real run is a single sample; the two truncations show that the model can still fail within the same token cap. Keep LM Studio `Enable Thinking` disabled. Generated content received schema validation but no independent quality assessment. Draft/review, later workflow stages, and production-database behavior remain out of PR5 scope.
+- **Safety and version control:** All model/test inputs were fictional. No external API or paid service was used. Tests used temporary SQLite databases. No dependency, `AGENTS.md`, or `PLANS.md` changes; no commit or push.
+- **Owner actual hours:** Not recorded by the agent; owner should enter their actual time.
+- **Next action:** Owner reviews the PR5 prototype and live output before approving any commit or starting PR6.
