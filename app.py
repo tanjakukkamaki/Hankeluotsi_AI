@@ -1,6 +1,6 @@
 import os
 import uuid
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterator
@@ -60,7 +60,7 @@ def _render_section_heading(title: str) -> None:
 
 @contextmanager
 def _concept_section(title: str) -> Iterator[None]:
-    with st.container(border=False, key="consistency_check"):
+    with st.container(border=False, key="concept_section_" + title.lower().replace(" ", "_")):
         _render_section_heading(title)
         yield
 
@@ -86,7 +86,7 @@ def _render_consistency_check(concept: ConceptPaper) -> None:
     errors = [item for item in findings if item.severity == FindingSeverity.ERROR]
     warnings = [item for item in findings if item.severity == FindingSeverity.WARNING]
 
-    with st.container(border=True):
+    with st.container(border=False, key="consistency_check"):
         st.subheader("Consistency Check")
         st.caption(
             "Deterministic structural checks only. This does not assess content quality "
@@ -127,7 +127,7 @@ def _render_live_funding_calls(project: ProjectRecord) -> None:
         "Search the official Aurora timetable and Horizon Europe grant topics. "
         "Only fixed public requests are sent; project text stays local."
     )
-    if st.button("Search Live Funding Calls", key=f"live-funding-search-{project.project_id}"):
+    if st.button("Search Live Funding Calls", key=f"live-funding-search-{project.project_id}", type="primary"):
         with st.spinner("Reading official funding sources..."):
             result = search_live_funding_calls()
         st.session_state["live_funding_result"] = (
@@ -139,8 +139,8 @@ def _render_live_funding_calls(project: ProjectRecord) -> None:
         return
     result, attempted_at = cached[2:]
     st.caption(f"Last explicit search completed: {attempted_at.isoformat()}. Results last for this app session.")
-    for notice in result.notices:
-        st.warning(notice)
+    if result.notices:
+        st.warning("\n\n".join(result.notices))
     if not result.calls:
         st.info("No live call records could be verified. Use the official sources and general programme guidance below.")
         st.link_button("Official Aurora calls", "https://www.interregaurora.eu/projects/calls-for-applications-2/")
@@ -257,62 +257,68 @@ def _render_funding_research(project: ProjectRecord) -> None:
                 status_badge("Programme guide · call details unknown")
                 st.text(item.funding_programme)
                 st.link_button("Official calls / funding source", item.official_source_url)
-                st.text("Call title: " + (item.call_title or "Unknown — no individual call retrieved"))
-                st.text("Application dates: " + (item.application_dates or "Unknown — check the official call"))
-                st.text(f"Call status: {item.status}")
-                st.markdown("**Objectives and priorities**")
-                for objective in item.objectives_and_priorities:
-                    st.text(objective)
-                st.markdown("**Geographic scope to check**")
-                st.text(item.geographic_eligibility)
-                st.markdown("**Applicant requirements to check**")
-                st.text(item.applicant_requirements)
-                st.caption(f"General guidance verified: {item.guidance_verified_on.isoformat()}")
-                for index, url in enumerate(item.guidance_urls, start=1):
-                    st.link_button(f"Guidance source {index}", url)
-                if item.retrieval_state == "retrieved":
-                    st.caption(f"Page description retrieved: {item.information_retrieved_at.isoformat()}")
-                    st.link_button("Retrieved programme page", item.retrieved_from_url)
-                    st.text(item.source_excerpt)
-                    st.caption("Page metadata only; it does not update or verify the guidance or call conditions above.")
-                elif item.retrieval_state == "unavailable":
-                    st.caption("Live programme page description unavailable. Showing reviewed guidance and official links.")
-                else:
-                    st.caption("Live retrieval not requested. Showing reviewed guidance and official links.")
-                for uncertainty in item.uncertainty:
-                    st.text(uncertainty)
+                with st.expander("Programme details & evidence", expanded=False, key=f"programme_details_{item.record_id}"):
+                    st.text("Call title: " + (item.call_title or "Unknown — no individual call retrieved"))
+                    st.text("Application dates: " + (item.application_dates or "Unknown — check the official call"))
+                    st.text(f"Call status: {item.status}")
+                    st.markdown("**Objectives and priorities**")
+                    for objective in item.objectives_and_priorities:
+                        st.text(objective)
+                    st.markdown("**Geographic scope to check**")
+                    st.text(item.geographic_eligibility)
+                    st.markdown("**Applicant requirements to check**")
+                    st.text(item.applicant_requirements)
+                    st.caption(f"General guidance verified: {item.guidance_verified_on.isoformat()}")
+                    for index, url in enumerate(item.guidance_urls, start=1):
+                        st.link_button(f"Guidance source {index}", url)
+                    if item.retrieval_state == "retrieved":
+                        st.caption(f"Page description retrieved: {item.information_retrieved_at.isoformat()}")
+                        st.link_button("Retrieved programme page", item.retrieved_from_url)
+                        st.text(item.source_excerpt)
+                        st.caption("Page metadata only; it does not update or verify the guidance or call conditions above.")
+                    elif item.retrieval_state == "unavailable":
+                        st.caption("Live programme page description unavailable. Showing reviewed guidance and official links.")
+                    else:
+                        st.caption("Live retrieval not requested. Showing reviewed guidance and official links.")
+                    for uncertainty in item.uncertainty:
+                        st.text(uncertainty)
+
+
+def _render_project_context(project: ProjectRecord) -> None:
+    with st.container(key="project_context"):
+        st.subheader("Saved project")
+        st.caption(f"Status: {project.state.value}")
+        with st.expander("Project idea · saved input", expanded=False):
+            st.markdown("#### Project idea")
+            for label, value in (
+                ("Title", project.idea.title),
+                ("Development need", project.idea.development_need),
+                ("Expected change", project.idea.expected_change),
+                ("Geography", project.idea.geography),
+            ):
+                st.markdown(f"**{label}**")
+                st.text(value)
+            st.markdown("**Target groups**")
+            for target_group in project.idea.target_groups:
+                st.text(target_group)
+            if project.idea.partners:
+                st.markdown("**Potential partners**")
+                for partner in project.idea.partners:
+                    st.text(partner)
+            if project.idea.funding_context:
+                st.markdown("**Funding context**")
+                st.text(project.idea.funding_context)
+            with st.expander("Raw project idea JSON", expanded=False):
+                st.json(project.idea.model_dump(mode="json"))
 
 
 def _render_saved_project(project: ProjectRecord) -> None:
-    st.subheader("Saved project")
-    st.caption(f"Status: {project.state.value}")
-    with st.container(border=True):
-        st.markdown("#### Project idea")
-        for label, value in (
-            ("Title", project.idea.title),
-            ("Development need", project.idea.development_need),
-            ("Expected change", project.idea.expected_change),
-            ("Geography", project.idea.geography),
-        ):
-            st.markdown(f"**{label}**")
-            st.text(value)
-        st.markdown("**Target groups**")
-        for target_group in project.idea.target_groups:
-            st.text(target_group)
-        if project.idea.partners:
-            st.markdown("**Potential partners**")
-            for partner in project.idea.partners:
-                st.text(partner)
-        if project.idea.funding_context:
-            st.markdown("**Funding context**")
-            st.text(project.idea.funding_context)
-        with st.expander("Raw project idea JSON", expanded=False):
-            st.json(project.idea.model_dump(mode="json"))
-
+    anchor("concept-paper")
     if project.concept is None:
-        st.caption("No concept has been saved for this project yet.")
-    else:
-        concept = project.concept
+        st.info("Your project idea is saved. A concept has not been generated for this record yet.")
+        return
+    concept = project.concept
+    with st.container(key="concept_document"):
         concept_heading, pdf_action = st.columns([0.72, 0.28], vertical_alignment="center")
         with concept_heading:
             st.subheader("Concept paper")
@@ -327,51 +333,52 @@ def _render_saved_project(project: ProjectRecord) -> None:
                 on_click="ignore",
                 use_container_width=True,
             )
+        with st.container(key="concept_document_title"):
+            st.text(project.idea.title)
+        with st.container(key="concept_summary"):
+            columns = st.columns(4)
+            for column, label, count in zip(columns,
+                ("Objectives", "Activities", "Results", "Indicators"),
+                (len(concept.objectives), len(concept.preliminary_activities), len(concept.expected_results), len(concept.proposed_indicators))):
+                column.metric(label, count)
         _render_consistency_check(concept)
-
-        with _concept_section("Background"):
-            st.text(concept.background_need)
-
-        with _concept_section("Objectives"):
-            for objective in concept.objectives:
-                _render_concept_reference(objective.id)
-                st.text(objective.description)
-
-        with _concept_section("Target groups"):
-            for target_group in concept.target_groups:
-                st.text(target_group)
-
-        with _concept_section("Activities"):
-            for activity in concept.preliminary_activities:
-                _render_concept_reference(
-                    activity.id, "Linked objectives", tuple(activity.objective_ids)
-                )
-                st.text(activity.description)
-
-        with _concept_section("Expected results"):
-            for result in concept.expected_results:
-                _render_concept_reference(
-                    result.id, "Linked activities", tuple(result.activity_ids)
-                )
-                st.text(result.description)
-
-        with _concept_section("Indicators"):
-            for indicator in concept.proposed_indicators:
-                _render_concept_reference(
-                    indicator.id, "Linked results", tuple(indicator.result_ids)
-                )
-                st.text(indicator.description)
-                st.markdown("**Measurement method**")
-                st.text(indicator.measurement_method)
-
-        with _concept_section("Assumptions"):
-            for assumption in concept.assumptions:
-                st.text(assumption)
-
-        with _concept_section("Open questions"):
-            for question in concept.open_questions:
-                st.text(question)
-
+        with st.container(key="concept_body"):
+            with _concept_section("Background"):
+                st.text(concept.background_need)
+            objective_column, group_column = st.columns(2, gap="large")
+            with objective_column, _concept_section("Objectives"):
+                for objective in concept.objectives:
+                    _render_concept_reference(objective.id)
+                    st.text(objective.description)
+            with group_column, _concept_section("Target groups"):
+                for target_group in concept.target_groups:
+                    st.text(target_group)
+            activity_column, result_column = st.columns(2, gap="large")
+            with activity_column, _concept_section("Activities"):
+                for activity in concept.preliminary_activities:
+                    _render_concept_reference(activity.id, "Linked objectives", tuple(activity.objective_ids))
+                    st.text(activity.description)
+            with result_column, _concept_section("Expected results"):
+                for result in concept.expected_results:
+                    _render_concept_reference(result.id, "Linked activities", tuple(result.activity_ids))
+                    st.text(result.description)
+            with _concept_section("Indicators"):
+                for indicator in concept.proposed_indicators:
+                    _render_concept_reference(indicator.id, "Linked results", tuple(indicator.result_ids))
+                    st.text(indicator.description)
+                    st.markdown("**Measurement method**")
+                    st.text(indicator.measurement_method)
+            assumption_column, question_column = st.columns(2, gap="large")
+            with assumption_column, _concept_section("Assumptions"):
+                for assumption in concept.assumptions:
+                    st.text(assumption)
+                if not concept.assumptions:
+                    st.caption("None provided.")
+            with question_column, _concept_section("Open questions"):
+                for question in concept.open_questions:
+                    st.text(question)
+                if not concept.open_questions:
+                    st.caption("None provided.")
         with st.expander("Raw ConceptPaper JSON", expanded=False):
             st.json(concept.model_dump(mode="json"))
 
@@ -397,40 +404,56 @@ project_options = [None, *project_by_id]
 pending_project_id = st.session_state.pop("pr5_pending_project_id", None)
 if pending_project_id in project_by_id:
     st.session_state["open_project_id"] = pending_project_id
-idea_column, saved_column = st.columns([1.55, 0.9], gap="large")
-with idea_column:
-    st.subheader("New project idea")
-    st.caption("A few structured details are enough to begin.")
-    with st.form("project_idea_form", clear_on_submit=False):
-        title = st.text_input("Project title", key="idea_title")
-        development_need = st.text_area("Development need", key="idea_development_need")
-        target_groups = st.text_area(
-            "Target groups", help="Separate multiple groups with commas or new lines.", key="idea_target_groups"
-        )
-        expected_change = st.text_area("Expected change", key="idea_expected_change")
-        geography = st.text_input("Geography", key="idea_geography")
-        partners = st.text_area(
-            "Potential partners (optional)", help="Separate entries with commas or new lines.", key="idea_partners"
-        )
-        funding_context = st.text_input("Funding context (optional)", key="idea_funding_context")
-        submitted = st.form_submit_button("Generate concept", type="primary")
-
-with saved_column:
-    with st.container(border=True):
-        st.subheader("Saved projects")
-        if projects:
-            st.caption(f"{len(projects)} saved project{'s' if len(projects) != 1 else ''}")
-        else:
-            st.caption("Your saved ideas and concepts will appear here.")
-            st.caption("Consistency results appear when you generate or open a concept.")
-        selected_project_id = st.selectbox(
-            "Open a saved project",
-            options=project_options,
-            format_func=lambda project_id: (
-                "Select a saved project" if project_id is None else _project_label(project_by_id[project_id])
-            ),
-            key="open_project_id",
-        )
+anchor("project-workspace")
+with st.container(key="project_workspace"):
+    idea_column, saved_column = st.columns([2.05, 1], gap="large")
+    with saved_column:
+        with st.container(key="saved_projects"):
+            st.subheader("Saved projects")
+            if projects:
+                st.caption(f"{len(projects)} saved project{'s' if len(projects) != 1 else ''}")
+            else:
+                st.caption("Your saved ideas and concepts will appear here.")
+                st.caption("Consistency results appear when you generate or open a concept.")
+            selected_project_id = st.selectbox(
+                "Open a saved project",
+                options=project_options,
+                format_func=lambda project_id: (
+                    "Select a saved project" if project_id is None else _project_label(project_by_id[project_id])
+                ),
+                key="open_project_id",
+            )
+            if selected_project_id is not None:
+                current = project_by_id[selected_project_id]
+                st.caption(f"Saved {current.updated_at[:10]} · Stored on this device")
+            else:
+                st.caption("Reopen your work at any time. Your ideas stay in the local workspace.")
+    with idea_column:
+        context = st.expander("Start a new project idea", expanded=False, key="new_idea") if selected_project_id is not None else nullcontext()
+        with context:
+            st.subheader("New project idea")
+            st.caption("Start with fictional information. A few structured details are enough.")
+            with st.form("project_idea_form", clear_on_submit=False):
+                title = st.text_input("Project title", key="idea_title", placeholder="e.g. Fictional Nordic creative futures")
+                development_need = st.text_area("Development need", key="idea_development_need", height=88, placeholder="What needs to change, and why?")
+                group_column, geography_column = st.columns([1.2, 1], gap="medium")
+                with group_column:
+                    target_groups = st.text_area(
+                        "Target groups", help="Separate multiple groups with commas or new lines.", key="idea_target_groups", height=80,
+                    )
+                with geography_column:
+                    geography = st.text_input("Geography", key="idea_geography", placeholder="e.g. Fictional Finland and Sweden")
+                expected_change = st.text_area("Expected change", key="idea_expected_change", height=80, placeholder="What will be different for the target groups?")
+                partner_column, funding_column = st.columns(2, gap="medium")
+                with partner_column:
+                    partners = st.text_area(
+                        "Potential partners (optional)", help="Separate entries with commas or new lines.", key="idea_partners", height=68,
+                    )
+                with funding_column:
+                    funding_context = st.text_input("Funding context (optional)", key="idea_funding_context")
+                submitted = st.form_submit_button("Generate concept", type="primary", use_container_width=True)
+        if selected_project_id is not None:
+            _render_project_context(project_by_id[selected_project_id])
 
 success_message = st.session_state.pop("pr5_success_message", None)
 if success_message:
@@ -500,3 +523,8 @@ if submitted:
             st.error(f"The generated concept did not pass validation and was not saved: {error}")
         except Exception as error:
             st.error(f"Concept generation or saving failed. Your valid saved data was preserved: {error}")
+
+if selected_project_id is None:
+    anchor("concept-paper")
+    anchor("funding-opportunities")
+st.markdown('<div class="workspace-footer"><span>HankeLuotsi AI · A clearer direction for project ideas.</span><span>Fictional data only · Human review required</span></div>', unsafe_allow_html=True)
