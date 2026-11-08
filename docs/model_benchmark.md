@@ -13,10 +13,11 @@ With LM Studio serving the selected local model at `http://127.0.0.1:1234/v1` an
 ```powershell
 .\.venv\Scripts\python.exe -m hankeluotsi.benchmark `
   --attempts-per-stage 10 `
-  --output benchmark-results/qwen3.5-4b-2026-11-08.json
+  --output benchmark-results/qwen3.5-4b-2026-11-08.json `
+  --enable-thinking-disabled
 ```
 
-Only add `--model-artifact`, `--quantization`, `--context-length`, and `--runtime-version` after verifying their values; do not guess. The output is JSON and includes individual attempts plus per-stage attempt counts, first-attempt success rates, and mean latency. It is not created until the command is run.
+Only add `--model-artifact`, `--quantization`, `--context-length`, and `--runtime-version` after verifying their values; do not guess. The output is JSON and includes individual attempts plus per-stage attempt counts, first-attempt success rates, and mean latency. `--enable-thinking-disabled` records the owner-verified LM Studio inference setting and does not change it. The report is not created until the command is run.
 
 ## Recorded attempt fields
 
@@ -34,22 +35,38 @@ One real concept-stage request was run using only the fictional `fictional_commu
 
 The output contained one objective, activity, expected result, and indicator. No independent quality score was assigned. The local model completed this request with LM Studio's **Enable Thinking** disabled, consistent with the earlier observation that reasoning could consume the completion budget and leave `message.content` empty when thinking was enabled.
 
+## Formal Reliability Benchmark: 2026-11-08
+
+The runner completed **30 sequential local requests** using `qwen3.5-4b`: 10 first attempts per stage, with one fixed fictional fixture repeated for each stage and retries disabled. The per-attempt source data is saved in [qwen3.5-4b-2026-11-08.json](../benchmark-results/qwen3.5-4b-2026-11-08.json).
+
+| Stage | Prompt | Attempts | JSON valid | Pydantic valid | `finish_reason=stop` | Truncated | First-attempt success | Mean time | 8/10 target |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---|
+| concept | `concept_v1` | 10 | 10/10 | 10/10 | 10/10 | 0/10 | **10/10 (100%)** | 6.07 s | PASS |
+| draft | `draft_v1` | 10 | 10/10 | 10/10 | 10/10 | 0/10 | **10/10 (100%)** | 2.86 s | PASS |
+| review | `review_v1` | 10 | 10/10 | 10/10 | 10/10 | 0/10 | **10/10 (100%)** | 4.89 s | PASS |
+
+All 30 attempts were first attempts: the runner called the client with `max_attempts=1`. All responses were valid JSON, passed their configured Pydantic models, ended with `stop`, and were neither truncated nor flagged incomplete. The 8/10 engineering threshold was met for all three benchmark schemas in this run.
+
+**Schema and quality caveats:** `ConceptPaper` uses the project's current schema. Draft and review use the explicitly provisional `DraftBenchmarkOutput` and `ReviewBenchmarkOutput` benchmark-only schemas, not the later planned application schemas. Every `quality_score` is null: no human content-quality assessment was performed, so these results establish structural reliability only, not content quality.
+
 ## Configuration and limitations
 
 | Setting | Recorded value |
 |---|---|
 | Endpoint | `http://127.0.0.1:1234/v1` |
 | Model identifier | `qwen3.5-4b` |
-| LM Studio Enable Thinking | Disabled for the successful test |
+| LM Studio Enable Thinking | Disabled for the formal benchmark |
 | Output token limit | 512 |
 | Temperature | 0.2 |
-| Prompt version | `concept_v1` |
+| Prompt versions | `concept_v1`, `draft_v1`, `review_v1` |
+| Timeout | 60 s |
 | GGUF filename / hash | Not verified |
 | Quantization | Not verified |
 | Context length | Not verified |
 | LM Studio/runtime version | Not recorded for this run |
 | Hardware / GPU offload | Not verified |
-| Draft and review stages | Not run against a live model |
-| Formal benchmark gate | Not run; requires 10 independent attempts per stage and at least 8/10 first-attempt successes for each stage |
+| Draft and review schemas | Provisional benchmark-only Pydantic schemas |
+| Human quality assessments | Not performed; `quality_score` is null for all attempts |
+| Formal benchmark gate | 10/10 first-attempt successes for each stage; 8/10 target met |
 
-The preliminary 1/1 concept success is not evidence that the planned 8/10 threshold has been met. Draft/review quality and reliability, exact model artifact, runtime configuration, and hardware behavior still need owner verification. No cloud API was used.
+The formal 10/10 results apply to these fixed prompts and schemas only. They are not a guarantee of reliability on other inputs, the final draft/review schemas, or content quality. The exact model artifact, quantization, context, runtime configuration, and hardware behavior still need owner verification. No cloud API was used.

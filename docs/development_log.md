@@ -48,7 +48,7 @@
 - **Owner actual hours:** Not recorded by the agent; owner should enter their actual time.
 - **Next action:** Owner reviews PR2 changes and evidence before approving any commit or starting PR3.
 
-## 2026-11-08 — PR3 benchmark framework and preliminary concept run
+## 2026-11-08 — PR3 benchmark framework and preliminary concept run (before formal benchmark)
 
 - **Task:** Add a reproducible, local-only benchmark runner for concept, draft, and review; fictional stage fixtures; offline reporting tests; and benchmark documentation. No PR4 or later work was started.
 - **Implementation:** `python -m hankeluotsi.benchmark` takes an explicit attempts-per-stage count and output path, requires a loopback endpoint, makes one request per scored attempt with retries disabled, and writes per-attempt JSON/Pydantic validity, prompt version, model ID, finish reason, truncation and incomplete-output flags, latency, success, and optional human quality score. Report-level data includes generation parameters and optional artifact, quantization, context, and runtime metadata. Draft/review currently use compact benchmark-only schemas pending their planned application schemas.
@@ -56,6 +56,17 @@
 - **Offline tests:** Focused benchmark/client suite passed (19 tests). Full suite: `python -m pytest -q` passed (75 tests, 1.35 s). The benchmark framework was not run live for all stages, and no 30-attempt benchmark was started.
 - **Preliminary local integration:** One first-attempt `ConceptPaper` generation using fixture `fictional_community_arts_concept_v1` passed through local LM Studio at `http://127.0.0.1:1234/v1`. Model `qwen3.5-4b`, prompt `concept_v1`, JSON valid, Pydantic valid, `finish_reason=stop`, not truncated, 7.03 s; generated one objective, activity, result, and indicator. LM Studio's Enable Thinking setting was disabled. This single sample does not establish benchmark reliability.
 - **Problems and fixes:** Focused review found that malformed JSON could be accepted by the client when no response model was supplied. The success condition now requires valid JSON in all modes; a regression test covers the case. Benchmark attempts call the client with `max_attempts=1`, and failures retain parse/validation and response metadata.
-- **Limitations:** No live draft/review attempts; the formal threshold of at least 8/10 successful first attempts per stage is untested. Exact GGUF file/hash, quantization, context length, runtime version, and GPU/offload settings remain unverified. No quality score was assigned to the preliminary output.
+- **Limitations at that stage:** No live draft/review attempts; the formal threshold of at least 8/10 successful first attempts per stage was untested. Exact GGUF file/hash, quantization, context length, runtime version, and GPU/offload settings remained unverified. No quality score was assigned to the preliminary output.
 - **Owner actual hours:** Not recorded by the agent; owner should enter actual time.
 - **Next action:** Owner reviews PR3 implementation and documentation before deciding whether to run the formal benchmark; no commit or push was made.
+
+## 2026-11-08 — PR3 formal local reliability benchmark
+
+- **Task:** Run the approved 10 first attempts per stage (30 total) against local LM Studio, sequentially, with `qwen3.5-4b` only. No PR4 or later work was started.
+- **Preflight:** All stages were configured for `qwen3.5-4b`; the local `/v1/models` endpoint exposed that ID. The three benchmark fixtures were reviewed and contain fictional data. The focused offline benchmark/client tests passed (19 tests) before the live run.
+- **Run:** `python -m hankeluotsi.benchmark --attempts-per-stage 10 --output benchmark-results/qwen3.5-4b-2026-11-08.json --enable-thinking-disabled`. The runner made exactly 30 sequential requests, one per attempt with no retry. Endpoint: `http://127.0.0.1:1234/v1`; temperature 0.2; max tokens 512; timeout 60 s; LM Studio Enable Thinking recorded disabled.
+- **Results:** Concept `10/10` (100%, mean 6.07 s); draft `10/10` (100%, mean 2.86 s); review `10/10` (100%, mean 4.89 s). All 30 attempts produced valid JSON and passed their configured Pydantic schema; all had `finish_reason=stop`, were not truncated, and were not flagged incomplete. Prompt versions were `concept_v1`, `draft_v1`, and `review_v1` respectively. The 8/10 target was met for each configured schema.
+- **Artifact:** Individual per-attempt records and stage summaries are saved in `benchmark-results/qwen3.5-4b-2026-11-08.json` and summarized in `docs/model_benchmark.md`.
+- **Limitations:** Draft/review use provisional compact benchmark-only schemas, not the later application schemas. No human content-quality scores were performed; `quality_score` is null. GGUF artifact/hash, quantization, context length, LM Studio/runtime version, and hardware/offload settings remain unverified. Results apply only to the repeated fixed fixtures and do not establish content quality or general reliability.
+- **Safety and version control:** Fictional data only; no external API, paid service, commit, or push used.
+- **Next action:** Owner reviews the saved results, provisional schema limitations, and configuration gaps before deciding on follow-up.

@@ -166,6 +166,7 @@ def run_benchmark(
     quantization: str | None = None,
     context_length: int | None = None,
     runtime_version: str | None = None,
+    enable_thinking: bool | None = None,
 ) -> BenchmarkReport:
     if attempts_per_stage < 1:
         raise ValueError("attempts_per_stage must be at least 1")
@@ -262,6 +263,7 @@ def run_benchmark(
             "quantization": quantization,
             "context_length": context_length,
             "runtime_version": runtime_version,
+            "enable_thinking": enable_thinking,
         },
         attempts=attempts,
     )
@@ -280,6 +282,7 @@ def main() -> None:
     parser.add_argument("--quantization")
     parser.add_argument("--context-length", type=int)
     parser.add_argument("--runtime-version")
+    parser.add_argument("--enable-thinking-disabled", action="store_true")
     args = parser.parse_args()
 
     report = run_benchmark(
@@ -288,6 +291,7 @@ def main() -> None:
         quantization=args.quantization,
         context_length=args.context_length,
         runtime_version=args.runtime_version,
+        enable_thinking=False if args.enable_thinking_disabled else None,
     )
     write_report(report, args.output)
     print(f"Wrote {len(report.attempts)} benchmark attempts to {args.output}")

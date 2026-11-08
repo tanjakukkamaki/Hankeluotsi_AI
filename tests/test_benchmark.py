@@ -119,7 +119,7 @@ def test_benchmark_rejects_non_local_endpoint():
 
 
 def test_report_writes_json_with_attempts_and_summaries(tmp_path: Path):
-    report = run_benchmark(1, client=FakeClient())
+    report = run_benchmark(1, client=FakeClient(), enable_thinking=False)
     output_path = tmp_path / "benchmark" / "results.json"
 
     write_report(report, output_path)
@@ -128,6 +128,7 @@ def test_report_writes_json_with_attempts_and_summaries(tmp_path: Path):
     assert len(saved["attempts"]) == 3
     assert saved["stage_summaries"]["review"]["first_attempt_success_rate"] == 1.0
     assert saved["model_metadata"]["artifact"] is None
+    assert saved["model_metadata"]["enable_thinking"] is False
 
 
 @pytest.mark.parametrize("attempts", [0, -1])
