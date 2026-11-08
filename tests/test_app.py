@@ -4,6 +4,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
+from pydantic import BaseModel
 from streamlit.testing.v1 import AppTest
 
 from hankeluotsi.repository import ProjectRepository, ProjectState
@@ -13,9 +14,37 @@ from hankeluotsi.schemas import ConceptPaper, ProjectIdea
 APP_PATH = Path(__file__).resolve().parents[1] / "app.py"
 
 
+class FictionalDraftModel(BaseModel):
+    title: str
+    summary: str
+
+
+class FictionalReviewModel(BaseModel):
+    overall_assessment: str
+
+
 def concept_data():
     fixture_path = Path(__file__).parent / "fixtures" / "concept_paper.json"
     return json.loads(fixture_path.read_text(encoding="utf-8"))
+
+
+def create_saved_concept(database_path, concept_payload=None):
+    repository = ProjectRepository(database_path)
+    project = repository.create_project(
+        {
+            "title": "Fictional consistency test project",
+            "development_need": "Fictional arts groups need digital skills.",
+            "target_groups": ["Fictional community arts volunteers"],
+            "expected_change": "Participants use one digital practice.",
+            "geography": "Fictional Finland",
+        },
+        operation_id="consistency-test-idea",
+    )
+    concept = ConceptPaper.model_validate(concept_payload or concept_data())
+    saved = repository.save_concept(
+        project.project_id, concept, operation_id="consistency-test-concept"
+    )
+    return repository, saved
 
 
 def fill_fictional_idea(app):
@@ -70,6 +99,8 @@ def test_app_validates_and_saves_concept_then_rerun_does_not_regenerate(
 
         assert not app.exception
         assert any("Concept validated and saved" in item.value for item in app.success)
+        assert any("No structural issues detected" in item.value for item in app.success)
+        assert any("Consistency Check" in item.value for item in app.subheader)
         assert mock_generate.call_count == 1
         assert any("#### Background" in item.value for item in app.markdown)
         mock_generate.assert_called_once()
@@ -81,6 +112,8 @@ def test_app_validates_and_saves_concept_then_rerun_does_not_regenerate(
 
         app.run()
         assert mock_generate.call_count == 1
+        assert any("No structural issues detected" in item.value for item in app.success)
+        assert any("Consistency Check" in item.value for item in app.subheader)
 
     repository = ProjectRepository(database_path)
     projects = repository.list_projects()
@@ -101,7 +134,7 @@ def test_app_reopens_saved_concept_from_sqlite(tmp_path, monkeypatch):
         "geography": "Fictional region",
     }
     project = repository.create_project(idea, operation_id="saved-idea")
-    repository.save_concept(
+    project = repository.save_concept(
         project.project_id,
         ConceptPaper.model_validate(concept_data()),
         operation_id="saved-concept",
@@ -112,7 +145,12 @@ def test_app_reopens_saved_concept_from_sqlite(tmp_path, monkeypatch):
 
     assert not app.exception
     assert any("Concept paper" in item.value for item in app.subheader)
+    assert any("Consistency Check" in item.value for item in app.subheader)
     assert any("concept_ready" in item.value for item in app.caption)
+    metrics = {item.label: item.value for item in app.metric}
+    assert metrics["Errors"] == "0"
+    assert metrics["Warnings"] == "0"
+    assert any("No structural issues detected" in item.value for item in app.success)
     displayed_markdown = [item.value for item in app.markdown]
     displayed_text = [item.value for item in app.text]
     for heading in (
@@ -144,6 +182,101 @@ def test_app_reopens_saved_concept_from_sqlite(tmp_path, monkeypatch):
     assert any(item.label == "Raw ConceptPaper JSON" for item in app.expander)
     assert any(item.label == "Raw project idea JSON" for item in app.expander)
     assert any(item.label == "Download PDF" for item in app.get("download_button"))
+
+    stored_after_display = repository.load_project(project.project_id)
+    assert stored_after_display == project
+
+
+def test_saved_concept_with_unresolved_reference_shows_error_without_mutation(
+    tmp_path, monkeypatch
+):
+    database_path = tmp_path / "app.sqlite3"
+    monkeypatch.setenv("HANKELUOTSI_DB_PATH", str(database_path))
+    concept = concept_data()
+    concept["preliminary_activities"][0]["objective_ids"] = ["O99"]
+    repository, project = create_saved_concept(database_path, concept)
+    before = repository.load_project(project.project_id)
+
+    app = AppTest.from_file(str(APP_PATH), default_timeout=10).run()
+    app.selectbox(key="open_project_id").select(project.project_id).run()
+
+    metrics = {item.label: item.value for item in app.metric}
+    assert metrics["Errors"] == "1"
+    assert metrics["Warnings"] == "0"
+    assert any("UNRESOLVED_OBJECTIVE_REFERENCE" in item.value for item in app.error)
+    assert any("Affected ID" in item.value and "A1" in item.value for item in app.caption)
+    assert repository.load_project(project.project_id) == before
+
+
+def test_saved_concept_with_duplicate_ids_shows_structural_error(tmp_path, monkeypatch):
+    database_path = tmp_path / "app.sqlite3"
+    monkeypatch.setenv("HANKELUOTSI_DB_PATH", str(database_path))
+    concept = concept_data()
+    concept["objectives"].append(dict(concept["objectives"][0]))
+    _, project = create_saved_concept(database_path, concept)
+
+    app = AppTest.from_file(str(APP_PATH), default_timeout=10).run()
+    app.selectbox(key="open_project_id").select(project.project_id).run()
+
+    assert any("DUPLICATE_OBJECTIVE_ID" in item.value for item in app.error)
+    assert any("Errors" == item.label and item.value == "1" for item in app.metric)
+
+
+def test_saved_disconnected_concept_shows_warning_without_error(tmp_path, monkeypatch):
+    database_path = tmp_path / "app.sqlite3"
+    monkeypatch.setenv("HANKELUOTSI_DB_PATH", str(database_path))
+    concept = concept_data()
+    concept["objectives"].append({"id": "O3", "description": "Fictional unconnected objective."})
+    concept["preliminary_activities"].append(
+        {"id": "A4", "description": "Fictional unconnected activity.", "objective_ids": ["O1"]}
+    )
+    concept["expected_results"].append(
+        {"id": "R3", "description": "Fictional unmeasured result.", "activity_ids": ["A3"]}
+    )
+    _, project = create_saved_concept(database_path, concept)
+
+    app = AppTest.from_file(str(APP_PATH), default_timeout=10).run()
+    app.selectbox(key="open_project_id").select(project.project_id).run()
+
+    metrics = {item.label: item.value for item in app.metric}
+    assert metrics["Errors"] == "0"
+    assert metrics["Warnings"] == "3"
+    warning_text = [item.value for item in app.warning]
+    assert any("OBJECTIVE_WITHOUT_ACTIVITY" in value for value in warning_text)
+    assert any("ACTIVITY_WITHOUT_RESULT" in value for value in warning_text)
+    assert any("RESULT_WITHOUT_INDICATOR" in value for value in warning_text)
+
+
+def test_displaying_approved_concept_does_not_change_approval_or_content(tmp_path, monkeypatch):
+    database_path = tmp_path / "app.sqlite3"
+    monkeypatch.setenv("HANKELUOTSI_DB_PATH", str(database_path))
+    repository, project = create_saved_concept(database_path)
+    repository.save_draft(
+        project.project_id,
+        FictionalDraftModel(title="Fictional draft", summary="Fictional summary"),
+        model_type=FictionalDraftModel,
+        operation_id="display-test-draft",
+    )
+    repository.save_review(
+        project.project_id,
+        FictionalReviewModel(overall_assessment="Fictional review"),
+        model_type=FictionalReviewModel,
+        deterministic_findings=[],
+        operation_id="display-test-review",
+    )
+    approved_before_render = repository.approve_project(
+        project.project_id, operation_id="display-test-approval"
+    )
+
+    app = AppTest.from_file(str(APP_PATH), default_timeout=10).run()
+    app.selectbox(key="open_project_id").select(project.project_id).run()
+
+    approved_after_render = repository.load_project(project.project_id)
+    assert not app.exception
+    assert approved_after_render == approved_before_render
+    assert approved_after_render.state == ProjectState.APPROVED
+    assert approved_after_render.approved_at == approved_before_render.approved_at
+    assert any("No structural issues detected" in item.value for item in app.success)
 
 
 def test_app_shows_validation_error_without_calling_model(tmp_path, monkeypatch):

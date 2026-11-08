@@ -7,6 +7,11 @@ from typing import Iterator
 import streamlit as st
 from pydantic import ValidationError
 
+from hankeluotsi.consistency import (
+    ConsistencyFinding,
+    FindingSeverity,
+    check_concept_consistency,
+)
 from hankeluotsi.llm_client import LLMClient
 from hankeluotsi.pdf_exporter import concept_pdf_filename, generate_concept_pdf
 from hankeluotsi.repository import ProjectRecord, ProjectRepository
@@ -62,6 +67,46 @@ def _render_concept_reference(
     )
 
 
+def _render_consistency_check(concept: ConceptPaper) -> None:
+    findings = check_concept_consistency(concept)
+    errors = [item for item in findings if item.severity == FindingSeverity.ERROR]
+    warnings = [item for item in findings if item.severity == FindingSeverity.WARNING]
+
+    with st.container(border=True):
+        st.subheader("Consistency Check")
+        st.caption(
+            "Deterministic structural checks only. This does not assess content quality "
+            "or funding eligibility."
+        )
+        error_column, warning_column = st.columns(2)
+        error_column.metric("Errors", len(errors))
+        warning_column.metric("Warnings", len(warnings))
+
+        if errors:
+            st.error("Structural validation found errors that need attention.")
+        elif warnings:
+            st.warning("No broken references found, but some concept elements are disconnected.")
+        else:
+            st.success("No structural issues detected.")
+
+        for finding in findings:
+            display = (
+                st.error
+                if finding.severity == FindingSeverity.ERROR
+                else st.warning
+            )
+            display(f"{finding.code.value}: {finding.message}")
+            affected = f"Affected ID: `{finding.element_id}`" if finding.element_id else None
+            related = (
+                f"Related IDs: {', '.join(f'`{item}`' for item in finding.related_ids)}"
+                if finding.related_ids
+                else None
+            )
+            details = " · ".join(item for item in (affected, related) if item)
+            if details:
+                st.caption(details)
+
+
 def _render_saved_project(project: ProjectRecord) -> None:
     st.subheader("Saved project")
     st.caption(f"Status: {project.state.value}")
@@ -106,6 +151,7 @@ def _render_saved_project(project: ProjectRecord) -> None:
                 on_click="ignore",
                 use_container_width=True,
             )
+        _render_consistency_check(concept)
 
         with _concept_section("Background"):
             st.text(concept.background_need)
@@ -443,6 +489,7 @@ with saved_column:
             st.caption(f"{len(projects)} saved project{'s' if len(projects) != 1 else ''}")
         else:
             st.caption("Your saved ideas and concepts will appear here.")
+            st.caption("Consistency results appear when you generate or open a concept.")
         selected_project_id = st.selectbox(
             "Open a saved project",
             options=project_options,
