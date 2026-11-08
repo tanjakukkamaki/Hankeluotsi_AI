@@ -40,6 +40,16 @@ python -m pytest -q
 
 The offline AppTest suite mocks generation and makes no live model calls. For a live manual test, make sure the local server is running first. Never commit secrets or real project/partner data.
 
+## Optional funding research
+
+Open a saved project and expand **Find Funding Opportunities (optional)**. Submit **Find Funding Opportunities** to compare its saved idea locally with six official programme guides: EURA 2021 EAKR/ESR+/JTF, Interreg Aurora, the EU Funding & Tenders Portal, and Business Finland. A concept is not required.
+
+The initial version provides **programme guidance, not verified individual calls**. Call titles, dates and open/closed status are unknown. Guides were checked on 8 November 2026 and may become outdated. Source links, geographic/applicant conditions to check and uncertainty are visible. Business Finland instruments are not necessarily EU-funded.
+
+An optional checkbox retrieves descriptions from four fixed public pages. Requests contain no project information or keywords, use normal TLS validation and do not bypass restrictions. A successful page fetch does not update or verify current calls or the reviewed guidance. Network errors, certificate errors and JavaScript-only pages leave the offline guidance available. Opening the section or rerunning the app does not make requests.
+
+Comparison uses a small English/Finnish topic vocabulary, without AI or eligibility scores. It cannot establish applicant, partnership or geographic eligibility. Results are temporary for the app session and do not change SQLite or approval. See [source investigation and limitations](docs/funding_sources.md).
+
 ## Fictional example
 
 For testing and demonstrations, use synthetic information such as:

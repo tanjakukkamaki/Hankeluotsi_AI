@@ -27,6 +27,8 @@ The application must always show a clear disclaimer:
 - Local inference through LM Studio, with an optional *per-stage* cloud API fallback using fictional data only.
 - Automated unit, integration and Streamlit UI tests; reproducible setup and a short recorded demo.
 
+**Owner-approved addition — 8 November 2026:** Optional Funding Opportunities Research for saved fictional ideas. The first slice uses reviewed official programme guidance for EURA 2021 (EAKR, ESR+, JTF), Interreg Aurora, the EU Funding & Tenders Portal and Business Finland, with optional bounded retrieval of public page descriptions. Comparison runs locally; project data is never sent to funding sources. Programme profiles must be distinguished from verified calls, with unknown call dates/status and visible source/review/retrieval dates. This authorizes read-only public-source research, not submissions, eligibility decisions, paid services or PR7. See the bounded task in `PLANS.md`.
+
 **Out of scope — do not add without owner approval**
 - Funding eligibility judgments, official programme-specific forms or compliance certifications.
 - Budget calculations, grant applications submitted to authorities or funding-platform integrations.

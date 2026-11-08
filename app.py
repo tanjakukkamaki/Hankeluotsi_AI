@@ -12,6 +12,7 @@ from hankeluotsi.consistency import (
     FindingSeverity,
     check_concept_consistency,
 )
+from hankeluotsi.funding import compare_locally, retrieve_funding_opportunities
 from hankeluotsi.llm_client import LLMClient
 from hankeluotsi.pdf_exporter import concept_pdf_filename, generate_concept_pdf
 from hankeluotsi.repository import ProjectRecord, ProjectRepository
@@ -105,6 +106,83 @@ def _render_consistency_check(concept: ConceptPaper) -> None:
             details = " · ".join(item for item in (affected, related) if item)
             if details:
                 st.caption(details)
+
+
+def _render_funding_research(project: ProjectRecord) -> None:
+    with st.expander("Find Funding Opportunities (optional)", expanded=False):
+        st.caption(
+            "Preliminary programme research. This version does not discover individual calls "
+            "or assess funding eligibility. Project information stays local."
+        )
+        with st.form(f"funding-search-{project.project_id}"):
+            retrieve_live = st.checkbox(
+                "Retrieve public programme page descriptions online",
+                value=False,
+                help="Requests four fixed official pages, with no project text or search terms. May take about 20 seconds on timeouts.",
+                key=f"funding-live-{project.project_id}",
+            )
+            search = st.form_submit_button("Find Funding Opportunities")
+        # These are temporary research results. The saved idea is always read from
+        # SQLite; a changed idea invalidates its previous local research display.
+        research_key = "funding_research_result"
+        idea_snapshot = project.idea.model_dump_json()
+        if search:
+            with st.spinner("Loading official programme guidance and comparing locally..."):
+                records = retrieve_funding_opportunities(retrieve_live=retrieve_live)
+            st.session_state[research_key] = (project.project_id, idea_snapshot, records)
+        saved_research = st.session_state.get(research_key)
+        if not saved_research or saved_research[:2] != (project.project_id, idea_snapshot):
+            st.caption("Choose Find Funding Opportunities to compare the saved idea with programme guidance.")
+            return
+        records = saved_research[2]
+        st.warning(
+            "Programme guidance only — no verified current calls. Call titles, dates and "
+            "open/closed status are unknown. General guidance was checked on 8 November 2026 "
+            "and may become outdated."
+        )
+        st.caption(
+            "Comparison uses a small English/Finnish topic vocabulary locally. Shared topics "
+            "are research clues, not scores. Geography, applicant conditions and partnerships "
+            "require manual checking. Results last only for this app session."
+        )
+        # Six static guide names/topic labels need no dataframe runtime.
+        st.markdown(
+            "| Programme | Shared topics | Call status |\n| --- | --- | --- |\n"
+            + "\n".join(
+                f"| {item.funding_programme} | "
+                f"{', '.join(compare_locally(project.idea, item)) or 'No vocabulary overlap detected'} | "
+                f"{item.status} |"
+                for item in records
+            )
+        )
+        for item in records:
+            with st.container(border=True):
+                st.text(item.funding_programme)
+                st.link_button("Official calls / funding source", item.official_source_url)
+                st.text("Call title: " + (item.call_title or "Unknown — no individual call retrieved"))
+                st.text("Application dates: " + (item.application_dates or "Unknown — check the official call"))
+                st.text(f"Call status: {item.status}")
+                st.markdown("**Objectives and priorities**")
+                for objective in item.objectives_and_priorities:
+                    st.text(objective)
+                st.markdown("**Geographic scope to check**")
+                st.text(item.geographic_eligibility)
+                st.markdown("**Applicant requirements to check**")
+                st.text(item.applicant_requirements)
+                st.caption(f"General guidance verified: {item.guidance_verified_on.isoformat()}")
+                for index, url in enumerate(item.guidance_urls, start=1):
+                    st.link_button(f"Guidance source {index}", url)
+                if item.retrieval_state == "retrieved":
+                    st.caption(f"Page description retrieved: {item.information_retrieved_at.isoformat()}")
+                    st.link_button("Retrieved programme page", item.retrieved_from_url)
+                    st.text(item.source_excerpt)
+                    st.caption("Page metadata only; it does not update or verify the guidance or call conditions above.")
+                elif item.retrieval_state == "unavailable":
+                    st.caption("Live programme page description unavailable. Showing reviewed guidance and official links.")
+                else:
+                    st.caption("Live retrieval not requested. Showing reviewed guidance and official links.")
+                for uncertainty in item.uncertainty:
+                    st.text(uncertainty)
 
 
 def _render_saved_project(project: ProjectRecord) -> None:
@@ -507,6 +585,7 @@ if info_message:
     st.info(info_message)
 if selected_project_id is not None:
     _render_saved_project(project_by_id[selected_project_id])
+    _render_funding_research(project_by_id[selected_project_id])
 
 if submitted:
     try:
