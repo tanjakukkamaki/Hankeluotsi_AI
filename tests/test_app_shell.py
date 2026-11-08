@@ -14,5 +14,5 @@ class AppShellTests(TestCase):
         self.assertEqual(len(app.exception), 0)
         self.assertEqual([element.value for element in app.title], ["HankeLuotsi AI"])
         self.assertTrue(
-            any("Not a funding eligibility assessment" in element.value for element in app.warning)
+            any("Not a funding eligibility assessment" in element.value for element in app.markdown)
         )

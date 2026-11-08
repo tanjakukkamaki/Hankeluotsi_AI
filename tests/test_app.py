@@ -45,7 +45,7 @@ def test_app_renders_disclaimer_form_and_saved_projects_selector(tmp_path, monke
     assert not app.exception
     assert [element.value for element in app.title] == ["HankeLuotsi AI"]
     assert any("From project idea to structured concept" in item.value for item in app.markdown)
-    assert any("Not a funding eligibility assessment" in item.value for item in app.warning)
+    assert any("Not a funding eligibility assessment" in item.value for item in app.markdown)
     assert any(item.label == "Project title" for item in app.text_input)
     assert any(item.label == "Open a saved project" for item in app.selectbox)
 
@@ -111,7 +111,7 @@ def test_app_reopens_saved_concept_from_sqlite(tmp_path, monkeypatch):
     app.selectbox(key="open_project_id").select(project.project_id).run()
 
     assert not app.exception
-    assert any("Validated concept paper" in item.value for item in app.subheader)
+    assert any("Concept paper" in item.value for item in app.subheader)
     assert any("concept_ready" in item.value for item in app.caption)
     displayed_markdown = [item.value for item in app.markdown]
     displayed_text = [item.value for item in app.text]
@@ -143,6 +143,7 @@ def test_app_reopens_saved_concept_from_sqlite(tmp_path, monkeypatch):
     assert any('concept-relationship">Linked results: R1</span>' in value for value in displayed_markdown)
     assert any(item.label == "Raw ConceptPaper JSON" for item in app.expander)
     assert any(item.label == "Raw project idea JSON" for item in app.expander)
+    assert any(item.label == "Download PDF" for item in app.get("download_button"))
 
 
 def test_app_shows_validation_error_without_calling_model(tmp_path, monkeypatch):

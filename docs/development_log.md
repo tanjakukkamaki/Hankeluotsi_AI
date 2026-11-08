@@ -116,3 +116,27 @@
 - **Tests:** AppTest continues to cover the rendered sections, source wording, IDs, links, subtitle, and debug expanders. Full offline suite passed: `python -m pytest -q` (98 tests, 2.62 s).
 - **Visual check:** Browser computed styles matched the requested background, heading, info, warning, form, and border colors. At 390 px the form remained vertically readable with no horizontal overflow.
 - **Scope:** Presentation only; no schema, repository, prompt, LLM, or dependency changes. No commit or push.
+
+## 2026-11-08 — Optional ConceptPaper PDF export
+
+- **Task:** Add the approved optional PDF export on the isolated `feature/pdf-export` branch; no funding research or later workflow stages were added.
+- **Implementation:** Added `generate_concept_pdf`, which creates an A4 document in `BytesIO` from a saved `ConceptPaper` without writing to the database or filesystem. It includes the project title, all concept sections, relationship IDs, the required AI-draft disclaimer, and page numbers. ReportLab's bundled Vera regular/bold TTF fonts are embedded for Finnish/English character support. The saved-concept UI now offers a sanitized `.pdf` filename through a `Download PDF` button.
+- **Dependency:** Added the single permitted new dependency, `reportlab==4.4.4`; no other direct dependency changes.
+- **Tests:** PDF tests cover PDF/A4 output, embedded font and Unicode glyph coverage, multi-page content, safe filenames, and preservation of the input model. AppTest checks the download control. Focused exporter/UI tests passed (10 tests); full offline suite passed: `python -m pytest -q` (101 tests, 2.82 s).
+- **Limitations:** No dedicated PDF text-extraction dependency was added; the output is validated structurally and by embedded font coverage. Download is available only for a project with a saved concept. No live model or external API was used for export tests.
+- **Owner actual hours:** Not recorded by the agent; owner should enter their actual time.
+- **Next action:** Owner reviews the optional PDF layout and Unicode rendering before approving any commit; no commit, push, or merge was made.
+
+## 2026-11-08 — PR5 planning workspace visual redesign
+
+- **Presentation:** Reorganized the page into a compact compass-branded header, preserved disclaimer note, three-step workflow strip, two-column idea/saved-project workspace, and full-width concept report. Draft/review is explicitly marked “Planned · not available yet.” Saved concepts retain their sections, IDs, relationship labels, collapsed JSON, and PDF download action.
+- **Responsive checks:** Browser inspection confirmed the workflow and workspace render at desktop width and the form remains within 390 px without horizontal overflow.
+- **Regression tests:** Existing AppTests cover generation, saved-project reopening, download availability, and submission behavior. Updated the older shell smoke test to look for the disclaimer note rather than a warning component. Full offline suite passed: `python -m pytest -q` (101 tests, 3.03 s).
+- **Scope:** Presentation and the corresponding disclaimer test assertion only. PDF export changes on `feature/pdf-export` were preserved; no schema, prompt, LLM, repository, or dependency changes. No commit, push, or merge.
+
+### PDF export QA follow-up
+
+- **Layout issue and fix:** Visual review of the normal fixture showed a mostly empty second page containing only assumptions/open questions. Reduced typography and vertical spacing modestly while retaining 9 pt body text, A4 margins, and flow-based pagination. Normal fixture now fits one A4 page; a long-content regression still spans multiple pages.
+- **Content and Unicode:** Confirmed the fixture's O1/O2, A1-A3, R1-R2, I1-I2 relationships are emitted by the PDF story and checked the rendered browser preview. A codepoint-built Finnish sample rendered `Ääni` and `ä, ö, å, Ä, Ö, Å` correctly with embedded Vera fonts and ToUnicode maps. The generated ConceptPaper remained unchanged.
+- **Validation:** PDF-focused tests passed (3 tests); full offline suite passed: `python -m pytest -q` (101 tests, 3.18 s). No PDF rendering or extraction dependency was added.
+- **Limitations:** No dedicated text-extraction package is installed, so QA used source-level section/reference coverage, font/ToUnicode checks, page-box/page-count checks, and browser rendering rather than automated PDF text extraction. No external API or paid service was used.

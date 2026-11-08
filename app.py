@@ -8,6 +8,7 @@ import streamlit as st
 from pydantic import ValidationError
 
 from hankeluotsi.llm_client import LLMClient
+from hankeluotsi.pdf_exporter import concept_pdf_filename, generate_concept_pdf
 from hankeluotsi.repository import ProjectRecord, ProjectRepository
 from hankeluotsi.schemas import ConceptPaper, ProjectIdea
 
@@ -65,7 +66,7 @@ def _render_saved_project(project: ProjectRecord) -> None:
     st.subheader("Saved project")
     st.caption(f"Status: {project.state.value}")
     with st.container(border=True):
-        st.subheader("Project idea")
+        st.markdown("#### Project idea")
         for label, value in (
             ("Title", project.idea.title),
             ("Development need", project.idea.development_need),
@@ -88,10 +89,23 @@ def _render_saved_project(project: ProjectRecord) -> None:
             st.json(project.idea.model_dump(mode="json"))
 
     if project.concept is None:
-        st.info("No concept has been saved for this project yet.")
+        st.caption("No concept has been saved for this project yet.")
     else:
         concept = project.concept
-        st.subheader("Validated concept paper")
+        concept_heading, pdf_action = st.columns([0.72, 0.28], vertical_alignment="center")
+        with concept_heading:
+            st.subheader("Concept paper")
+            st.caption("AI-generated draft · Pydantic validated")
+        with pdf_action:
+            st.download_button(
+                "Download PDF",
+                data=generate_concept_pdf(project.idea.title, concept),
+                file_name=concept_pdf_filename(project.idea.title),
+                mime="application/pdf",
+                key=f"download-concept-{project.project_id}",
+                on_click="ignore",
+                use_container_width=True,
+            )
 
         with _concept_section("Background"):
             st.text(concept.background_need)
@@ -140,18 +154,16 @@ def _render_saved_project(project: ProjectRecord) -> None:
             st.json(concept.model_dump(mode="json"))
 
 
-st.set_page_config(page_title="HankeLuotsi AI", layout="wide")
+st.set_page_config(page_title="HankeLuotsi AI", layout="wide", page_icon="⌖")
 st.markdown(
     """
     <style>
     :root {
-        --hankeluotsi-primary: #163A5F;
-        --hankeluotsi-accent: #2A9D8F;
-        --hankeluotsi-background: #F7FAFC;
+        --hankeluotsi-primary: #15334A;
+        --hankeluotsi-accent: #278F91;
+        --hankeluotsi-background: #F4F7FA;
         --hankeluotsi-card: #FFFFFF;
         --hankeluotsi-border: #D9E2EC;
-        --hankeluotsi-info: #EAF4FF;
-        --hankeluotsi-warning: #FFF4CC;
         --hankeluotsi-text: #1F2937;
         --hankeluotsi-muted: #667789;
     }
@@ -160,28 +172,86 @@ st.markdown(
         color: var(--hankeluotsi-text);
     }
     [data-testid="stMainBlockContainer"] {
-        max-width: 980px;
-        padding: 2.25rem 2rem 3.25rem;
+        max-width: 1180px;
+        padding: 2rem 2.5rem 3.5rem;
     }
     h1, h2, h3, h4 {
         color: var(--hankeluotsi-primary) !important;
     }
     h1 {
-        font-size: 2.25rem !important;
-        margin-bottom: 0.15rem;
+        font-size: 2.1rem !important;
+        margin: 0 0 0.1rem;
     }
     h2 {
-        margin: 1.6rem 0 0.6rem;
+        margin: 1.5rem 0 0.65rem;
     }
     .app-subtitle {
         color: var(--hankeluotsi-muted);
-        font-size: 1.05rem;
-        margin: 0 0 1.25rem;
+        font-size: 0.98rem;
+        margin: 0;
+    }
+    .brand-compass {
+        align-items: center;
+        background: #E6F1F1;
+        border: 1px solid #D0E4E4;
+        border-radius: 12px;
+        color: var(--hankeluotsi-primary);
+        display: flex;
+        font-size: 1.65rem;
+        height: 3.2rem;
+        justify-content: center;
+        margin-top: 0.1rem;
+        width: 3.2rem;
+    }
+    .workflow-label {
+        color: var(--hankeluotsi-muted);
+        font-size: 0.72rem;
+        font-weight: 700;
+        margin: 0.4rem 0 0.6rem;
+        text-transform: uppercase;
+    }
+    .workflow-card {
+        background: var(--hankeluotsi-card);
+        border: 1px solid var(--hankeluotsi-border);
+        border-radius: 9px;
+        min-height: 7.1rem;
+        padding: 0.9rem 1rem;
+    }
+    .workflow-card.available {
+        border-top: 3px solid var(--hankeluotsi-accent);
+    }
+    .workflow-card.planned {
+        background: #F8FAFC;
+    }
+    .workflow-number {
+        color: var(--hankeluotsi-accent);
+        font-size: 0.73rem;
+        font-weight: 700;
+    }
+    .workflow-title {
+        color: var(--hankeluotsi-primary);
+        font-size: 0.98rem;
+        font-weight: 700;
+        margin: 0.25rem 0;
+    }
+    .workflow-status {
+        color: var(--hankeluotsi-muted);
+        font-size: 0.8rem;
+    }
+    .disclaimer-note {
+        background: #EAF4FF;
+        border-left: 3px solid var(--hankeluotsi-primary);
+        border-radius: 5px;
+        color: var(--hankeluotsi-text);
+        font-size: 0.84rem;
+        line-height: 1.45;
+        margin: 1.1rem 0 1.3rem;
+        padding: 0.75rem 1rem;
     }
     [data-testid="stMarkdownContainer"] h4 {
         color: var(--hankeluotsi-primary) !important;
-        font-size: 1.08rem;
-        margin: 0.2rem 0 0.65rem;
+        font-size: 1rem;
+        margin: 0.1rem 0 0.5rem;
     }
     [data-testid="stVerticalBlockBorderWrapper"] {
         background: var(--hankeluotsi-card);
@@ -204,8 +274,8 @@ st.markdown(
     [data-testid="stForm"] {
         background: var(--hankeluotsi-card);
         border: 1px solid var(--hankeluotsi-border);
-        border-radius: 8px;
-        padding: 1.35rem 1.45rem;
+        border-radius: 9px;
+        padding: 1.2rem 1.35rem;
     }
     [data-testid="stTextInput"] input,
     [data-testid="stTextArea"] textarea,
@@ -226,7 +296,8 @@ st.markdown(
         border-radius: 6px;
         color: white;
         font-weight: 600;
-        min-height: 2.75rem;
+        min-height: 2.9rem;
+        width: 100%;
     }
     .stButton button[kind="primary"]:hover {
         background: #218579;
@@ -237,6 +308,19 @@ st.markdown(
         background: var(--hankeluotsi-card);
         border: 1px solid var(--hankeluotsi-border);
         border-radius: 6px;
+    }
+    [data-testid="stDownloadButton"] button {
+        background: var(--hankeluotsi-primary);
+        border: 1px solid var(--hankeluotsi-primary);
+        border-radius: 6px;
+        color: white;
+        font-weight: 600;
+        min-height: 2.65rem;
+    }
+    [data-testid="stDownloadButton"] button:hover {
+        background: #214D6D;
+        border-color: #214D6D;
+        color: white;
     }
     .concept-reference-row {
         align-items: center;
@@ -261,33 +345,66 @@ st.markdown(
     }
     @media (max-width: 640px) {
         [data-testid="stMainBlockContainer"] {
-            padding: 1.25rem 1rem 2rem;
+            padding: 1.1rem 1rem 2rem;
         }
         [data-testid="stForm"] {
-            padding: 0.9rem;
+            padding: 0.8rem 0.85rem;
         }
         .app-subtitle {
-            font-size: 0.98rem;
+            font-size: 0.9rem;
         }
         [data-testid="stVerticalBlockBorderWrapper"] {
-            padding: 0.75rem 0.8rem;
+            padding: 0.7rem 0.75rem;
         }
         h1 {
-            font-size: 1.9rem !important;
+            font-size: 1.65rem !important;
+        }
+        .brand-compass {
+            font-size: 1.35rem;
+            height: 2.7rem;
+            width: 2.7rem;
+        }
+        .workflow-card {
+            min-height: 6.4rem;
+            padding: 0.7rem;
+        }
+        .workflow-title {
+            font-size: 0.85rem;
+        }
+        .workflow-status {
+            font-size: 0.72rem;
         }
     }
     </style>
     """,
     unsafe_allow_html=True,
 )
-st.title("HankeLuotsi AI")
-st.markdown('<p class="app-subtitle">From project idea to structured concept</p>', unsafe_allow_html=True)
-st.warning(
-    "AI-generated draft. Not a funding eligibility assessment. "
-    "Verify requirements against the relevant funding programme."
+brand_icon, brand_title = st.columns([0.08, 0.92], vertical_alignment="center")
+with brand_icon:
+    st.markdown('<div class="brand-compass" aria-hidden="true">⌖</div>', unsafe_allow_html=True)
+with brand_title:
+    st.title("HankeLuotsi AI")
+    st.markdown('<p class="app-subtitle">From project idea to structured concept</p>', unsafe_allow_html=True)
+
+st.markdown(
+    '<div class="disclaimer-note" role="note"><strong>AI-generated draft.</strong> '
+    'Not a funding eligibility assessment. Verify requirements against the relevant funding programme.</div>',
+    unsafe_allow_html=True,
 )
-st.caption("Prototype: enter a fictional project idea to generate and save a validated concept.")
-st.info("Use fictional project data only. The local model creates an unreviewed planning draft.")
+st.markdown('<p class="workflow-label">Planning workflow</p>', unsafe_allow_html=True)
+workflow_columns = st.columns(3, gap="small")
+workflow_steps = (
+    ("01", "Project idea", "Input and save available", "available"),
+    ("02", "Concept paper", "Generate and reopen available", "available"),
+    ("03", "Draft & review", "Planned · not available yet", "planned"),
+)
+for column, (number, title, status, availability) in zip(workflow_columns, workflow_steps):
+    with column:
+        st.markdown(
+            f'<div class="workflow-card {availability}"><div class="workflow-number">{number}</div>'
+            f'<div class="workflow-title">{title}</div><div class="workflow-status">{status}</div></div>',
+            unsafe_allow_html=True,
+        )
 
 try:
     repository = ProjectRepository(DEFAULT_DATABASE_PATH)
@@ -301,14 +418,40 @@ project_options = [None, *project_by_id]
 pending_project_id = st.session_state.pop("pr5_pending_project_id", None)
 if pending_project_id in project_by_id:
     st.session_state["open_project_id"] = pending_project_id
-selected_project_id = st.selectbox(
-    "Open a saved project",
-    options=project_options,
-    format_func=lambda project_id: (
-        "Select a saved project" if project_id is None else _project_label(project_by_id[project_id])
-    ),
-    key="open_project_id",
-)
+idea_column, saved_column = st.columns([1.55, 0.9], gap="large")
+with idea_column:
+    st.subheader("New project idea")
+    st.caption("A few structured details are enough to begin.")
+    with st.form("project_idea_form", clear_on_submit=False):
+        title = st.text_input("Project title", key="idea_title")
+        development_need = st.text_area("Development need", key="idea_development_need")
+        target_groups = st.text_area(
+            "Target groups", help="Separate multiple groups with commas or new lines.", key="idea_target_groups"
+        )
+        expected_change = st.text_area("Expected change", key="idea_expected_change")
+        geography = st.text_input("Geography", key="idea_geography")
+        partners = st.text_area(
+            "Potential partners (optional)", help="Separate entries with commas or new lines.", key="idea_partners"
+        )
+        funding_context = st.text_input("Funding context (optional)", key="idea_funding_context")
+        submitted = st.form_submit_button("Generate concept", type="primary")
+
+with saved_column:
+    with st.container(border=True):
+        st.subheader("Saved projects")
+        if projects:
+            st.caption(f"{len(projects)} saved project{'s' if len(projects) != 1 else ''}")
+        else:
+            st.caption("Your saved ideas and concepts will appear here.")
+        selected_project_id = st.selectbox(
+            "Open a saved project",
+            options=project_options,
+            format_func=lambda project_id: (
+                "Select a saved project" if project_id is None else _project_label(project_by_id[project_id])
+            ),
+            key="open_project_id",
+        )
+
 success_message = st.session_state.pop("pr5_success_message", None)
 if success_message:
     st.success(success_message)
@@ -317,21 +460,6 @@ if info_message:
     st.info(info_message)
 if selected_project_id is not None:
     _render_saved_project(project_by_id[selected_project_id])
-
-st.header("Project idea")
-with st.form("project_idea_form", clear_on_submit=False):
-    title = st.text_input("Project title", key="idea_title")
-    development_need = st.text_area("Development need", key="idea_development_need")
-    target_groups = st.text_area(
-        "Target groups", help="Separate multiple groups with commas or new lines.", key="idea_target_groups"
-    )
-    expected_change = st.text_area("Expected change", key="idea_expected_change")
-    geography = st.text_input("Geography", key="idea_geography")
-    partners = st.text_area(
-        "Potential partners (optional)", help="Separate entries with commas or new lines.", key="idea_partners"
-    )
-    funding_context = st.text_input("Funding context (optional)", key="idea_funding_context")
-    submitted = st.form_submit_button("Generate concept", type="primary")
 
 if submitted:
     try:
