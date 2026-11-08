@@ -70,3 +70,14 @@
 - **Limitations:** Draft/review use provisional compact benchmark-only schemas, not the later application schemas. No human content-quality scores were performed; `quality_score` is null. GGUF artifact/hash, quantization, context length, LM Studio/runtime version, and hardware/offload settings remain unverified. Results apply only to the repeated fixed fixtures and do not establish content quality or general reliability.
 - **Safety and version control:** Fictional data only; no external API, paid service, commit, or push used.
 - **Next action:** Owner reviews the saved results, provisional schema limitations, and configuration gaps before deciding on follow-up.
+
+## 2026-11-08 — PR4 SQLite repository and workflow state management
+
+- **Task:** Implement SQLite persistence and repository-level state transitions for PR4 only. No PR5 or later work was started.
+- **Implementation:** Added `ProjectRepository` with explicit transactions, schema-version checks, validated project-idea/concept storage, generic Pydantic-validated draft/review storage, deterministic findings storage, loading and listing. The state path is `created` → `concept_ready` → `draft_ready` → `reviewed` → `approved`; invalid transitions raise explicit errors.
+- **Safety and consistency:** Every write requires a stable `operation_id`. Replayed IDs with identical operation type/payload are idempotent; reuse with different content raises a conflict. Idea, concept, or draft regeneration clears dependent stages and moves status back atomically. Invalid Pydantic values are rejected before writes. An approved project is immutable, approval requires a reviewed draft, and `load_for_export` blocks unapproved records.
+- **Tests:** `tests/test_repository.py` uses only `tmp_path` SQLite databases and fictional fixtures. Focused repository tests passed (16 tests). Full offline suite: `python -m pytest -q` passed (91 tests, 1.72 s). The rollback test injects a temporary SQLite trigger failure and confirms neither the project update nor operation record persisted. Diagnostics and `git diff --check` passed.
+- **Limitations:** The repository is not wired into the Streamlit app or generation pipeline; that integration belongs to a later approved task. Draft/review application schemas are not yet defined, so callers must supply their Pydantic model type. Unsupported database record versions are refused; no migration framework is included. Every mutation requires the caller to provide a stable idempotency key.
+- **Safety and version control:** No external APIs, paid services, production database, commits, or pushes were used. `AGENTS.md` and `PLANS.md` were not modified.
+- **Owner actual hours:** Not recorded by the agent; owner should enter their actual time.
+- **Next action:** Owner reviews PR4 repository behavior, tests, and limitations before approving any commit or starting PR5.
