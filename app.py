@@ -1,6 +1,8 @@
 import os
 import uuid
+from contextlib import contextmanager
 from pathlib import Path
+from typing import Iterator
 
 import streamlit as st
 from pydantic import ValidationError
@@ -32,30 +34,58 @@ def _concept_generation_input(idea: ProjectIdea) -> str:
     )
 
 
+def _render_section_heading(title: str) -> None:
+    st.markdown(f"#### {title}")
+
+
+@contextmanager
+def _concept_section(title: str) -> Iterator[None]:
+    with st.container(border=True):
+        _render_section_heading(title)
+        yield
+
+
+def _render_concept_reference(
+    identifier: str,
+    relationship_label: str | None = None,
+    related_ids: tuple[str, ...] = (),
+) -> None:
+    relationship = (
+        f'<span class="concept-relationship">{relationship_label}: {", ".join(related_ids)}</span>'
+        if relationship_label
+        else ""
+    )
+    st.markdown(
+        f'<div class="concept-reference-row"><span class="concept-id">{identifier}</span>{relationship}</div>',
+        unsafe_allow_html=True,
+    )
+
+
 def _render_saved_project(project: ProjectRecord) -> None:
     st.subheader("Saved project")
     st.caption(f"Status: {project.state.value}")
-    st.subheader("Project idea")
-    for label, value in (
-        ("Title", project.idea.title),
-        ("Development need", project.idea.development_need),
-        ("Expected change", project.idea.expected_change),
-        ("Geography", project.idea.geography),
-    ):
-        st.markdown(f"**{label}**")
-        st.text(value)
-    st.markdown("**Target groups**")
-    for target_group in project.idea.target_groups:
-        st.text(target_group)
-    if project.idea.partners:
-        st.markdown("**Potential partners**")
-        for partner in project.idea.partners:
-            st.text(partner)
-    if project.idea.funding_context:
-        st.markdown("**Funding context**")
-        st.text(project.idea.funding_context)
-    with st.expander("Raw project idea JSON", expanded=False):
-        st.json(project.idea.model_dump(mode="json"))
+    with st.container(border=True):
+        st.subheader("Project idea")
+        for label, value in (
+            ("Title", project.idea.title),
+            ("Development need", project.idea.development_need),
+            ("Expected change", project.idea.expected_change),
+            ("Geography", project.idea.geography),
+        ):
+            st.markdown(f"**{label}**")
+            st.text(value)
+        st.markdown("**Target groups**")
+        for target_group in project.idea.target_groups:
+            st.text(target_group)
+        if project.idea.partners:
+            st.markdown("**Potential partners**")
+            for partner in project.idea.partners:
+                st.text(partner)
+        if project.idea.funding_context:
+            st.markdown("**Funding context**")
+            st.text(project.idea.funding_context)
+        with st.expander("Raw project idea JSON", expanded=False):
+            st.json(project.idea.model_dump(mode="json"))
 
     if project.concept is None:
         st.info("No concept has been saved for this project yet.")
@@ -63,52 +93,195 @@ def _render_saved_project(project: ProjectRecord) -> None:
         concept = project.concept
         st.subheader("Validated concept paper")
 
-        st.markdown("#### Background")
-        st.text(concept.background_need)
+        with _concept_section("Background"):
+            st.text(concept.background_need)
 
-        st.markdown("#### Objectives")
-        for objective in concept.objectives:
-            st.markdown(f"**{objective.id}**")
-            st.text(objective.description)
+        with _concept_section("Objectives"):
+            for objective in concept.objectives:
+                _render_concept_reference(objective.id)
+                st.text(objective.description)
 
-        st.markdown("#### Target groups")
-        for target_group in concept.target_groups:
-            st.text(target_group)
+        with _concept_section("Target groups"):
+            for target_group in concept.target_groups:
+                st.text(target_group)
 
-        st.markdown("#### Activities")
-        for activity in concept.preliminary_activities:
-            linked_objectives = ", ".join(activity.objective_ids)
-            st.markdown(f"**{activity.id} | Linked objectives: {linked_objectives}**")
-            st.text(activity.description)
+        with _concept_section("Activities"):
+            for activity in concept.preliminary_activities:
+                _render_concept_reference(
+                    activity.id, "Linked objectives", tuple(activity.objective_ids)
+                )
+                st.text(activity.description)
 
-        st.markdown("#### Expected results")
-        for result in concept.expected_results:
-            linked_activities = ", ".join(result.activity_ids)
-            st.markdown(f"**{result.id} | Linked activities: {linked_activities}**")
-            st.text(result.description)
+        with _concept_section("Expected results"):
+            for result in concept.expected_results:
+                _render_concept_reference(
+                    result.id, "Linked activities", tuple(result.activity_ids)
+                )
+                st.text(result.description)
 
-        st.markdown("#### Indicators")
-        for indicator in concept.proposed_indicators:
-            linked_results = ", ".join(indicator.result_ids)
-            st.markdown(f"**{indicator.id} | Linked results: {linked_results}**")
-            st.text(indicator.description)
-            st.markdown("**Measurement method**")
-            st.text(indicator.measurement_method)
+        with _concept_section("Indicators"):
+            for indicator in concept.proposed_indicators:
+                _render_concept_reference(
+                    indicator.id, "Linked results", tuple(indicator.result_ids)
+                )
+                st.text(indicator.description)
+                st.markdown("**Measurement method**")
+                st.text(indicator.measurement_method)
 
-        st.markdown("#### Assumptions")
-        for assumption in concept.assumptions:
-            st.text(assumption)
+        with _concept_section("Assumptions"):
+            for assumption in concept.assumptions:
+                st.text(assumption)
 
-        st.markdown("#### Open questions")
-        for question in concept.open_questions:
-            st.text(question)
+        with _concept_section("Open questions"):
+            for question in concept.open_questions:
+                st.text(question)
 
         with st.expander("Raw ConceptPaper JSON", expanded=False):
             st.json(concept.model_dump(mode="json"))
 
 
-st.set_page_config(page_title="HankeLuotsi AI")
+st.set_page_config(page_title="HankeLuotsi AI", layout="wide")
+st.markdown(
+    """
+    <style>
+    :root {
+        --hankeluotsi-primary: #163A5F;
+        --hankeluotsi-accent: #2A9D8F;
+        --hankeluotsi-background: #F7FAFC;
+        --hankeluotsi-card: #FFFFFF;
+        --hankeluotsi-border: #D9E2EC;
+        --hankeluotsi-info: #EAF4FF;
+        --hankeluotsi-warning: #FFF4CC;
+        --hankeluotsi-text: #1F2937;
+        --hankeluotsi-muted: #667789;
+    }
+    .stApp, [data-testid="stAppViewContainer"] {
+        background: var(--hankeluotsi-background);
+        color: var(--hankeluotsi-text);
+    }
+    [data-testid="stMainBlockContainer"] {
+        max-width: 980px;
+        padding: 2.25rem 2rem 3.25rem;
+    }
+    h1, h2, h3, h4 {
+        color: var(--hankeluotsi-primary) !important;
+    }
+    h1 {
+        font-size: 2.25rem !important;
+        margin-bottom: 0.15rem;
+    }
+    h2 {
+        margin: 1.6rem 0 0.6rem;
+    }
+    .app-subtitle {
+        color: var(--hankeluotsi-muted);
+        font-size: 1.05rem;
+        margin: 0 0 1.25rem;
+    }
+    [data-testid="stMarkdownContainer"] h4 {
+        color: var(--hankeluotsi-primary) !important;
+        font-size: 1.08rem;
+        margin: 0.2rem 0 0.65rem;
+    }
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background: var(--hankeluotsi-card);
+        border: 1px solid var(--hankeluotsi-border);
+        border-radius: 8px;
+        padding: 0.95rem 1.15rem;
+    }
+    [data-testid="stAlertContentInfo"] {
+        background: var(--hankeluotsi-info) !important;
+        border: 1px solid #C9DFF3;
+        border-radius: 7px;
+        color: var(--hankeluotsi-text) !important;
+    }
+    [data-testid="stAlertContentWarning"] {
+        background: var(--hankeluotsi-warning) !important;
+        border: 1px solid #E8D697;
+        border-radius: 7px;
+        color: var(--hankeluotsi-text) !important;
+    }
+    [data-testid="stForm"] {
+        background: var(--hankeluotsi-card);
+        border: 1px solid var(--hankeluotsi-border);
+        border-radius: 8px;
+        padding: 1.35rem 1.45rem;
+    }
+    [data-testid="stTextInput"] input,
+    [data-testid="stTextArea"] textarea,
+    [data-testid="stSelectbox"] [role="combobox"] {
+        background: var(--hankeluotsi-card);
+        color: var(--hankeluotsi-text);
+        border: 1px solid var(--hankeluotsi-border);
+        border-radius: 6px;
+    }
+    [data-testid="stTextInput"] input:focus,
+    [data-testid="stTextArea"] textarea:focus {
+        border-color: var(--hankeluotsi-accent);
+        box-shadow: 0 0 0 1px var(--hankeluotsi-accent);
+    }
+    .stButton button[kind="primary"] {
+        background: var(--hankeluotsi-accent);
+        border: 1px solid var(--hankeluotsi-accent);
+        border-radius: 6px;
+        color: white;
+        font-weight: 600;
+        min-height: 2.75rem;
+    }
+    .stButton button[kind="primary"]:hover {
+        background: #218579;
+        border-color: #218579;
+        color: white;
+    }
+    [data-testid="stExpander"] {
+        background: var(--hankeluotsi-card);
+        border: 1px solid var(--hankeluotsi-border);
+        border-radius: 6px;
+    }
+    .concept-reference-row {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+        margin: 0.5rem 0 0.25rem;
+    }
+    .concept-id {
+        background: #E5F1F1;
+        border: 1px solid #C9E1E1;
+        border-radius: 4px;
+        color: var(--hankeluotsi-navy);
+        display: inline-block;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 0.16rem 0.48rem;
+    }
+    .concept-relationship {
+        color: var(--hankeluotsi-muted);
+        font-size: 0.86rem;
+    }
+    @media (max-width: 640px) {
+        [data-testid="stMainBlockContainer"] {
+            padding: 1.25rem 1rem 2rem;
+        }
+        [data-testid="stForm"] {
+            padding: 0.9rem;
+        }
+        .app-subtitle {
+            font-size: 0.98rem;
+        }
+        [data-testid="stVerticalBlockBorderWrapper"] {
+            padding: 0.75rem 0.8rem;
+        }
+        h1 {
+            font-size: 1.9rem !important;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 st.title("HankeLuotsi AI")
+st.markdown('<p class="app-subtitle">From project idea to structured concept</p>', unsafe_allow_html=True)
 st.warning(
     "AI-generated draft. Not a funding eligibility assessment. "
     "Verify requirements against the relevant funding programme."

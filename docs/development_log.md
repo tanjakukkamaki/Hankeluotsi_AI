@@ -109,3 +109,10 @@
 - **Tests:** AppTest verifies each section, exact fixture text, IDs and relationship labels, and raw JSON expanders. Focused UI tests passed (7 tests); full offline suite passed: `python -m pytest -q` (98 tests, 2.83 s).
 - **Limitations:** No change to model output or assessment; this is presentation-only. No live model call was needed.
 - **Next action:** Owner reviews the human-readable concept view before approving any commit or further PR5 changes.
+
+### PR5 follow-up — visual polish
+
+- **Presentation:** Applied the requested light palette (`#163A5F`, `#2A9D8F`, `#F7FAFC`, `#FFFFFF`, `#D9E2EC`, `#EAF4FF`, `#FFF4CC`, `#1F2937`), clearer title/subtitle hierarchy, bordered concept-section cards, subtle reference-ID labels, styled controls, and narrower-screen spacing. Original generated content remains rendered as text; IDs and links are unchanged; raw JSON stays in collapsed expanders.
+- **Tests:** AppTest continues to cover the rendered sections, source wording, IDs, links, subtitle, and debug expanders. Full offline suite passed: `python -m pytest -q` (98 tests, 2.62 s).
+- **Visual check:** Browser computed styles matched the requested background, heading, info, warning, form, and border colors. At 390 px the form remained vertically readable with no horizontal overflow.
+- **Scope:** Presentation only; no schema, repository, prompt, LLM, or dependency changes. No commit or push.

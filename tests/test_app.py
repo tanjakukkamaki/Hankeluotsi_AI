@@ -44,6 +44,7 @@ def test_app_renders_disclaimer_form_and_saved_projects_selector(tmp_path, monke
 
     assert not app.exception
     assert [element.value for element in app.title] == ["HankeLuotsi AI"]
+    assert any("From project idea to structured concept" in item.value for item in app.markdown)
     assert any("Not a funding eligibility assessment" in item.value for item in app.warning)
     assert any(item.label == "Project title" for item in app.text_input)
     assert any(item.label == "Open a saved project" for item in app.selectbox)
@@ -136,10 +137,10 @@ def test_app_reopens_saved_concept_from_sqlite(tmp_path, monkeypatch):
     assert expected_content["proposed_indicators"][0]["measurement_method"] in displayed_text
     assert expected_content["assumptions"][0] in displayed_text
     assert expected_content["open_questions"][0] in displayed_text
-    assert any("**O1**" in value for value in displayed_markdown)
-    assert any("**A1 | Linked objectives: O1**" in value for value in displayed_markdown)
-    assert any("**R1 | Linked activities: A1, A2**" in value for value in displayed_markdown)
-    assert any("**I1 | Linked results: R1**" in value for value in displayed_markdown)
+    assert any('concept-id">O1</span>' in value for value in displayed_markdown)
+    assert any('concept-relationship">Linked objectives: O1</span>' in value for value in displayed_markdown)
+    assert any('concept-relationship">Linked activities: A1, A2</span>' in value for value in displayed_markdown)
+    assert any('concept-relationship">Linked results: R1</span>' in value for value in displayed_markdown)
     assert any(item.label == "Raw ConceptPaper JSON" for item in app.expander)
     assert any(item.label == "Raw project idea JSON" for item in app.expander)
 
