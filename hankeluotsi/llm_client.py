@@ -20,7 +20,11 @@ class GenerationResult:
     data: Any
     finish_reason: str = "unknown"
     truncated: bool = False
+    incomplete_output: bool = False
     response_time_seconds: float = 0.0
+    json_valid: bool = True
+    pydantic_valid: bool | None = None
+    attempt_count: int = 1
     provider: str = "local"
 
 
@@ -34,7 +38,11 @@ class GenerationError(ValueError):
         prompt_version: str,
         finish_reason: str,
         truncated: bool,
+        incomplete_output: bool,
         response_time_seconds: float,
+        json_valid: bool,
+        pydantic_valid: bool | None,
+        attempt_count: int,
     ) -> None:
         super().__init__(message)
         self.stage = stage
@@ -42,7 +50,11 @@ class GenerationError(ValueError):
         self.prompt_version = prompt_version
         self.finish_reason = finish_reason
         self.truncated = truncated
+        self.incomplete_output = incomplete_output
         self.response_time_seconds = response_time_seconds
+        self.json_valid = json_valid
+        self.pydantic_valid = pydantic_valid
+        self.attempt_count = attempt_count
 
 
 class LLMClient:
@@ -97,7 +109,11 @@ class LLMClient:
         response_model: Type[T] | None = None,
         *,
         model: str | None = None,
+        max_attempts: int = 2,
     ) -> GenerationResult:
+        if max_attempts not in (1, 2):
+            raise ValueError("max_attempts must be 1 or 2")
+
         stage_name = stage.lower()
         prompt_version = prompt_version_for_stage(stage_name)
         prompt = build_prompt(stage_name, user_input)
@@ -107,9 +123,13 @@ class LLMClient:
         last_metadata: dict[str, Any] = {
             "finish_reason": "unknown",
             "truncated": False,
+            "incomplete_output": True,
             "response_time_seconds": 0.0,
+            "json_valid": False,
+            "pydantic_valid": False if response_model is not None else None,
+            "attempt_count": 0,
         }
-        for attempt in range(2):
+        for attempt in range(max_attempts):
             started_at = time.perf_counter()
             response = self._openai_client().chat.completions.create(
                 model=selected_model,
@@ -128,45 +148,56 @@ class LLMClient:
             last_metadata = {
                 "finish_reason": finish_reason,
                 "truncated": truncated,
+                "incomplete_output": finish_reason != "stop",
                 "response_time_seconds": response_time_seconds,
+                "json_valid": False,
+                "pydantic_valid": False if response_model is not None else None,
+                "attempt_count": attempt + 1,
             }
 
-            if truncated:
-                last_error = ValueError("truncated response (finish_reason=length)")
-                if attempt == 0:
-                    continue
-                break
-
             message = choice.message.content
+            validated: Any = None
             try:
                 parsed = self._parse_json_content(message)
             except ValueError as exc:
                 last_error = exc
-                if attempt == 0:
-                    continue
-                break
-
-            if response_model is not None:
-                try:
-                    validated = response_model.model_validate(parsed)
-                except Exception as exc:  # pragma: no cover - exercised in tests via ValueError wrapper
-                    last_error = ValueError(f"response validation failed: {exc}")
-                    if attempt == 0:
-                        continue
-                    break
             else:
-                validated = parsed
+                last_metadata["json_valid"] = True
+                if response_model is None:
+                    validated = parsed
+                else:
+                    last_metadata["pydantic_valid"] = False
+                    try:
+                        validated = response_model.model_validate(parsed)
+                    except Exception as exc:  # pragma: no cover - asserted through benchmark metadata
+                        last_error = ValueError(f"response validation failed: {exc}")
+                    else:
+                        last_metadata["pydantic_valid"] = True
 
-            return GenerationResult(
-                stage=stage_name,
-                model=selected_model,
-                prompt_version=prompt_version,
-                data=validated,
-                finish_reason=finish_reason,
-                truncated=truncated,
-                response_time_seconds=response_time_seconds,
-                provider="local",
-            )
+            if truncated:
+                last_error = ValueError("truncated response (finish_reason=length)")
+            elif last_metadata["json_valid"] and (
+                response_model is None or last_metadata["pydantic_valid"] is True
+            ):
+                return GenerationResult(
+                    stage=stage_name,
+                    model=selected_model,
+                    prompt_version=prompt_version,
+                    data=validated,
+                    finish_reason=finish_reason,
+                    truncated=truncated,
+                    incomplete_output=last_metadata["incomplete_output"],
+                    response_time_seconds=response_time_seconds,
+                    json_valid=last_metadata["json_valid"],
+                    pydantic_valid=last_metadata["pydantic_valid"],
+                    attempt_count=attempt + 1,
+                    provider="local",
+                )
+
+            if attempt + 1 < max_attempts:
+                last_error = None
+                continue
+            break
 
         raise GenerationError(
             str(last_error or f"response validation failed for stage {stage_name}"),

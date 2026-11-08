@@ -102,6 +102,7 @@ def test_generate_records_unknown_finish_reason_after_validating_json():
 
     assert result.finish_reason == "unknown"
     assert result.truncated is False
+    assert result.incomplete_output is True
     assert isinstance(result.data, ProjectIdea)
 
 
@@ -175,6 +176,29 @@ def test_generate_raises_on_malformed_json():
         client = LLMClient()
         with pytest.raises(ValueError, match="JSON"):
             client.generate("concept", "Test idea", response_model=ProjectIdea)
+
+
+def test_generate_rejects_malformed_json_without_response_model():
+    mock_client = SimpleNamespace(
+        chat=SimpleNamespace(
+            completions=SimpleNamespace(
+                create=Mock(
+                    return_value=SimpleNamespace(
+                        choices=[
+                            SimpleNamespace(
+                                finish_reason="stop",
+                                message=SimpleNamespace(content="not json"),
+                            )
+                        ]
+                    )
+                )
+            )
+        )
+    )
+
+    with patch("hankeluotsi.llm_client.OpenAI", return_value=mock_client):
+        with pytest.raises(ValueError, match="Malformed JSON"):
+            LLMClient().generate("concept", "Test idea")
 
 
 def test_generate_raises_on_schema_validation_error():
