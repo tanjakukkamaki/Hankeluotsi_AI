@@ -18,11 +18,20 @@ from hankeluotsi.funding_calls import assess_call_status, compare_call_locally
 from hankeluotsi.live_funding import search_live_funding_calls
 from hankeluotsi.llm_client import LLMClient
 from hankeluotsi.pdf_exporter import concept_pdf_filename, generate_concept_pdf
+from hankeluotsi.presentation import (
+    ASSET_DIRECTORY,
+    PROJECT_ROOT,
+    anchor,
+    apply_styles,
+    render_brand,
+    render_intro,
+    status_badge,
+)
 from hankeluotsi.repository import ProjectRecord, ProjectRepository
 from hankeluotsi.schemas import ConceptPaper, ProjectIdea
 
 
-DEFAULT_DATABASE_PATH = Path(os.getenv("HANKELUOTSI_DB_PATH", "hankeluotsi.sqlite3"))
+DEFAULT_DATABASE_PATH = Path(os.getenv("HANKELUOTSI_DB_PATH", str(PROJECT_ROOT / "hankeluotsi.sqlite3")))
 
 
 def _operation_id(operation: str, submission_id: str) -> str:
@@ -30,7 +39,8 @@ def _operation_id(operation: str, submission_id: str) -> str:
 
 
 def _project_label(project: ProjectRecord) -> str:
-    return f"{project.idea.title} ({project.state.value})"
+    state = project.state.value.replace("_", " ")
+    return f"{project.idea.title} · {state} · {project.project_id[:8]}"
 
 
 def _concept_generation_input(idea: ProjectIdea) -> str:
@@ -50,7 +60,7 @@ def _render_section_heading(title: str) -> None:
 
 @contextmanager
 def _concept_section(title: str) -> Iterator[None]:
-    with st.container(border=True):
+    with st.container(border=False, key="consistency_check"):
         _render_section_heading(title)
         yield
 
@@ -156,8 +166,10 @@ def _render_live_funding_calls(project: ProjectRecord) -> None:
         key=f"live-call-selection-{project.project_id}",
     )
     call = by_id[selected]
-    with st.container(border=True):
-        st.text(call.title)
+    with st.container(border=False, key="live_call_card"):
+        status_badge(statuses[selected][0].capitalize(), tone="teal" if statuses[selected][0] == "open" else "neutral")
+        with st.container(key="live_call_title"):
+            st.text(call.title)
         st.text(f"Programme: {call.programme}")
         st.text(f"Official identifier: {call.identifier}")
         if call.call_identifier:
@@ -191,7 +203,8 @@ def _render_live_funding_calls(project: ProjectRecord) -> None:
 
 
 def _render_funding_research(project: ProjectRecord) -> None:
-    with st.expander("Find Funding Opportunities (optional)", expanded=False):
+    anchor("funding-opportunities")
+    with st.expander("Find Funding Opportunities (optional)", expanded=False, key="funding_research"):
         st.caption(
             "Official live calls and preliminary programme research. "
             "This does not assess funding eligibility. Project information stays local."
@@ -240,7 +253,8 @@ def _render_funding_research(project: ProjectRecord) -> None:
             )
         )
         for item in records:
-            with st.container(border=True):
+            with st.container(border=False, key=f"programme_card_{item.record_id}"):
+                status_badge("Programme guide · call details unknown")
                 st.text(item.funding_programme)
                 st.link_button("Official calls / funding source", item.official_source_url)
                 st.text("Call title: " + (item.call_title or "Unknown — no individual call retrieved"))
@@ -362,257 +376,14 @@ def _render_saved_project(project: ProjectRecord) -> None:
             st.json(concept.model_dump(mode="json"))
 
 
-st.set_page_config(page_title="HankeLuotsi AI", layout="wide", page_icon="⌖")
-st.markdown(
-    """
-    <style>
-    :root {
-        --hankeluotsi-primary: #15334A;
-        --hankeluotsi-accent: #278F91;
-        --hankeluotsi-background: #F4F7FA;
-        --hankeluotsi-card: #FFFFFF;
-        --hankeluotsi-border: #D9E2EC;
-        --hankeluotsi-text: #1F2937;
-        --hankeluotsi-muted: #667789;
-    }
-    .stApp, [data-testid="stAppViewContainer"] {
-        background: var(--hankeluotsi-background);
-        color: var(--hankeluotsi-text);
-    }
-    [data-testid="stMainBlockContainer"] {
-        max-width: 1180px;
-        padding: 2rem 2.5rem 3.5rem;
-    }
-    h1, h2, h3, h4 {
-        color: var(--hankeluotsi-primary) !important;
-    }
-    h1 {
-        font-size: 2.1rem !important;
-        margin: 0 0 0.1rem;
-    }
-    h2 {
-        margin: 1.5rem 0 0.65rem;
-    }
-    .app-subtitle {
-        color: var(--hankeluotsi-muted);
-        font-size: 0.98rem;
-        margin: 0;
-    }
-    .brand-compass {
-        align-items: center;
-        background: #E6F1F1;
-        border: 1px solid #D0E4E4;
-        border-radius: 12px;
-        color: var(--hankeluotsi-primary);
-        display: flex;
-        font-size: 1.65rem;
-        height: 3.2rem;
-        justify-content: center;
-        margin-top: 0.1rem;
-        width: 3.2rem;
-    }
-    .workflow-label {
-        color: var(--hankeluotsi-muted);
-        font-size: 0.72rem;
-        font-weight: 700;
-        margin: 0.4rem 0 0.6rem;
-        text-transform: uppercase;
-    }
-    .workflow-card {
-        background: var(--hankeluotsi-card);
-        border: 1px solid var(--hankeluotsi-border);
-        border-radius: 9px;
-        min-height: 7.1rem;
-        padding: 0.9rem 1rem;
-    }
-    .workflow-card.available {
-        border-top: 3px solid var(--hankeluotsi-accent);
-    }
-    .workflow-card.planned {
-        background: #F8FAFC;
-    }
-    .workflow-number {
-        color: var(--hankeluotsi-accent);
-        font-size: 0.73rem;
-        font-weight: 700;
-    }
-    .workflow-title {
-        color: var(--hankeluotsi-primary);
-        font-size: 0.98rem;
-        font-weight: 700;
-        margin: 0.25rem 0;
-    }
-    .workflow-status {
-        color: var(--hankeluotsi-muted);
-        font-size: 0.8rem;
-    }
-    .disclaimer-note {
-        background: #EAF4FF;
-        border-left: 3px solid var(--hankeluotsi-primary);
-        border-radius: 5px;
-        color: var(--hankeluotsi-text);
-        font-size: 0.84rem;
-        line-height: 1.45;
-        margin: 1.1rem 0 1.3rem;
-        padding: 0.75rem 1rem;
-    }
-    [data-testid="stMarkdownContainer"] h4 {
-        color: var(--hankeluotsi-primary) !important;
-        font-size: 1rem;
-        margin: 0.1rem 0 0.5rem;
-    }
-    [data-testid="stVerticalBlockBorderWrapper"] {
-        background: var(--hankeluotsi-card);
-        border: 1px solid var(--hankeluotsi-border);
-        border-radius: 8px;
-        padding: 0.95rem 1.15rem;
-    }
-    [data-testid="stAlertContentInfo"] {
-        background: var(--hankeluotsi-info) !important;
-        border: 1px solid #C9DFF3;
-        border-radius: 7px;
-        color: var(--hankeluotsi-text) !important;
-    }
-    [data-testid="stAlertContentWarning"] {
-        background: var(--hankeluotsi-warning) !important;
-        border: 1px solid #E8D697;
-        border-radius: 7px;
-        color: var(--hankeluotsi-text) !important;
-    }
-    [data-testid="stForm"] {
-        background: var(--hankeluotsi-card);
-        border: 1px solid var(--hankeluotsi-border);
-        border-radius: 9px;
-        padding: 1.2rem 1.35rem;
-    }
-    [data-testid="stTextInput"] input,
-    [data-testid="stTextArea"] textarea,
-    [data-testid="stSelectbox"] [role="combobox"] {
-        background: var(--hankeluotsi-card);
-        color: var(--hankeluotsi-text);
-        border: 1px solid var(--hankeluotsi-border);
-        border-radius: 6px;
-    }
-    [data-testid="stTextInput"] input:focus,
-    [data-testid="stTextArea"] textarea:focus {
-        border-color: var(--hankeluotsi-accent);
-        box-shadow: 0 0 0 1px var(--hankeluotsi-accent);
-    }
-    .stButton button[kind="primary"] {
-        background: var(--hankeluotsi-accent);
-        border: 1px solid var(--hankeluotsi-accent);
-        border-radius: 6px;
-        color: white;
-        font-weight: 600;
-        min-height: 2.9rem;
-        width: 100%;
-    }
-    .stButton button[kind="primary"]:hover {
-        background: #218579;
-        border-color: #218579;
-        color: white;
-    }
-    [data-testid="stExpander"] {
-        background: var(--hankeluotsi-card);
-        border: 1px solid var(--hankeluotsi-border);
-        border-radius: 6px;
-    }
-    [data-testid="stDownloadButton"] button {
-        background: var(--hankeluotsi-primary);
-        border: 1px solid var(--hankeluotsi-primary);
-        border-radius: 6px;
-        color: white;
-        font-weight: 600;
-        min-height: 2.65rem;
-    }
-    [data-testid="stDownloadButton"] button:hover {
-        background: #214D6D;
-        border-color: #214D6D;
-        color: white;
-    }
-    .concept-reference-row {
-        align-items: center;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.55rem;
-        margin: 0.5rem 0 0.25rem;
-    }
-    .concept-id {
-        background: #E5F1F1;
-        border: 1px solid #C9E1E1;
-        border-radius: 4px;
-        color: var(--hankeluotsi-navy);
-        display: inline-block;
-        font-size: 0.78rem;
-        font-weight: 700;
-        padding: 0.16rem 0.48rem;
-    }
-    .concept-relationship {
-        color: var(--hankeluotsi-muted);
-        font-size: 0.86rem;
-    }
-    @media (max-width: 640px) {
-        [data-testid="stMainBlockContainer"] {
-            padding: 1.1rem 1rem 2rem;
-        }
-        [data-testid="stForm"] {
-            padding: 0.8rem 0.85rem;
-        }
-        .app-subtitle {
-            font-size: 0.9rem;
-        }
-        [data-testid="stVerticalBlockBorderWrapper"] {
-            padding: 0.7rem 0.75rem;
-        }
-        h1 {
-            font-size: 1.65rem !important;
-        }
-        .brand-compass {
-            font-size: 1.35rem;
-            height: 2.7rem;
-            width: 2.7rem;
-        }
-        .workflow-card {
-            min-height: 6.4rem;
-            padding: 0.7rem;
-        }
-        .workflow-title {
-            font-size: 0.85rem;
-        }
-        .workflow-status {
-            font-size: 0.72rem;
-        }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
+st.set_page_config(
+    page_title="HankeLuotsi AI",
+    layout="wide",
+    page_icon=str(ASSET_DIRECTORY / "hankeluotsi-mark.svg"),
 )
-brand_icon, brand_title = st.columns([0.08, 0.92], vertical_alignment="center")
-with brand_icon:
-    st.markdown('<div class="brand-compass" aria-hidden="true">⌖</div>', unsafe_allow_html=True)
-with brand_title:
-    st.title("HankeLuotsi AI")
-    st.markdown('<p class="app-subtitle">From project idea to structured concept</p>', unsafe_allow_html=True)
-
-st.markdown(
-    '<div class="disclaimer-note" role="note"><strong>AI-generated draft.</strong> '
-    'Not a funding eligibility assessment. Verify requirements against the relevant funding programme.</div>',
-    unsafe_allow_html=True,
-)
-st.markdown('<p class="workflow-label">Planning workflow</p>', unsafe_allow_html=True)
-workflow_columns = st.columns(3, gap="small")
-workflow_steps = (
-    ("01", "Project idea", "Input and save available", "available"),
-    ("02", "Concept paper", "Generate and reopen available", "available"),
-    ("03", "Draft & review", "Planned · not available yet", "planned"),
-)
-for column, (number, title, status, availability) in zip(workflow_columns, workflow_steps):
-    with column:
-        st.markdown(
-            f'<div class="workflow-card {availability}"><div class="workflow-number">{number}</div>'
-            f'<div class="workflow-title">{title}</div><div class="workflow-status">{status}</div></div>',
-            unsafe_allow_html=True,
-        )
+apply_styles()
+render_brand()
+render_intro()
 
 try:
     repository = ProjectRepository(DEFAULT_DATABASE_PATH)
