@@ -38,10 +38,13 @@ def render_intro() -> None:
         'Verify requirements against the relevant funding programme.</div></div>',
         unsafe_allow_html=True,
     )
+    has_project = bool(st.session_state.get("open_project_id") or st.session_state.get("pr5_pending_project_id"))
+    concept_target = "#concept-paper" if has_project else "#project-workspace"
+    funding_target = "#funding-opportunities" if has_project else "#project-workspace"
     steps = (
         ("01", "Shape the idea", "A focused starting point", "#project-workspace", "available"),
-        ("02", "Build the concept", "A structured working draft", "#concept-paper", "available"),
-        ("03", "Check & explore", "Consistency and official sources", "#funding-opportunities", "available"),
+        ("02", "Build the concept", "A structured working draft", concept_target, "available"),
+        ("03", "Check & explore", "Consistency and official sources", funding_target, "available"),
         ("04", "Draft & review", "Planned · not available yet", None, "planned"),
     )
     cards = []

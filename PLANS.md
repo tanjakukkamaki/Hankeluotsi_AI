@@ -181,6 +181,14 @@ These are **proposed** tasks/PRs, not existing pull requests. A task may span mu
 
 **Acceptance:** Explicit **Search Live Funding Calls** action on a saved idea; no automatic network requests on reruns; project text never enters requests; evidence-backed live calls are distinct from general suggestions. Display actual IDs/title/objectives, available geography/applicants, raw/parsed dates, official and conservative current status, evidence URLs, retrieval/update dates and uncertainty. Explain local vocabulary overlaps without eligibility scores. Failures isolate sources, partial pagination stays visible, and stale session snapshots require explicit refresh. Offline fictional fixtures test dates/time zones/statuses, provenance, malformed/partial responses and UI preservation; opt-in live checks never run in the default suite. Complete offline tests and whitespace checks pass; document verified results and limits.
 
+### UI polish and end-to-end QA continuation (approved 8–9 Nov)
+
+**Scope:** Continue the existing redesign and original SVG assets on the current branch; preserve owner commits/staging and Live Funding Search. Native Streamlit layout, local CSS/theme, escaped display helpers, compact concept/funding cards and responsive navigation only. Small reproducible UI/path/selection fixes are authorized; project schemas, AI prompts, repository and verified funding logic stay unchanged. No PR7, dependencies, external design services or Git history actions.
+
+**Files:** `app.py`, `hankeluotsi/presentation.py`, local `assets/`, `.streamlit/config.toml`, focused UI tests, README, this plan and QA/development documentation. Preserve original SVG files unless an actual rendering defect requires adjustment.
+
+**Acceptance:** Full offline suite; real-browser fictional-data checks for generation where LM Studio is available, save/reopen, concept/consistency, PDF/Finnish characters, programme guidance, live calls/links and source failures. Verify desktop/tablet/mobile geometry, safe collapsed content, readable contrast, preserved approved records and the normal database. Record unavailable checks honestly. `docs/ui_qa.md` contains review evidence and a manual checklist. Owner review precedes any commit.
+
 ## F. Evaluation rubric (write before scenario execution)
 
 Score each dimension **1–5** and record short evidence; these are educational judgments, not objective funding eligibility scores.

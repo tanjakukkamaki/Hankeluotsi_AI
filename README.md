@@ -20,6 +20,10 @@ python -m pip install -r requirements.txt
 streamlit run app.py
 ```
 
+## Interface review
+
+For the completed Nordic UI, original logo, browser QA evidence and tomorrow's review checklist, see [UI verification](docs/ui_qa.md). Restart Streamlit after pulling or reviewing changes to Python modules/theme files; this avoids an old imported presentation module remaining in a long-running process. Run from the repository directory so the local theme configuration is loaded. The default database and UI assets are anchored to the project folder; an explicit `HANKELUOTSI_DB_PATH` override is respected.
+
 ## Local model setup
 
 Start the LM Studio local server at `http://127.0.0.1:1234/v1`, load `qwen3.5-4b`, and disable **Enable Thinking** in the model's inference settings. The app uses only the configured local endpoint; it does not call cloud APIs. Use fictional information only.

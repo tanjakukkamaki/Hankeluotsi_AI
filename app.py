@@ -87,15 +87,15 @@ def _render_consistency_check(concept: ConceptPaper) -> None:
     warnings = [item for item in findings if item.severity == FindingSeverity.WARNING]
 
     with st.container(border=False, key="consistency_check"):
-        st.subheader("Consistency Check")
+        heading, error_column, warning_column = st.columns([3, 1, 1], vertical_alignment="center")
+        with heading:
+            st.subheader("Consistency Check")
+        error_column.metric("Errors", len(errors))
+        warning_column.metric("Warnings", len(warnings))
         st.caption(
             "Deterministic structural checks only. This does not assess content quality "
             "or funding eligibility."
         )
-        error_column, warning_column = st.columns(2)
-        error_column.metric("Errors", len(errors))
-        warning_column.metric("Warnings", len(warnings))
-
         if errors:
             st.error("Structural validation found errors that need attention.")
         elif warnings:
@@ -172,34 +172,41 @@ def _render_live_funding_calls(project: ProjectRecord) -> None:
             st.text(call.title)
         st.text(f"Programme: {call.programme}")
         st.text(f"Official identifier: {call.identifier}")
-        if call.call_identifier:
-            st.text(f"Parent call identifier: {call.call_identifier}")
         st.text(f"Current status: {statuses[selected][0]}")
         st.text(statuses[selected][1])
-        st.text(f"Published source status: {call.official_status}")
-        st.text("Opening: " + (call.opening.display if call.opening else "Unknown"))
-        st.text("Deadline: " + (call.deadline.display if call.deadline else "Unknown"))
-        for label, value in (("Opening source value", call.opening), ("Deadline source value", call.deadline)):
-            if value:
-                st.text(f"{label}: {value.raw}")
+        opening_column, deadline_column = st.columns(2)
+        with opening_column:
+            st.text("Opening: " + (call.opening.display if call.opening else "Unknown"))
+        with deadline_column:
+            st.text("Deadline: " + (call.deadline.display if call.deadline else "Unknown"))
         st.link_button("Official call page", call.source_url)
-        st.link_button("Retrieved source evidence", call.evidence_url)
-        st.caption(f"Call record retrieved: {call.retrieved_at.isoformat()}")
-        st.caption("Source updated: " + (call.source_updated_on.isoformat() if call.source_updated_on else "Unknown"))
+        retrieved_display = call.retrieved_at.astimezone(timezone.utc).strftime("%d %b %Y, %H:%M UTC")
+        st.caption(f"Call record retrieved: {retrieved_display}")
         st.markdown("**Local comparison and requirements to check**")
         topics = compare_call_locally(project.idea, call)
         st.text("Shared vocabulary topics: " + (", ".join(topics) or "No overlap detected"))
         st.caption("Topics overlap in the saved idea and call title/objectives. This does not establish suitability or eligibility.")
-        for label, value in (
-            ("Funding objectives / source excerpt", call.objectives),
-            ("Geographical area", call.geographic_area),
-            ("Applicant requirements / source excerpt", call.applicant_requirements),
-        ):
-            st.markdown(f"**{label}**")
-            st.text(value or "Unknown — check the official call documents.")
-        for uncertainty in call.uncertainties:
-            st.text(uncertainty)
         st.caption("Source excerpts may be incomplete. Verify all requirements and exact submission deadlines in the official call documents.")
+        with st.expander("Objectives & applicant information", expanded=False):
+            for label, value in (
+                ("Funding objectives / source excerpt", call.objectives),
+                ("Geographical area", call.geographic_area),
+                ("Applicant requirements / source excerpt", call.applicant_requirements),
+            ):
+                st.markdown(f"**{label}**")
+                st.text(value or "Unknown — check the official call documents.")
+            for uncertainty in call.uncertainties:
+                st.text(uncertainty)
+        with st.expander("Source evidence & original dates", expanded=False):
+            if call.call_identifier:
+                st.text(f"Parent call identifier: {call.call_identifier}")
+            st.text(f"Published source status: {call.official_status}")
+            for label, value in (("Opening source value", call.opening), ("Deadline source value", call.deadline)):
+                if value:
+                    st.text(f"{label}: {value.raw}")
+            st.link_button("Retrieved source evidence", call.evidence_url)
+            st.caption(f"Original retrieval timestamp: {call.retrieved_at.isoformat()}")
+            st.caption("Source updated: " + (call.source_updated_on.isoformat() if call.source_updated_on else "Unknown"))
 
 
 def _render_funding_research(project: ProjectRecord) -> None:
@@ -257,6 +264,12 @@ def _render_funding_research(project: ProjectRecord) -> None:
                 status_badge("Programme guide · call details unknown")
                 st.text(item.funding_programme)
                 st.link_button("Official calls / funding source", item.official_source_url)
+                description_status = {
+                    "not_requested": "Offline guide",
+                    "retrieved": "Page description retrieved",
+                    "unavailable": "Live description unavailable",
+                }[item.retrieval_state]
+                st.caption(f"Guidance checked {item.guidance_verified_on.isoformat()} · {description_status}")
                 with st.expander("Programme details & evidence", expanded=False, key=f"programme_details_{item.record_id}"):
                     st.text("Call title: " + (item.call_title or "Unknown — no individual call retrieved"))
                     st.text("Application dates: " + (item.application_dates or "Unknown — check the official call"))

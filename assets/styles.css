@@ -58,8 +58,8 @@ p, label, input, textarea, button { font-family: "Segoe UI", -apple-system, Blin
 input:focus, textarea:focus { border-color: var(--teal) !important; box-shadow: 0 0 0 2px rgba(39,143,145,.12) !important; outline: none; }
 [data-testid="stWidgetLabel"] p { color: #3B5363; font-size: .8rem; font-weight: 550; }
 button { border-radius: 9px !important; min-height: 2.55rem !important; font-size: .84rem !important; font-weight: 600 !important; transition: background .15s, border-color .15s !important; }
-button[kind="primary"], [data-testid="stFormSubmitButton"] button[kind="primary"] { background: var(--teal); color: white; border: 1px solid var(--teal); box-shadow: 0 2px 4px rgba(39,143,145,.1); }
-button[kind="primary"]:hover { background: var(--teal-dark); border-color: var(--teal-dark); }
+button[kind="primary"], [data-testid="stFormSubmitButton"] button[kind="primary"] { background: var(--teal-dark); color: white; border: 1px solid var(--teal-dark); box-shadow: 0 2px 4px rgba(39,143,145,.1); }
+button[kind="primary"]:hover { background: #185E61; border-color: #185E61; }
 button[kind="secondary"] { background: var(--paper); border: 1px solid var(--line); color: var(--navy); }
 button[kind="secondary"]:hover { border-color: var(--teal); color: var(--teal-dark); }
 button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid #278F91 !important; outline-offset: 3px; }
@@ -67,8 +67,6 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 [data-testid="stDownloadButton"] button:hover { background: #244D68; color: white; border-color: #244D68; }
 .st-key-saved_projects { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 1.1rem; box-shadow: 0 4px 20px rgba(21,51,74,.025); }
 .st-key-saved_projects [data-testid="stVerticalBlock"] { gap: .65rem; }
-.st-key-new_idea > details { border: 0; background: transparent; }
-.st-key-new_idea > details > summary { padding: .15rem 0 .6rem; }
 .st-key-project_context { padding-top: .4rem; }
 .st-key-concept_document { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 1.5rem 1.7rem 1.2rem; box-shadow: 0 8px 28px rgba(21,51,74,.035); }
 .st-key-concept_document_title [data-testid="stText"] { font-size: 1.65rem; font-weight: 650; letter-spacing: -.035em; line-height: 1.3; color: var(--navy); margin-bottom: .2rem; }
@@ -99,10 +97,12 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .st-key-live_call_card { background: #FFFFFF; border: 1px solid var(--line); border-radius: 14px; padding: 1.15rem; border-top: 3px solid var(--teal); }
 .st-key-live_call_title [data-testid="stText"] { font-size: 1.2rem; font-weight: 600; line-height: 1.45; color: var(--navy); }
 .st-key-live_call_card [data-testid="stLinkButton"] a { border-color: var(--line); font-size: .8rem; border-radius: 8px; min-height: 2.35rem; }
+[data-testid="stLinkButton"] a { color: var(--teal-dark); }
 [class*="st-key-programme_card_"] { border: 1px solid var(--line); border-radius: 12px; background: #FFFFFF; padding: 1rem; }
 [class*="st-key-programme_card_"] > div > [data-testid="stText"]:first-child { font-size: 1rem; font-weight: 650; }
 .st-key-funding_research [data-testid="stForm"] { box-shadow: none; background: #F8FBFC; }
 .st-key-live_call_card [data-testid="stText"], [class*="st-key-programme_card_"] [data-testid="stText"] { font-size: .86rem; }
+.st-key-live_call_card .st-key-live_call_title [data-testid="stText"] { font-size: 1.2rem; font-weight: 650; }
 [data-testid="stTable"] { overflow-x: auto; }
 [data-testid="stMarkdownContainer"] table { font-size: .78rem; border-collapse: collapse; width: 100%; }
 [data-testid="stMarkdownContainer"] th { background: #F1F6F8; color: var(--navy); text-align: left; }
@@ -141,6 +141,8 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
   .st-key-concept_summary [data-testid="stMetricValue"] { font-size: 1.15rem; }
   .st-key-concept_summary [data-testid="stMetricLabel"] p { font-size: .63rem; }
   .st-key-consistency_check [data-testid="stColumn"] { min-width: 0 !important; flex: 1 !important; }
+  .st-key-consistency_check [data-testid="stColumn"]:first-child { flex: 2.8 !important; }
+  .st-key-consistency_check [data-testid="stMetric"] { display: block; }
   .st-key-consistency_check { padding: .75rem; }
   .st-key-live_call_card { padding: .85rem; }
   .workspace-footer { flex-direction: column; gap: .2rem; }
