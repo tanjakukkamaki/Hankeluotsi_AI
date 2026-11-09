@@ -14,7 +14,8 @@ from hankeluotsi.consistency import (
     check_concept_consistency,
 )
 from hankeluotsi.funding import compare_locally, retrieve_funding_opportunities
-from hankeluotsi.funding_calls import assess_call_status, compare_call_locally
+from hankeluotsi.funding_calls import compare_call_locally
+from hankeluotsi.funding_matching import RELEVANCE_CATEGORIES, rank_funding_calls
 from hankeluotsi.live_funding import search_live_funding_calls
 from hankeluotsi.llm_client import LLMClient
 from hankeluotsi.pdf_exporter import concept_pdf_filename, generate_concept_pdf
@@ -133,6 +134,7 @@ def _render_live_funding_calls(project: ProjectRecord) -> None:
         st.session_state["live_funding_result"] = (
             project.project_id, project.idea.model_dump_json(), result, datetime.now(timezone.utc),
         )
+        st.session_state.pop(f"ranked-live-call-selection-{project.project_id}", None)
     cached = st.session_state.get("live_funding_result")
     if not cached or cached[:2] != (project.project_id, project.idea.model_dump_json()):
         st.caption("No live search has been run for this saved idea. General programme suggestions are available below.")
@@ -147,7 +149,8 @@ def _render_live_funding_calls(project: ProjectRecord) -> None:
         st.link_button("Official EU funding calls", "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/calls-for-proposals")
         return
     now = datetime.now(timezone.utc)
-    statuses = {f"{item.source}:{item.identifier}": assess_call_status(item, now=now) for item in result.calls}
+    ranked = rank_funding_calls(project.idea, result.calls, concept=project.concept, now=now)
+    statuses = {f"{item.call.source}:{item.call.identifier}": (item.status, item.status_reason) for item in ranked}
     st.caption(
         f"{len(result.calls)} published call/topic records. "
         + "; ".join(f"{status}: {sum(value[0] == status for value in statuses.values())}" for status in ("open", "upcoming", "closed", "unknown"))
@@ -156,17 +159,53 @@ def _render_live_funding_calls(project: ProjectRecord) -> None:
         "Statuses are checked locally against official labels and dates. Date-only boundaries "
         "remain conservative; snapshots older than six hours become unknown. Refresh explicitly."
     )
-    by_id = {f"{item.source}:{item.identifier}": item for item in result.calls}
-    order = {"open": 0, "upcoming": 1, "closed": 2, "unknown": 3}
-    options = sorted(by_id, key=lambda key: (order[statuses[key][0]], by_id[key].identifier))
+    st.caption(
+        "Sorted by local research relevance, then score, then status. High/Medium/Low describe "
+        "wording overlap, never eligibility or a funding probability. All categories and statuses "
+        "are included by default. Ranking covers this retrieved window, not every EU call."
+    )
+    st.caption(" · ".join(f"{category}: {sum(item.category == category for item in ranked)}" for category in RELEVANCE_CATEGORIES))
+    if not any(item.category in ("High", "Medium") for item in ranked):
+        st.info("No High or Medium relevance found in this snapshot. Low and unmatched records remain available; try the official sources and programme guides for wider research.")
+    relevance_column, programme_column, status_column = st.columns(3)
+    with relevance_column:
+        relevance_filter = st.multiselect("Relevance", options=RELEVANCE_CATEGORIES,
+            default=list(RELEVANCE_CATEGORIES), key=f"live-relevance-{project.project_id}")
+    programmes = sorted({item.call.programme for item in ranked})
+    programme_key = f"live-programme-{project.project_id}"
+    if programme_key in st.session_state:
+        previous_programmes = st.session_state[programme_key]
+        remaining_programmes = [value for value in previous_programmes if value in programmes]
+        st.session_state[programme_key] = remaining_programmes or (programmes if previous_programmes else [])
+    with programme_column:
+        programme_filter = st.multiselect("Funding programme", options=programmes,
+            default=programmes, key=programme_key)
+    with status_column:
+        status_filter = st.multiselect("Call status", options=("open", "upcoming", "closed", "unknown"),
+            default=["open", "upcoming", "closed", "unknown"], key=f"live-status-{project.project_id}")
+    visible = [item for item in ranked if item.category in relevance_filter
+               and item.call.programme in programme_filter and item.status in status_filter]
+    st.caption(f"Showing {len(visible)} of {len(ranked)} retrieved records. All relevance levels remain available in the filters.")
+    if not visible:
+        st.info("No calls match these filters. Include Low, Insufficient Information or other statuses/programmes to see more records.")
+        return
+    by_id = {f"{item.call.source}:{item.call.identifier}": item for item in visible}
+    options = list(by_id)
+    selection_key = f"ranked-live-call-selection-{project.project_id}"
+    if st.session_state.get(selection_key) not in options:
+        st.session_state[selection_key] = options[0]
     selected = st.selectbox(
         "Inspect a live call",
         options=options,
-        format_func=lambda key: f"{statuses[key][0]} | {by_id[key].identifier} | {by_id[key].title}",
-        key=f"live-call-selection-{project.project_id}",
+        format_func=lambda key: f"{by_id[key].category} relevance | {statuses[key][0]} | {by_id[key].call.identifier} | {by_id[key].call.title}",
+        key=selection_key,
     )
-    call = by_id[selected]
+    match = by_id[selected]
+    call = match.call
     with st.container(border=False, key="live_call_card"):
+        status_badge(f"{match.category} relevance", tone="teal" if match.category == "High" else "neutral")
+        st.text(f"Local relevance score: {match.score}/100" if match.score is not None else "Local relevance score: not assigned — insufficient evidence")
+        st.caption(f"Matching confidence: {match.confidence}. A heuristic evidence assessment, not confirmed eligibility.")
         status_badge(statuses[selected][0].capitalize(), tone="teal" if statuses[selected][0] == "open" else "neutral")
         with st.container(key="live_call_title"):
             st.text(call.title)
@@ -182,7 +221,20 @@ def _render_live_funding_calls(project: ProjectRecord) -> None:
         st.link_button("Official call page", call.source_url)
         retrieved_display = call.retrieved_at.astimezone(timezone.utc).strftime("%d %b %Y, %H:%M UTC")
         st.caption(f"Call record retrieved: {retrieved_display}")
+        st.caption("Official-source reference matches a supported retrieval adapter; availability is not rechecked on reruns."
+                   if match.source_reference_confirmed else "Official-source reference unconfirmed. This record is not verified.")
         st.markdown("**Local comparison and requirements to check**")
+        for reason in match.reasons:
+            st.text(reason)
+        for caution in match.cautions:
+            st.text(caution)
+        with st.expander("How this local match was calculated", expanded=False):
+            st.text("Rule version 1: theme coverage (up to 80), named geography (-5 to 10), explicit partner-type wording (-5 to 10). Target groups do not establish an applicant type.")
+            if match.score is not None:
+                st.text(f"Theme points: {match.thematic_points}; geography points: {match.geography_points}; partner-type points: {match.applicant_points}. Total is bounded to 0–100.")
+            st.text("Core idea and concept objectives weigh twice target-group-only themes. Call title evidence weighs 1; objectives excerpt weighs 0.8. Broad digital/research/innovation words alone cannot produce Medium or High relevance.")
+            st.text("Known non-art phrases such as state-of-the-art and innovation culture are ignored for cultural matching. An unsupported specialist title without a specific shared title theme caps theme points at 24.")
+            st.text("High requires at least 55 theme points and two specific shared themes; Medium requires at least 25 and one specific theme. Missing descriptions or differing named conditions cap High at Medium. Missing/unconfirmed evidence can leave a record unscored.")
         topics = compare_call_locally(project.idea, call)
         st.text("Shared vocabulary topics: " + (", ".join(topics) or "No overlap detected"))
         st.caption("Topics overlap in the saved idea and call title/objectives. This does not establish suitability or eligibility.")

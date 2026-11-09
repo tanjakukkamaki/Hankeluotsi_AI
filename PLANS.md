@@ -189,6 +189,14 @@ These are **proposed** tasks/PRs, not existing pull requests. A task may span mu
 
 **Acceptance:** Full offline suite; real-browser fictional-data checks for generation where LM Studio is available, save/reopen, concept/consistency, PDF/Finnish characters, programme guidance, live calls/links and source failures. Verify desktop/tablet/mobile geometry, safe collapsed content, readable contrast, preserved approved records and the normal database. Record unavailable checks honestly. `docs/ui_qa.md` contains review evidence and a manual checklist. Owner review precedes any commit.
 
+### Intelligent funding matching and ranking (approved 9 Nov)
+
+**Scope / files:** Separate pure `hankeluotsi/funding_matching.py`, additive live-results UI in `app.py`, fictional matching/AppTest regressions, README and matching/development documentation. Stay on the current feature branch and preserve existing work. No project-schema, prompt, repository, PDF, model-provider or source-adapter changes; no paid services, PR7 or Git publication.
+
+**Contract:** Immutable derived match assessments reference the original call records. Use saved title/need/expected change/target groups, optional concept objectives, geography and explicit partner-type wording locally. Transparent weighted theme coverage dominates small geography/applicant-context clues. High/Medium/Low/Insufficient Information, evidence confidence and explanations are separate from current call status and eligibility. Missing applicant/location data cannot establish compatibility. Validate official URL/identifier/evidence relationships using the existing adapter contracts; unconfirmed records remain unscored with unknown current status.
+
+**Acceptance:** Specific creative/community/skills evidence ranks before unrelated scientific calls; broad research/digital words and non-art phrases alone do not promote calls. Default relevance order with programme/status/relevance filters retains access to all results. Source facts stay unchanged, conflicts/staleness retain conservative statuses, filters/reruns make no external calls, and no project text enters retrieval. Offline fictional tests include missing/excluded/ambiguous information, source failures, date conflicts and saved-record preservation. Verify raw official data separately and inspect the actual Streamlit interface. Complete offline suite, `git diff --check`, documented limitations and owner review before any commit.
+
 ## F. Evaluation rubric (write before scenario execution)
 
 Score each dimension **1–5** and record short evidence; these are educational judgments, not objective funding eligibility scores.
