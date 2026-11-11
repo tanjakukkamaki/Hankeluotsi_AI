@@ -58,8 +58,8 @@ p, label, input, textarea, button { font-family: "Segoe UI", -apple-system, Blin
 input:focus, textarea:focus { border-color: var(--teal) !important; box-shadow: 0 0 0 2px rgba(39,143,145,.12) !important; outline: none; }
 [data-testid="stWidgetLabel"] p { color: #3B5363; font-size: .8rem; font-weight: 550; }
 button { border-radius: 9px !important; min-height: 2.55rem !important; font-size: .84rem !important; font-weight: 600 !important; transition: background .15s, border-color .15s !important; }
-button[kind="primary"], [data-testid="stFormSubmitButton"] button[kind="primary"] { background: var(--teal-dark); color: white; border: 1px solid var(--teal-dark); box-shadow: 0 2px 4px rgba(39,143,145,.1); }
-button[kind="primary"]:hover { background: #185E61; border-color: #185E61; }
+button[kind="primary"], button[kind="primaryFormSubmit"] { background: var(--teal-dark); color: white; border: 1px solid var(--teal-dark); box-shadow: 0 2px 4px rgba(39,143,145,.1); }
+button[kind="primary"]:hover, button[kind="primaryFormSubmit"]:hover { background: #185E61; border-color: #185E61; }
 button[kind="secondary"] { background: var(--paper); border: 1px solid var(--line); color: var(--navy); }
 button[kind="secondary"]:hover { border-color: var(--teal); color: var(--teal-dark); }
 button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid #278F91 !important; outline-offset: 3px; }

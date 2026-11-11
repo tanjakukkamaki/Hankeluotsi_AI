@@ -71,12 +71,45 @@ def test_generic_project_wording_cannot_produce_a_high_numeric_score():
     assert result.category == "Low" and result.thematic_points <= 24
 
 
-@pytest.mark.parametrize("phrase", ["state-of-the-art research equipment", "innovation culture", "bacterial culture"])
+@pytest.mark.parametrize("phrase", [
+    "state-of-the-art research equipment", "innovation culture", "bacterial culture",
+    "a culture within research and innovation organisations",
+    "a culture in research and innovation companies",
+])
 def test_non_art_uses_of_art_and_culture_are_not_cultural_matches(phrase):
     result = match_funding_call(idea(), call(title="Fictional technology facilities",
         objectives="Fictional facilities support " + phrase + " for industrial research."), now=NOW)
     assert "culture & creative work" not in result.matched_topics
     assert result.category == "Low"
+
+
+def test_organisational_culture_prize_stays_available_but_ranks_below_actual_arts_work():
+    fixture_directory = Path(__file__).parent / "fixtures"
+    project = ProjectIdea.model_validate_json((fixture_directory / "project_idea.json").read_text(encoding="utf-8"))
+    concept = ConceptPaper.model_validate_json((fixture_directory / "concept_paper.json").read_text(encoding="utf-8"))
+    identifier = "HORIZON-FICTIONAL-WOMEN-INNOVATORS"
+    prize = call(source="EU Funding & Tenders Portal", programme="Horizon Europe",
+        identifier=identifier, title="Fictional Prize for Women Innovators",
+        objectives="Fictional prize supports a culture within research and innovation organisations "
+                   "and companies allowing women to become innovators and entrepreneurs.",
+        source_url="https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/topic-details/" + identifier,
+        evidence_url=_page_url(1), applicant_requirements=None)
+    before = prize.model_dump_json()
+    with patch("urllib.request.build_opener", side_effect=AssertionError("No network allowed")):
+        ranked = rank_funding_calls(project, (prize, call()), concept=concept, now=NOW)
+    assert ranked[0].call.identifier == "FICTIONAL-Z-ARTS"
+    match = ranked[1]
+    assert match.call is prize and match.category == "Low"
+    assert "culture & creative work" not in match.matched_topics
+    assert match.status == "open" and match.applicant_points == 0
+    assert any("no applicant compatibility assumed" in reason for reason in match.cautions)
+    assert prize.model_dump_json() == before
+    # Prizes and women innovators are not excluded; substantive arts evidence still counts.
+    arts_prize = prize.model_copy(update={"objectives": prize.objectives +
+        " A separate strand supports community arts, accessible cultural workshops and digital learning skills."})
+    positive = match_funding_call(idea(), arts_prize, now=NOW)
+    assert positive.category == "High"
+    assert "culture & creative work" in positive.matched_topics
 
 
 @pytest.mark.parametrize("title", ["Fictional sedimentary reservoir assessment", "Fictional nature restoration science"])

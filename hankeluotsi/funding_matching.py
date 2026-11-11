@@ -76,7 +76,7 @@ def _theme_mentions(text: str, theme: str, aliases: tuple[str, ...]) -> bool:
         text = re.sub(r"\bstate[\s-]+of[\s-]+the[\s-]+art\b", " ", text, flags=re.IGNORECASE)
         modifiers = "innovation|research|safety|security|business|entrepreneurial|organisational|organizational|cell|bacterial|microbial|tissue"
         text = re.sub(r"\b(?:" + modifiers + r")\s+cultures?\b", " ", text, flags=re.IGNORECASE)
-        text = re.sub(r"\bculture\s+of\s+(?:" + modifiers + r")\b", " ", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bcultures?\s+(?:of|within|in)\s+(?:" + modifiers + r")\b", " ", text, flags=re.IGNORECASE)
     return _mentions(text, aliases)
 
 

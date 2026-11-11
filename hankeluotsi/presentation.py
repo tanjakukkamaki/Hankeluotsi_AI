@@ -38,6 +38,11 @@ def _change_language() -> None:
 def render_brand() -> None:
     if st.session_state.get("ui_language") not in LANGUAGES:
         st.session_state["ui_language"] = "en"
+    # Streamlit's static shell defaults to English. Only these fixed locale
+    # literals enter this script; never include project/model/source content.
+    language = "fi" if st.session_state["ui_language"] == "fi" else "en"
+    st.html(f'<script>document.documentElement.lang = "{language}";</script>',
+            unsafe_allow_javascript=True)
     mark = base64.b64encode((ASSET_DIRECTORY / "hankeluotsi-mark.svg").read_bytes()).decode("ascii")
     with st.container(key="brand_header"):
         icon, name, context = st.columns([0.075, 0.69, 0.235], vertical_alignment="center", gap="small")
