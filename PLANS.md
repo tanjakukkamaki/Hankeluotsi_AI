@@ -197,6 +197,12 @@ These are **proposed** tasks/PRs, not existing pull requests. A task may span mu
 
 **Acceptance:** Specific creative/community/skills evidence ranks before unrelated scientific calls; broad research/digital words and non-art phrases alone do not promote calls. Default relevance order with programme/status/relevance filters retains access to all results. Source facts stay unchanged, conflicts/staleness retain conservative statuses, filters/reruns make no external calls, and no project text enters retrieval. Offline fictional tests include missing/excluded/ambiguous information, source failures, date conflicts and saved-record preservation. Verify raw official data separately and inspect the actual Streamlit interface. Complete offline suite, `git diff --check`, documented limitations and owner review before any commit.
 
+### Final ConceptPaper PDF pagination polish (approved 9 Nov)
+
+**Files / scope:** `hankeluotsi/pdf_exporter.py`, PDF pagination tests, this plan and development log, plus two fictional review PDFs. Moderate spacing reductions only; keep the existing 9-point body/12-point leading, A4 margins, Unicode fonts, source content/IDs, disclaimer and page numbers. Group each ordinary indicator with its measurement label/text; allow a block larger than a full page to split safely.
+
+**Acceptance:** A representative near-one-page fixture fits on one page without font shrinking; page-boundary tests keep each fitting indicator/measurement together; longer documents and oversized paragraphs paginate without loss/overflow. Generate and visually inspect fictional one- and two-page PDFs. Complete offline suite and whitespace checks pass. Preserve schemas, prompts, SQLite, funding, UI and other functionality; no dependency or Git publication changes. Owner reviews before committing.
+
 ## F. Evaluation rubric (write before scenario execution)
 
 Score each dimension **1–5** and record short evidence; these are educational judgments, not objective funding eligibility scores.

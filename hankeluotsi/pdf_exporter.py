@@ -75,7 +75,7 @@ def _styles():
             fontSize=9.5,
             leading=12,
             textColor=MUTED,
-            spaceAfter=4 * mm,
+            spaceAfter=3 * mm,
         )
     )
     styles.add(
@@ -86,8 +86,8 @@ def _styles():
             fontSize=12,
             leading=15,
             textColor=PRIMARY,
-            spaceBefore=3 * mm,
-            spaceAfter=1.5 * mm,
+            spaceBefore=2 * mm,
+            spaceAfter=1 * mm,
             keepWithNext=True,
         )
     )
@@ -99,7 +99,8 @@ def _styles():
             fontSize=9,
             leading=12,
             textColor=TEXT,
-            spaceAfter=1 * mm,
+            spaceBefore=0,
+            spaceAfter=0.8 * mm,
             splitLongWords=True,
         )
     )
@@ -144,14 +145,23 @@ def _text_entry(value: str, styles) -> Paragraph:
     return Paragraph(_paragraph_text(value), styles["HankeBody"])
 
 
-def _linked_entry(identifier: str, description: str, relation_label: str | None, related_ids, styles):
+def _linked_entry(identifier: str, description: str, relation_label: str | None, related_ids, styles,
+                  *, measurement_method: str | None = None):
     reference = f" <font color='{MUTED.hexval()}'>{escape(relation_label)}: {escape(', '.join(related_ids))}</font>" if relation_label else ""
     label = Paragraph(
         f"<font name='HankeVera-Bold' color='{ACCENT.hexval()}'>{escape(identifier)}</font>{reference}",
         styles["HankeEntry"],
     )
+    label.keepWithNext = True
     body = Paragraph(_paragraph_text(description), styles["HankeEntry"])
-    return KeepTogether([label, body])
+    entries = [label, body]
+    if measurement_method is not None:
+        method_label = Paragraph("Measurement method", styles["HankeEntry"])
+        method_label.keepWithNext = True
+        entries.extend([method_label, Paragraph(_paragraph_text(measurement_method), styles["HankeEntry"])])
+    # Ordinary entries move as a single block. ReportLab can still split an
+    # exceptionally large entry that exceeds a full page instead of overflowing.
+    return KeepTogether(entries)
 
 
 def _draw_page(canvas, document) -> None:
@@ -185,7 +195,7 @@ def generate_concept_pdf(project_title: str, concept: ConceptPaper) -> bytes:
     story: list[Flowable] = [
         Paragraph(_paragraph_text(project_title), styles["HankeTitle"]),
         Paragraph("Concept paper", styles["HankeSubtitle"]),
-        HRFlowable(width="100%", thickness=1, color=ACCENT, spaceAfter=4 * mm),
+        HRFlowable(width="100%", thickness=1, color=ACCENT, spaceAfter=3 * mm),
     ]
     disclaimer = Table(
         [[Paragraph(_paragraph_text(DISCLAIMER), styles["HankeDisclaimer"])]],
@@ -198,12 +208,12 @@ def generate_concept_pdf(project_title: str, concept: ConceptPaper) -> bytes:
                 ("BOX", (0, 0), (-1, -1), 0.6, BORDER),
                 ("LEFTPADDING", (0, 0), (-1, -1), 4 * mm),
                 ("RIGHTPADDING", (0, 0), (-1, -1), 4 * mm),
-                ("TOPPADDING", (0, 0), (-1, -1), 2 * mm),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 2 * mm),
+                ("TOPPADDING", (0, 0), (-1, -1), 1.5 * mm),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 1.5 * mm),
             ]
         )
     )
-    story.extend([disclaimer, Spacer(1, 2 * mm)])
+    story.extend([disclaimer, Spacer(1, 1.5 * mm)])
 
     _section(story, "Background", [_text_entry(concept.background_need, styles)], styles)
     _section(
@@ -260,14 +270,7 @@ def generate_concept_pdf(project_title: str, concept: ConceptPaper) -> bytes:
                 "Linked results",
                 indicator.result_ids,
                 styles,
-            )
-        )
-        indicator_entries.append(
-            KeepTogether(
-                [
-                    Paragraph("Measurement method", styles["HankeEntry"]),
-                    Paragraph(_paragraph_text(indicator.measurement_method), styles["HankeEntry"]),
-                ]
+                measurement_method=indicator.measurement_method,
             )
         )
     _section(story, "Indicators", indicator_entries, styles)
