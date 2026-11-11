@@ -1,0 +1,298 @@
+"""Local interface translations. Never apply these helpers to saved/source content.
+
+English source strings are stable dictionary keys. Named placeholders preserve
+dynamic values; only explicitly marked system messages translate their labels.
+"""
+
+import re
+from functools import lru_cache
+from string import Formatter
+
+
+LANGUAGES = {"fi": "Suomi", "en": "English"}
+TRANSLATIONS = {
+    "From project idea to structured concept": "Hankeideasta jäsennellyksi konseptiksi",
+    "Personal workspace": "Oma työtila",
+    "Local-first · Academic prototype": "Paikallinen · Opintoprojektin prototyyppi",
+    "HankeLuotsi compass: guidance and direction": "HankeLuotsin kompassi: opastusta ja suuntaa",
+    "A CLEARER START FOR YOUR NEXT PROJECT": "SELKEÄ ALKU SEURAAVALLE HANKKEELLESI",
+    "Ideas with direction.": "Ideoille suunta.",
+    "Shape a project concept, find the gaps and explore official funding sources.": "Jäsennä hankekonsepti, tunnista puutteet ja tutustu virallisiin rahoituslähteisiin.",
+    "AI-generated draft.": "Tekoälyn tuottama luonnos.",
+    "AI-generated draft. Not a funding eligibility assessment. Verify requirements against the relevant funding programme.": "Tekoälyn tuottama luonnos. Tämä ei ole arvio rahoituskelpoisuudesta. Tarkista vaatimukset kyseisen rahoitusohjelman virallisista lähteistä.",
+    "Not a funding eligibility assessment. Verify requirements against the relevant funding programme.": "Tämä ei ole arvio rahoituskelpoisuudesta. Tarkista vaatimukset kyseisen rahoitusohjelman virallisista lähteistä.",
+    "Shape the idea": "Jäsennä idea", "A focused starting point": "Rajattu lähtökohta",
+    "Build the concept": "Laadi konsepti", "A structured working draft": "Jäsennelty työversio",
+    "Check & explore": "Tarkista ja tutki", "Consistency and official sources": "Johdonmukaisuus ja viralliset lähteet",
+    "Draft & review": "Luonnos ja arviointi", "Planned · not available yet": "Suunnitteilla · ei vielä käytössä",
+    "Planning workflow": "Hankesuunnittelun vaiheet",
+    "A clearer direction for project ideas.": "Hankeideoille selkeämpi suunta.",
+    "Fictional data only · Human review required": "Vain kuvitteellisia tietoja · Ihmisen tarkistus tarvitaan",
+    "Saved projects": "Tallennetut hankkeet", "Open a saved project": "Avaa tallennettu hanke",
+    "Select a saved project": "Valitse tallennettu hanke",
+    "{count} saved projects": "Tallennettuja hankkeita: {count}",
+    "{count} saved project": "Tallennettuja hankkeita: {count}",
+    "Your saved ideas and concepts will appear here.": "Tallennetut ideat ja konseptit näkyvät tässä.",
+    "Consistency results appear when you generate or open a concept.": "Johdonmukaisuustarkistuksen tulokset näkyvät, kun luot tai avaat konseptin.",
+    "Saved {date} · Stored on this device": "Tallennettu {date} · Tiedot tällä laitteella",
+    "Reopen your work at any time. Your ideas stay in the local workspace.": "Voit avata työsi uudelleen. Ideasi säilyvät paikallisessa työtilassa.",
+    "Start a new project idea": "Aloita uusi hankeidea", "New project idea": "Uusi hankeidea",
+    "Start with fictional information. A few structured details are enough.": "Käytä kuvitteellisia tietoja. Muutama jäsennelty lähtötieto riittää.",
+    "Project title": "Hankkeen nimi", "Title": "Nimi", "Development need": "Kehittämistarve",
+    "Target groups": "Kohderyhmät", "Geography": "Maantieteellinen alue", "Expected change": "Tavoiteltu muutos",
+    "Potential partners (optional)": "Mahdolliset kumppanit (valinnainen)",
+    "Potential partners": "Mahdolliset kumppanit", "Funding context (optional)": "Rahoitustausta (valinnainen)",
+    "Funding context": "Rahoitustausta", "Generate concept": "Luo hankekonsepti",
+    "e.g. Fictional Nordic creative futures": "esim. Kuvitteellinen luovien alojen tulevaisuushanke",
+    "What needs to change, and why?": "Minkä pitää muuttua ja miksi?",
+    "Separate multiple groups with commas or new lines.": "Erota kohderyhmät pilkuilla tai rivinvaihdoilla.",
+    "e.g. Fictional Finland and Sweden": "esim. Kuvitteellinen Suomi ja Ruotsi",
+    "What will be different for the target groups?": "Mikä muuttuu kohderyhmien kannalta?",
+    "Separate entries with commas or new lines.": "Erota kumppanit pilkuilla tai rivinvaihdoilla.",
+    "Saved project": "Tallennettu hanke", "Status: {status}": "Tila: {status}",
+    "Project idea · saved input": "Hankeidea · tallennetut lähtötiedot", "Project idea": "Hankeidea",
+    "Raw project idea JSON": "Hankeidean alkuperäinen JSON",
+    "Your project idea is saved. A concept has not been generated for this record yet.": "Hankeidea on tallennettu. Tälle hankkeelle ei ole vielä luotu konseptia.",
+    "Concept paper": "Hankekonsepti", "AI-generated draft · Pydantic validated": "Tekoälyn luonnos · Pydantic-validoitu",
+    "Download PDF": "Lataa PDF", "Background": "Tausta", "Objectives": "Tavoitteet",
+    "Activities": "Toimenpiteet", "Expected results": "Odotetut tulokset", "Results": "Tulokset",
+    "Indicators": "Mittarit", "Assumptions": "Oletukset", "Open questions": "Avoimet kysymykset",
+    "Linked objectives": "Liittyvät tavoitteet", "Linked activities": "Liittyvät toimenpiteet",
+    "Linked results": "Liittyvät tulokset", "Measurement method": "Mittausmenetelmä",
+    "None provided.": "Ei annettu.", "Raw ConceptPaper JSON": "Hankekonseptin alkuperäinen JSON",
+    "Page {number}": "Sivu {number}", "AI-generated concept paper": "Tekoälyn tuottama hankekonsepti",
+    "PDF labels follow the interface language; saved document text is unchanged.": "PDF:n otsikot noudattavat käyttöliittymän kieltä. Tallennettu teksti ei muutu.",
+    "Consistency Check": "Johdonmukaisuustarkistus", "Errors": "Virheet", "Warnings": "Huomiot",
+    "Deterministic structural checks only. This does not assess content quality or funding eligibility.": "Vain sääntöpohjainen rakenteen tarkistus. Tämä ei arvioi sisällön laatua tai rahoituskelpoisuutta.",
+    "Structural validation found errors that need attention.": "Rakenteen tarkistus löysi korjattavia virheitä.",
+    "No broken references found, but some concept elements are disconnected.": "Rikkinäisiä viittauksia ei löytynyt, mutta osa konseptin osista on irrallisia.",
+    "No structural issues detected.": "Rakenteellisia ongelmia ei löytynyt.",
+    "Affected ID: `{id}`": "Tunniste: `{id}`", "Related IDs: {ids}": "Liittyvät tunnisteet: {ids}",
+    "Could not open the local project database: {error}": "Paikallista hanketietokantaa ei voitu avata. Tekninen lisätieto: {error}",
+    "Please correct the project idea: {details}": "Korjaa hankeidean tiedot: {details}",
+    "This project already has a saved concept. No duplicate generation was started.": "Hankkeella on jo tallennettu konsepti. Uutta luontia ei käynnistetty.",
+    "Generating and validating the concept with the local model...": "Konseptia luodaan ja validoidaan paikallisella mallilla...",
+    "Concept validated and saved for {title}. Model: {model}; prompt: {prompt}; response time: {seconds} s.": "Konsepti validoitu ja tallennettu hankkeelle {title}. Malli: {model}; kehote: {prompt}; vastausaika: {seconds} s.",
+    "The generated concept did not pass validation and was not saved: {error}": "Luotu konsepti ei läpäissyt validointia eikä sitä tallennettu. Tekninen lisätieto: {error}",
+    "Concept generation or saving failed. Your valid saved data was preserved: {error}": "Konseptin luonti tai tallennus epäonnistui. Aiemmat kelvolliset tiedot säilyivät. Tekninen lisätieto: {error}",
+    "Check the value.": "Tarkista kentän arvo.", "This field is required.": "Tämä kenttä on pakollinen.",
+    "created": "Luotu", "concept_ready": "Konsepti valmis", "concept ready": "Konsepti valmis",
+    "draft_ready": "Luonnos valmis", "draft ready": "Luonnos valmis", "reviewed": "Arvioitu", "approved": "Hyväksytty",
+    "Find Funding Opportunities (optional)": "Etsi rahoitusmahdollisuuksia (valinnainen)",
+    "Official live calls and preliminary programme research. This does not assess funding eligibility. Project information stays local.": "Virallisia hakutietoja ja alustavaa ohjelmatutkimusta. Tämä ei arvioi rahoituskelpoisuutta. Hanketiedot pysyvät paikallisina.",
+    "Live funding calls from official sources": "Rahoitushaut virallisista lähteistä",
+    "Search the official Aurora timetable and Horizon Europe grant topics. Only fixed public requests are sent; project text stays local.": "Hae Auroran virallisesta hakuaikataulusta ja Horisontti Euroopan hakuteemoista. Vain ennalta määritetyt julkiset pyynnöt lähetetään; hanketeksti pysyy paikallisena.",
+    "Search Live Funding Calls": "Hae ajantasaisia rahoitushakuja", "Reading official funding sources...": "Luetaan virallisia rahoituslähteitä...",
+    "No live search has been run for this saved idea. General programme suggestions are available below.": "Tälle idealle ei ole tehty ajantasaista hakua. Yleiset ohjelmaehdotukset ovat saatavilla alempana.",
+    "Last explicit search completed: {time}. Results last for this app session.": "Viimeisin käyttäjän käynnistämä haku valmistui: {time}. Tulokset säilyvät istunnon ajan.",
+    "No live call records could be verified. Use the official sources and general programme guidance below.": "Hakutietueita ei voitu varmistaa. Käytä virallisia lähteitä ja alla olevia ohjelmatietoja.",
+    "Official Aurora calls": "Auroran viralliset haut", "Official EU funding calls": "EU:n viralliset rahoitushaut",
+    "{count} published call/topic records. ": "Julkaistuja haku- tai teematietueita: {count}. ",
+    "Statuses are checked locally against official labels and dates. Date-only boundaries remain conservative; snapshots older than six hours become unknown. Refresh explicitly.": "Tilat tarkistetaan paikallisesti virallisten merkintöjen ja päivämäärien perusteella. Epätarkat aikarajat käsitellään varovaisesti. Yli kuusi tuntia vanhan tilannekuvan tila on tuntematon. Päivitä käynnistämällä uusi haku.",
+    "Sorted by local research relevance, then score, then status. High/Medium/Low describe wording overlap, never eligibility or a funding probability. All categories and statuses are included by default. Ranking covers this retrieved window, not every EU call.": "Järjestys perustuu paikalliseen vastaavuuteen, pisteisiin ja tilaan. Vahva/kohtalainen/heikko kuvaavat sanaston vastaavuutta, eivät kelpoisuutta tai rahoituksen todennäköisyyttä. Kaikki luokat ja tilat ovat oletuksena mukana. Arvio koskee vain haettuja tietueita.",
+    "No High or Medium relevance found in this snapshot. Low and unmatched records remain available; try the official sources and programme guides for wider research.": "Tilannekuvasta ei löytynyt vahvaa tai kohtalaista vastaavuutta. Heikot ja arvioimattomat tulokset ovat saatavilla. Laajenna tutkimusta virallisissa lähteissä ja ohjelmaoppaissa.",
+    "Relevance": "Vastaavuus", "Funding programme": "Rahoitusohjelma", "Call status": "Haun tila",
+    "High": "Vahva", "Medium": "Kohtalainen", "Low": "Heikko", "Insufficient Information": "Tiedot eivät riitä",
+    "Limited": "Rajallinen", "Moderate": "Kohtalainen", "Stronger": "Vahvempi",
+    "open": "avoin", "upcoming": "tuleva", "closed": "päättynyt", "unknown": "tuntematon",
+    "Open": "Avoin", "Upcoming": "Tuleva", "Closed": "Päättynyt", "Unknown": "Tuntematon",
+    "{count} relevance": "Vastaavuus: {count}",
+    "Showing {shown} of {total} retrieved records. All relevance levels remain available in the filters.": "Näytetään {shown}/{total} haettua tietuetta. Kaikki vastaavuusluokat ovat valittavissa suodattimissa.",
+    "No calls match these filters. Include Low, Insufficient Information or other statuses/programmes to see more records.": "Mikään haku ei vastaa suodattimia. Valitse myös heikot tai arvioimattomat tulokset tai muita tiloja ja ohjelmia.",
+    "Inspect a live call": "Tarkastele rahoitushakua", "Local relevance score: {score}/100": "Paikallinen vastaavuuspisteytys: {score}/100",
+    "Local relevance score: not assigned — insufficient evidence": "Vastaavuuspisteitä ei annettu — tiedot eivät riitä",
+    "Matching confidence: {level}. A heuristic evidence assessment, not confirmed eligibility.": "Vastaavuusarvion varmuus: {level}. Sääntöpohjainen tiedon arvio, ei vahvistettu kelpoisuus.",
+    "Programme: {programme}": "Ohjelma: {programme}", "Official identifier: {id}": "Virallinen tunniste: {id}",
+    "Current status: {status}": "Nykyinen tila: {status}", "Opening: {date}": "Avautuminen: {date}", "Deadline: {date}": "Määräaika: {date}",
+    " (date only; exact time/timezone unverified)": " (vain päivämäärä; tarkka aika ja aikavyöhyke varmistamatta)",
+    "Official call page": "Virallinen hakusivu", "Call record retrieved: {time}": "Hakutietue haettu: {time}",
+    "Official-source reference matches a supported retrieval adapter; availability is not rechecked on reruns.": "Lähdeviite vastaa tuettua virallista hakurajapintaa. Saatavuutta ei tarkisteta uudelleen käyttöliittymän päivittyessä.",
+    "Official-source reference unconfirmed. This record is not verified.": "Virallista lähdeviitettä ei ole varmistettu. Tietue ei ole varmennettu.",
+    "Local comparison and requirements to check": "Paikallinen vertailu ja tarkistettavat vaatimukset",
+    "How this local match was calculated": "Miten paikallinen vastaavuus laskettiin",
+    "Rule version 1: theme coverage (up to 80), named geography (-5 to 10), explicit partner-type wording (-5 to 10). Target groups do not establish an applicant type.": "Säännöstö 1: teemojen kattavuus (enintään 80), nimetyt alueet (-5–10) ja kumppanityyppien sanasto (-5–10). Kohderyhmistä ei päätellä hakijatyyppiä.",
+    "Theme points: {theme}; geography points: {geo}; partner-type points: {partner}. Total is bounded to 0–100.": "Teemapisteet: {theme}; aluepisteet: {geo}; kumppanityypin pisteet: {partner}. Yhteispisteet rajataan välille 0–100.",
+    "Core idea and concept objectives weigh twice target-group-only themes. Call title evidence weighs 1; objectives excerpt weighs 0.8. Broad digital/research/innovation words alone cannot produce Medium or High relevance.": "Idean ja konseptin tavoitteiden paino on kaksinkertainen pelkkiin kohderyhmäteemoihin verrattuna. Hakunimen paino on 1, tavoiteotteen 0,8. Yleiset digitaalisuus-, tutkimus- tai innovaatiosanat eivät yksin tuota kohtalaista tai vahvaa vastaavuutta.",
+    "Known non-art phrases such as state-of-the-art and innovation culture are ignored for cultural matching. An unsupported specialist title without a specific shared title theme caps theme points at 24.": "Ilmaisut kuten state-of-the-art ja innovation culture eivät osoita kulttuurialan vastaavuutta. Hankkeelle vieras erikoisalan hakunimi rajaa teemapisteet 24:ään, ellei nimessä ole yhteistä erityisteemaa.",
+    "High requires at least 55 theme points and two specific shared themes; Medium requires at least 25 and one specific theme. Missing descriptions or differing named conditions cap High at Medium. Missing/unconfirmed evidence can leave a record unscored.": "Vahva vastaavuus edellyttää vähintään 55 teemapistettä ja kahta yhteistä erityisteemaa; kohtalainen vähintään 25 pistettä ja yhtä erityisteemaa. Puuttuvat kuvaukset tai poikkeavat nimetyt ehdot rajaavat tason kohtalaiseksi. Riittämättömät tai varmistamattomat tiedot voivat estää pisteytyksen.",
+    "Shared vocabulary topics: {topics}": "Yhteiset sanastoteemat: {topics}", "No overlap detected": "Ei havaittua vastaavuutta",
+    "Topics overlap in the saved idea and call title/objectives. This does not establish suitability or eligibility.": "Teemoja esiintyy sekä tallennetussa ideassa että haun nimessä tai tavoitteissa. Tämä ei vahvista soveltuvuutta tai kelpoisuutta.",
+    "Source excerpts may be incomplete. Verify all requirements and exact submission deadlines in the official call documents.": "Lähdeotteet voivat olla puutteellisia. Tarkista kaikki vaatimukset ja tarkat määräajat virallisista hakuasiakirjoista.",
+    "Objectives & applicant information": "Tavoitteet ja hakijatiedot", "Funding objectives / source excerpt": "Rahoituksen tavoitteet / lähdeote",
+    "Geographical area": "Maantieteellinen alue", "Applicant requirements / source excerpt": "Hakijavaatimukset / lähdeote",
+    "Unknown — check the official call documents.": "Tuntematon — tarkista viralliset hakuasiakirjat.",
+    "Source evidence & original dates": "Lähdetiedot ja alkuperäiset päivämäärät", "Parent call identifier: {id}": "Ylemmän haun tunniste: {id}",
+    "Published source status: {status}": "Lähteen julkaisema tila: {status}", "Opening source value": "Avautumisen lähdearvo", "Deadline source value": "Määräajan lähdearvo",
+    "Retrieved source evidence": "Haettu lähdeaineisto", "Original retrieval timestamp: {time}": "Alkuperäinen hakuaikaleima: {time}", "Source updated: {date}": "Lähde päivitetty: {date}",
+    "General programme suggestions": "Yleiset ohjelmaehdotukset",
+    "Retrieve public programme page descriptions online": "Hae julkiset ohjelmasivujen kuvaukset verkosta",
+    "Requests four fixed official pages, with no project text or search terms. May take about 20 seconds on timeouts.": "Hakee neljä ennalta määritettyä virallista sivua ilman hanketekstiä tai hakusanoja. Aikakatkaisut voivat kestää noin 20 sekuntia.",
+    "Find Funding Opportunities": "Etsi rahoitusmahdollisuuksia", "Loading official programme guidance and comparing locally...": "Ladataan virallisia ohjelmatietoja ja verrataan paikallisesti...",
+    "Choose Find Funding Opportunities to compare the saved idea with programme guidance.": "Valitse Etsi rahoitusmahdollisuuksia vertaillaksesi ideaa ohjelmatietoihin.",
+    "Programme guidance only — these general suggestions contain no verified current calls. Call titles, dates and open/closed status are unknown. General guidance was checked on 8 November 2026 and may become outdated.": "Vain ohjelmatietoa — yleiset ehdotukset eivät sisällä varmennettuja ajantasaisia hakuja. Hakujen nimet, päivämäärät ja tilat ovat tuntemattomia. Yleiset tiedot tarkistettiin 8.11.2026 ja ne voivat vanhentua.",
+    "Comparison uses a small English/Finnish topic vocabulary locally. Shared topics are research clues, not scores. Geography, applicant conditions and partnerships require manual checking. Results last only for this app session.": "Vertailu käyttää paikallista pientä suomen- ja englanninkielistä teemasanastoa. Yhteiset teemat ovat tutkimusvihjeitä, eivät pisteitä. Alueet, hakijaehdot ja kumppanuudet on tarkistettava käsin. Tulokset säilyvät vain tämän istunnon ajan.",
+    "Programme": "Ohjelma", "Shared topics": "Yhteiset teemat", "No vocabulary overlap detected": "Sanastovastaavuutta ei havaittu",
+    "Programme guide · call details unknown": "Ohjelmaopas · haun tiedot tuntemattomia", "Official calls / funding source": "Viralliset haut / rahoituslähde",
+    "Offline guide": "Paikallinen opas", "Page description retrieved": "Sivukuvaus haettu", "Live description unavailable": "Verkkokuvaus ei saatavilla",
+    "Guidance checked {date} · {state}": "Ohjelmatiedot tarkistettu {date} · {state}",
+    "Programme details & evidence": "Ohjelman tiedot ja lähteet", "Call title: {title}": "Haun nimi: {title}",
+    "Unknown — no individual call retrieved": "Tuntematon — yksittäistä hakua ei haettu",
+    "Application dates: {dates}": "Hakuajat: {dates}", "Unknown — check the official call": "Tuntematon — tarkista virallinen haku",
+    "Call status: {status}": "Haun tila: {status}", "Objectives and priorities": "Tavoitteet ja painopisteet",
+    "Geographic scope to check": "Tarkistettava alueellinen rajaus", "Applicant requirements to check": "Tarkistettavat hakijavaatimukset",
+    "General guidance verified: {date}": "Yleiset ohjelmatiedot tarkistettu: {date}", "Guidance source {number}": "Ohjelmatietojen lähde {number}",
+    "Page description retrieved: {time}": "Sivukuvaus haettu: {time}", "Retrieved programme page": "Haettu ohjelmasivu",
+    "Page metadata only; it does not update or verify the guidance or call conditions above.": "Vain sivun metatietoja; ne eivät päivitä tai vahvista yllä olevia ohjelmatietoja tai hakuehtoja.",
+    "Live programme page description unavailable. Showing reviewed guidance and official links.": "Ohjelmasivun verkkokuvaus ei ole saatavilla. Näytetään tarkistetut ohjelmatiedot ja viralliset linkit.",
+    "Live retrieval not requested. Showing reviewed guidance and official links.": "Verkkohakua ei pyydetty. Näytetään tarkistetut ohjelmatiedot ja viralliset linkit.",
+    "Source text is shown in its original language and is not automatically translated.": "Lähdeteksti näytetään alkuperäisellä kielellä eikä sitä käännetä automaattisesti.",
+}
+
+
+TRANSLATIONS.update({
+    "Objective": "Tavoite", "Activity": "Toimenpide", "Result": "Tulos", "Indicator": "Mittari",
+    "objective": "tavoite", "activity": "toimenpide", "result": "tulos", "indicator": "mittari",
+    "{kind} identifier {id} is used {count} times.": "{kind}: tunnistetta {id} käytetään {count} kertaa.",
+    "{kind} {id} links to {target} {reference} {count} times.": "{kind} {id}: viittaus kohteeseen {target} {reference} esiintyy {count} kertaa.",
+    "{kind} {id} refers to {target} {reference}, which is not defined in this concept.": "{kind} {id} viittaa kohteeseen {target} {reference}, jota ei ole määritelty tässä konseptissa.",
+    "Activity {id} is not linked from an expected result.": "Toimenpiteeseen {id} ei viitata odotetuista tuloksista.",
+    "Activity {id} is not linked to an objective.": "Toimenpidettä {id} ei ole liitetty tavoitteeseen.",
+    "Indicator {id} is not linked to a result.": "Mittaria {id} ei ole liitetty tulokseen.",
+    "Objective {id} has no activity linked to it.": "Tavoitteeseen {id} ei ole liitetty toimenpidettä.",
+    "Result {id} has no proposed indicator linked to it.": "Tulokseen {id} ei ole liitetty mittaria.",
+    "Result {id} is not linked to an activity.": "Tulosta {id} ei ole liitetty toimenpiteeseen.",
+    "Snapshot is stale or its retrieval time is inconsistent; search again explicitly.": "Tilannekuva on vanhentunut tai hakuaika on ristiriitainen. Käynnistä uusi haku.",
+    "Published dates are outside the supported calendar range; verify the official source.": "Julkaistut päivämäärät ovat tuetun kalenterialueen ulkopuolella. Tarkista virallinen lähde.",
+    "The published date range is inconsistent.": "Julkaistu ajanjakso on ristiriitainen.",
+    "The official source explicitly reports this call closed.": "Virallinen lähde ilmoittaa haun päättyneeksi.",
+    "The published deadline has passed, including date/timezone uncertainty.": "Julkaistu määräaika on ohitettu myös päivä- ja aikavyöhyke-epävarmuus huomioiden.",
+    "The official open label conflicts with the future opening date.": "Lähteen avoin-merkintä on ristiriidassa tulevan avautumispäivän kanssa.",
+    "The published opening date is in the future.": "Julkaistu avautumispäivä on tulevaisuudessa.",
+    "Official open status agrees with the published date window.": "Virallinen avoin-tila vastaa julkaistua hakuaikaa.",
+    "Missing/conflicting information or a date boundary prevents confirming current status.": "Puuttuvat tai ristiriitaiset tiedot tai epävarma aikaraja estävät nykyisen tilan varmistamisen.",
+    "Thematic overlap in title/objectives: {topics}.": "Yhteiset teemat nimessä tai tavoitteissa: {topics}.",
+    "none detected by these rules": "näillä säännöillä ei havaittu yhteisiä teemoja",
+    "{label} wording overlaps: {terms}. This does not confirm eligibility.": "{label}: yhteistä sanastoa: {terms}. Tämä ei vahvista kelpoisuutta.",
+    "{label}: official information is missing; no compatibility assumed.": "{label}: virallinen tieto puuttuu; yhteensopivuutta ei oleteta.",
+    "{label}: source text contains exclusions; check the full conditions manually.": "{label}: lähteessä on rajauksia; tarkista kaikki ehdot käsin.",
+    "{label}: named categories differ; manual checking is required, not an exclusion decision.": "{label}: nimetyt luokat poikkeavat; tarkista käsin. Tämä ei ole hylkäyspäätös.",
+    "{label}: insufficient recognised wording for comparison; no compatibility assumed.": "{label}: tunnistettua sanastoa ei ole riittävästi vertailuun; yhteensopivuutta ei oleteta.",
+    "Named region": "Nimetty alue", "Partner type": "Kumppanityyppi",
+    "Only broad digital/research/innovation wording overlaps; theme points are capped at 24 (Low).": "Vain yleistä digitaalisuus-, tutkimus- tai innovaatiosanastoa on yhteistä. Teemapisteet rajataan 24:ään (heikko).",
+    "Call title focuses on {themes}, absent from the project's recognised themes. Incidental overlaps need careful checking.": "Haun nimi painottuu teemoihin {themes}, joita hankkeesta ei tunnistettu. Satunnaiset vastaavuudet on tarkistettava huolellisesti.",
+    "No specific shared theme in this specialist title; theme points are capped at 24 (Low).": "Erikoisalan hakunimessä ei ole yhteistä erityisteemaa. Teemapisteet rajataan 24:ään (heikko).",
+    "Applicant organisation type is unspecified; target groups are not treated as applicants.": "Hakijaorganisaation tyyppiä ei ole määritelty. Kohderyhmiä ei tulkita hakijoiksi.",
+    "Official applicant requirements are missing; no applicant compatibility assumed.": "Viralliset hakijavaatimukset puuttuvat. Hakijan soveltuvuutta ei oleteta.",
+    "Applicant/legal status, partnerships and full geographical conditions still require human verification.": "Hakijan oikeudellinen asema, kumppanuudet ja kaikki alueelliset ehdot edellyttävät ihmisen tarkistusta.",
+    "A substantive objectives/description excerpt is missing; title-only clues cannot receive High relevance.": "Riittävä tavoite- tai kuvausote puuttuu. Pelkkä hakunimi ei voi saada vahvaa vastaavuutta.",
+    "Official source reference could not be confirmed against a supported adapter. This record is not verified or scored.": "Virallista lähdeviitettä ei voitu vahvistaa tuetusta rajapinnasta. Tietuetta ei ole varmennettu eikä pisteytetty.",
+    "Official source reference is unconfirmed; published facts require checking.": "Virallinen lähdeviite on varmistamatta. Julkaistut tiedot on tarkistettava.",
+    "No project themes were recognised by the small English/Finnish vocabulary.": "Pieni suomen- ja englanninkielinen sanasto ei tunnistanut hankkeen teemoja.",
+    "Current call status is unknown: {reason}": "Haun nykyinen tila on tuntematon: {reason}",
+    "culture & creative work": "kulttuuri ja luovat alat", "skills & learning": "osaaminen ja oppiminen",
+    "community development": "yhteisöjen kehittäminen", "inclusion": "osallisuus", "employment": "työllisyys",
+    "tourism": "matkailu", "climate & environment": "ilmasto ja ympäristö", "energy": "energia", "health": "terveys",
+    "manufacturing": "valmistava teollisuus", "agriculture": "maatalous", "digital": "digitaalisuus", "research": "tutkimus", "innovation": "innovaatiot",
+    "skills": "osaaminen", "culture": "kulttuuri", "green transition": "vihreä siirtymä", "international growth": "kansainvälinen kasvu", "cross-border": "rajat ylittävä yhteistyö",
+    "Finland": "Suomi", "Sweden": "Ruotsi", "Norway": "Norja", "Denmark": "Tanska", "Estonia": "Viro", "Germany": "Saksa",
+    "Lapland": "Lappi", "North Ostrobothnia": "Pohjois-Pohjanmaa", "non-profit/NGO": "yleishyödyllinen järjestö", "university": "korkeakoulu", "SME": "pk-yritys", "SMEs": "pk-yritykset", "public authority": "julkinen toimija",
+    "Live source unavailable or its response could not be verified. Use the official link and programme guidance.": "Ajantasainen lähde ei ole saatavilla tai vastausta ei voitu varmentaa. Käytä virallista linkkiä ja ohjelmatietoja.",
+    "Interreg Aurora: {reason}": "Interreg Aurora: {reason}",
+    "EURA 2021: live call retrieval is unavailable in this version; see the official calls link and general guidance.": "EURA 2021: ajantasaisia hakuja ei haeta tässä versiossa. Katso virallinen hakulinkki ja yleiset ohjelmatiedot.",
+    "Business Finland: public pages were verified, but call-level parsing/pagination are not integrated; use the official source.": "Business Finland: julkiset sivut tarkistettiin, mutta hakukohtaista jäsentämistä ja sivutusta ei ole toteutettu. Käytä virallista lähdettä.",
+    "Official timetable information may be indicative. Detailed call terms and priority restrictions prevail.": "Virallinen aikataulu voi olla suuntaa antava. Tarkat hakuehdot ja painopisterajaukset ratkaisevat.",
+    "Applicant categories and geographical coverage are source information, not an eligibility assessment.": "Hakijaluokat ja alueellinen kattavuus ovat lähdetietoa, eivät kelpoisuusarvio.",
+    "An opening/deadline date is missing or invalid; verify the call page.": "Avautumis- tai määräaika puuttuu tai on virheellinen. Tarkista hakusivu.",
+    "Calendar dates have no verified deadline time or timezone.": "Päivämäärille ei ole varmistettu tarkkaa määräaikaa tai aikavyöhykettä.",
+    "Source update date is missing or invalid.": "Lähteen päivityspäivä puuttuu tai on virheellinen.",
+    "skipped a malformed timetable row.": "Virheellinen aikataulurivi ohitettiin.",
+    "skipped a record that failed structured validation.": "Rakenteen validoinnissa hylätty tietue ohitettiin.",
+    "skipped a row without an official title/identifier.": "Rivi ilman virallista nimeä tai tunnistetta ohitettiin.",
+    "omitted a conflicting duplicate call identifier.": "Ristiriitainen kaksoistunniste jätettiin pois.",
+    "timetable row limit reached; results are partial.": "Aikataulun riviraja saavutettiin; tulokset ovat osittaiset.",
+    "EU Portal page {number} unavailable ({reason}); earlier verified results, if any, are retained. Use the official Portal link to check other calls.": "EU-portaalin sivu {number} ei ole saatavilla ({reason}). Aiemmin varmennetut tulokset säilytetään. Tarkista muut haut virallisesta portaalista.",
+    "network, TLS, HTTP or protocol error": "verkko-, TLS-, HTTP- tai protokollavirhe", "invalid response contract": "virheellinen vastausrakenne",
+    "EU Portal page {number}: an unverified or malformed record was skipped.": "EU-portaalin sivu {number}: varmistamaton tai virheellinen tietue ohitettiin.",
+    "EU Portal repeated a topic across results; the duplicate was omitted.": "EU-portaali toisti hakuteeman; kaksoistietue jätettiin pois.",
+    "EU Portal result count changed during pagination; this is an incomplete snapshot.": "EU-portaalin tulosmäärä muuttui sivutuksen aikana. Tilannekuva on puutteellinen.",
+    "EU Portal returned conflicting evidence for a repeated topic; all versions of that topic were omitted.": "EU-portaalissa oli toistetulle teemalle ristiriitaisia tietoja. Kaikki sen versiot jätettiin pois.",
+    "EU Portal returned no calls for the fixed Horizon Europe open-topic filter.": "EU-portaali ei palauttanut hakuja ennalta määritetyllä avoimien Horisontti Eurooppa -teemojen suodattimella.",
+    "EU Portal returned service warnings; result completeness is unverified.": "EU-portaali palautti palveluvaroituksia. Tulosten kattavuutta ei ole varmistettu.",
+    "EU Portal search is limited to the first {pages} pages ({count} records); additional source results were not retrieved.": "EU-portaalihaku on rajattu {pages} ensimmäiseen sivuun ({count} tietuetta). Muita lähteen tuloksia ei haettu.",
+    "Geographic eligibility was not extracted; verify countries and applicant conditions on the official topic page.": "Alueellista kelpoisuutta ei poimittu. Tarkista maat ja hakijaehdot viralliselta teemasivulta.",
+    "API condition text is guidance for manual checking, not a confirmed eligibility assessment.": "Rajapinnan ehtoteksti tukee käsin tehtävää tarkistusta. Se ei ole vahvistettu kelpoisuusarvio.",
+    "Parent call identifier was unavailable or ambiguous.": "Ylemmän haun tunniste ei ollut saatavilla tai se oli epäselvä.",
+    "Funding objectives": "Rahoituksen tavoitteet", "Applicant conditions": "Hakijaehdot", "Opening date": "Avautumispäivä", "Application deadline": "Haun määräaika",
+    "{field} are a shortened excerpt; read the complete official topic page.": "{field}: lyhennetty ote. Lue koko virallinen teemasivu.",
+    "{field} could not be parsed with verified date/time precision.": "{field}: arvoa ei voitu jäsentää varmennetulla aikataulutarkkuudella.",
+    "{field} could not be safely extracted from the source markup.": "{field}: tietoa ei voitu poimia turvallisesti lähteen merkkauskielestä.",
+    "{field} is date-only; the API midnight value does not verify a deadline time or timezone.": "{field}: vain päivämäärä. Rajapinnan keskiyöarvo ei varmista määräajan kellonaikaa tai aikavyöhykettä.",
+    "{field} is missing or has multiple values; no stage or date was selected automatically.": "{field}: tieto puuttuu tai arvoja on useita. Vaihetta tai päivämäärää ei valittu automaattisesti.",
+    "{field} were empty in the API response.": "{field}: rajapinnan vastaus oli tyhjä.",
+    "{field} were not available as one verified API field.": "{field}: tietoa ei saatu yhtenä varmistettuna rajapintakenttänä.",
+    "Programme guidance only; no individual call has been retrieved or verified.": "Vain ohjelmatietoa; yksittäistä hakua ei ole haettu tai varmennettu.",
+    "Check current call terms, dates, geographical coverage and applicant conditions at the official source.": "Tarkista ajantasaiset hakuehdot, päivämäärät, alueet ja hakijavaatimukset virallisesta lähteestä.",
+    "Network, certificate or HTTP access failed; open the official source manually.": "Verkko-, varmenne- tai HTTP-yhteys epäonnistui. Avaa virallinen lähde itse.",
+    "No usable programme description; the page may require JavaScript.": "Käyttökelpoista ohjelmakuvausta ei löytynyt. Sivu voi vaatia JavaScriptin.",
+    "Source redirected; open its official link manually.": "Lähde ohjasi toiselle sivulle. Avaa virallinen linkki itse.",
+    "Only the fixed official programme pages may be retrieved.": "Vain ennalta määritetyt viralliset ohjelmasivut voidaan hakea.",
+    "Source did not return an HTML programme page.": "Lähde ei palauttanut HTML-muotoista ohjelmasivua.",
+    "Source page exceeds the retrieval size limit.": "Lähdesivu ylittää haun kokorajan.",
+    "Decoded source page exceeds the retrieval size limit.": "Purettu lähdesivu ylittää haun kokorajan.",
+    "Source uses an unsupported content encoding.": "Lähde käyttää tiedostokoodausta, jota ei tueta.",
+    "Source page could not be decoded using its declared text encoding.": "Lähdesivua ei voitu lukea ilmoitetulla tekstikoodauksella.",
+    "Source returned an invalid compressed page.": "Lähde palautti virheellisen pakatun sivun.",
+})
+
+
+def language_code(value: str) -> str:
+    return value if value in LANGUAGES else "en"
+
+
+def translate(message: str, language: str = "en", **values) -> str:
+    result = TRANSLATIONS.get(message, message) if language_code(language) == "fi" else message
+    return result.format(**values) if values else result
+
+
+@lru_cache(maxsize=1)
+def _templates():
+    templates = []
+    for english, finnish in TRANSLATIONS.items():
+        parts, names = [], set()
+        for literal, name, _, _ in Formatter().parse(english):
+            parts.append(re.escape(literal))
+            if name:
+                parts.append(f"(?P<{name}>.*?)" if name not in names else f"(?P={name})")
+                names.add(name)
+        if names:
+            templates.append((re.compile("".join(parts), re.DOTALL), finnish))
+    return templates
+
+
+def localize(message: str, language: str = "en", *, system_values: bool = False) -> str:
+    """Localize a known UI message; raw project/source text must bypass this.
+
+    Template captures are unchanged by default. Only engine-generated label
+    values (never user text) may opt into dictionary translation.
+    """
+    if language_code(language) == "en":
+        return message
+    if message in TRANSLATIONS:
+        return TRANSLATIONS[message]
+    for prefix, suffix in (("#### ", ""), ("**", "**")):
+        if message.startswith(prefix) and (not suffix or message.endswith(suffix)):
+            inner = message[len(prefix):len(message) - len(suffix) if suffix else None]
+            return prefix + localize(inner, language, system_values=system_values) + suffix
+    for pattern, finnish in _templates():
+        match = pattern.fullmatch(message)
+        if match:
+            values = match.groupdict()
+            if system_values:
+                translated = {}
+                for key, value in values.items():
+                    whole = localize(value, language)
+                    translated[key] = whole if whole != value else ", ".join(
+                        localize(term, language) for term in value.split(", "))
+                values = translated
+            return finnish.format(**values)
+    return message

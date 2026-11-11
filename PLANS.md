@@ -203,6 +203,12 @@ These are **proposed** tasks/PRs, not existing pull requests. A task may span mu
 
 **Acceptance:** A representative near-one-page fixture fits on one page without font shrinking; page-boundary tests keep each fitting indicator/measurement together; longer documents and oversized paragraphs paginate without loss/overflow. Generate and visually inspect fictional one- and two-page PDFs. Complete offline suite and whitespace checks pass. Preserve schemas, prompts, SQLite, funding, UI and other functionality; no dependency or Git publication changes. Owner reviews before committing.
 
+### Finnish / English interface and concept generation (approved 11 Nov)
+
+**Scope / files:** Central `hankeluotsi/i18n.py`, application/presentation labels and a top-right Suomi/English selector, minimal per-request output-language instruction in the existing concept input, localized PDF labels, focused CSS, fictional fixtures/tests and documentation. Preserve the staged PDF-layout work and Git index. No schema, repository, stored-record, funding-rule/adapter, provider or base prompt-template changes; no cloud translation, dependencies or Git publication.
+
+**Contract / acceptance:** Interface language lives only in Streamlit session state. Locale-specific dropdown widgets carry canonical selections across switches, retaining project IDs and cached call/filter values without source/model requests. Saved text and official funding source excerpts remain original. New generation requests selected-language human text with unchanged JSON keys, schema version and O/A/R/I IDs, using the existing local client and strict validation. PDF headings/disclaimer/footer follow the chosen interface language; body text is preserved. Both locales, switching, approved-record preservation, invalid model keys, cached funding and PDF rendering pass offline tests; verify both in a real browser, including mobile selector visibility. Preserve all staged changes and report limitations before owner review.
+
 ## F. Evaluation rubric (write before scenario execution)
 
 Score each dimension **1–5** and record short evidence; these are educational judgments, not objective funding eligibility scores.

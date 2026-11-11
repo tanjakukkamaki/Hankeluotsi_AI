@@ -24,6 +24,7 @@ from reportlab.platypus import (
 )
 
 from hankeluotsi.schemas import ConceptPaper
+from hankeluotsi.i18n import language_code, translate
 
 
 DISCLAIMER = (
@@ -146,7 +147,7 @@ def _text_entry(value: str, styles) -> Paragraph:
 
 
 def _linked_entry(identifier: str, description: str, relation_label: str | None, related_ids, styles,
-                  *, measurement_method: str | None = None):
+                  *, measurement_method: str | None = None, language: str = "en"):
     reference = f" <font color='{MUTED.hexval()}'>{escape(relation_label)}: {escape(', '.join(related_ids))}</font>" if relation_label else ""
     label = Paragraph(
         f"<font name='HankeVera-Bold' color='{ACCENT.hexval()}'>{escape(identifier)}</font>{reference}",
@@ -156,7 +157,7 @@ def _linked_entry(identifier: str, description: str, relation_label: str | None,
     body = Paragraph(_paragraph_text(description), styles["HankeEntry"])
     entries = [label, body]
     if measurement_method is not None:
-        method_label = Paragraph("Measurement method", styles["HankeEntry"])
+        method_label = Paragraph(translate("Measurement method", language), styles["HankeEntry"])
         method_label.keepWithNext = True
         entries.extend([method_label, Paragraph(_paragraph_text(measurement_method), styles["HankeEntry"])])
     # Ordinary entries move as a single block. ReportLab can still split an
@@ -172,13 +173,16 @@ def _draw_page(canvas, document) -> None:
     canvas.line(20 * mm, 15 * mm, page_width - 20 * mm, 15 * mm)
     canvas.setFont("HankeVera", 8)
     canvas.setFillColor(MUTED)
-    canvas.drawRightString(page_width - 20 * mm, 9.5 * mm, f"Page {document.page}")
+    canvas.drawRightString(page_width - 20 * mm, 9.5 * mm, translate("Page {number}", getattr(document, "ui_language", "en"), number=document.page))
     canvas.restoreState()
 
 
-def generate_concept_pdf(project_title: str, concept: ConceptPaper) -> bytes:
+def generate_concept_pdf(project_title: str, concept: ConceptPaper, *, language: str = "en") -> bytes:
     """Render a validated concept paper as an in-memory A4 PDF."""
     _register_fonts()
+    language = language_code(language)
+    def label(text: str) -> str:
+        return translate(text, language)
     styles = _styles()
     buffer = BytesIO()
     document = SimpleDocTemplate(
@@ -190,15 +194,16 @@ def generate_concept_pdf(project_title: str, concept: ConceptPaper) -> bytes:
         bottomMargin=18 * mm,
         title=project_title,
         author="HankeLuotsi AI",
-        subject="AI-generated concept paper",
+        subject=label("AI-generated concept paper"),
     )
+    document.ui_language = language
     story: list[Flowable] = [
         Paragraph(_paragraph_text(project_title), styles["HankeTitle"]),
-        Paragraph("Concept paper", styles["HankeSubtitle"]),
+        Paragraph(label("Concept paper"), styles["HankeSubtitle"]),
         HRFlowable(width="100%", thickness=1, color=ACCENT, spaceAfter=3 * mm),
     ]
     disclaimer = Table(
-        [[Paragraph(_paragraph_text(DISCLAIMER), styles["HankeDisclaimer"])]],
+        [[Paragraph(_paragraph_text(label(DISCLAIMER)), styles["HankeDisclaimer"])]],
         colWidths=[document.width],
     )
     disclaimer.setStyle(
@@ -215,10 +220,10 @@ def generate_concept_pdf(project_title: str, concept: ConceptPaper) -> bytes:
     )
     story.extend([disclaimer, Spacer(1, 1.5 * mm)])
 
-    _section(story, "Background", [_text_entry(concept.background_need, styles)], styles)
+    _section(story, label("Background"), [_text_entry(concept.background_need, styles)], styles)
     _section(
         story,
-        "Objectives",
+        label("Objectives"),
         [
             _linked_entry(objective.id, objective.description, None, (), styles)
             for objective in concept.objectives
@@ -227,18 +232,18 @@ def generate_concept_pdf(project_title: str, concept: ConceptPaper) -> bytes:
     )
     _section(
         story,
-        "Target groups",
+        label("Target groups"),
         [_text_entry(group, styles) for group in concept.target_groups],
         styles,
     )
     _section(
         story,
-        "Activities",
+        label("Activities"),
         [
             _linked_entry(
                 activity.id,
                 activity.description,
-                "Linked objectives",
+                label("Linked objectives"),
                 activity.objective_ids,
                 styles,
             )
@@ -248,12 +253,12 @@ def generate_concept_pdf(project_title: str, concept: ConceptPaper) -> bytes:
     )
     _section(
         story,
-        "Expected results",
+        label("Expected results"),
         [
             _linked_entry(
                 result.id,
                 result.description,
-                "Linked activities",
+                label("Linked activities"),
                 result.activity_ids,
                 styles,
             )
@@ -267,22 +272,23 @@ def generate_concept_pdf(project_title: str, concept: ConceptPaper) -> bytes:
             _linked_entry(
                 indicator.id,
                 indicator.description,
-                "Linked results",
+                label("Linked results"),
                 indicator.result_ids,
                 styles,
                 measurement_method=indicator.measurement_method,
+                language=language,
             )
         )
-    _section(story, "Indicators", indicator_entries, styles)
+    _section(story, label("Indicators"), indicator_entries, styles)
 
     assumptions = [
         _text_entry(item, styles) for item in concept.assumptions
-    ] or [Paragraph("None provided.", styles["HankeEmpty"])]
-    _section(story, "Assumptions", assumptions, styles)
+    ] or [Paragraph(label("None provided."), styles["HankeEmpty"])]
+    _section(story, label("Assumptions"), assumptions, styles)
     questions = [
         _text_entry(item, styles) for item in concept.open_questions
-    ] or [Paragraph("None provided.", styles["HankeEmpty"])]
-    _section(story, "Open questions", questions, styles)
+    ] or [Paragraph(label("None provided."), styles["HankeEmpty"])]
+    _section(story, label("Open questions"), questions, styles)
 
     document.build(story, onFirstPage=_draw_page, onLaterPages=_draw_page)
     return buffer.getvalue()

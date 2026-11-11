@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "background_need": "Kuvitteelliset taideyhdistykset tarvitsevat tukea digitaalisten työvälineiden käyttöön. Harjoittelu tukee yhteisöjen arkea ja osallistumista.",
+  "objectives": [
+    {"id": "O1", "description": "Osallistujat osaavat valita yhden saavutettavan digitaalisen työvälineen arjen tehtävään."},
+    {"id": "O2", "description": "Kuvitteelliset yhdistykset laativat suunnitelman opitun toimintatavan jatkamisesta."}
+  ],
+  "target_groups": ["Kuvitteellisten taideyhdistysten työntekijät ja vapaaehtoiset"],
+  "preliminary_activities": [
+    {"id": "A1", "description": "Järjestetään ohjattu työpaja kuvitteellisilla tapahtumatiedoilla.", "objective_ids": ["O1"]},
+    {"id": "A2", "description": "Harjoitellaan työvälineen käyttöä saavutettavassa vertaisryhmässä.", "objective_ids": ["O1", "O2"]},
+    {"id": "A3", "description": "Laaditaan lyhyt jatkosuunnitelma ja sovitaan seurantatapaaminen.", "objective_ids": ["O2"]}
+  ],
+  "expected_results": [
+    {"id": "R1", "description": "Osallistujat näyttävät yhden opitun digitaalisen tehtävän käytännössä.", "activity_ids": ["A1", "A2"]},
+    {"id": "R2", "description": "Yhdistyksillä on toteuttamiskelpoinen jatkosuunnitelma.", "activity_ids": ["A3"]}
+  ],
+  "proposed_indicators": [
+    {"id": "I1", "description": "Osallistujien määrä, jotka suorittavat sovitun käytännön tehtävän.", "result_ids": ["R1"], "measurement_method": "Lasketaan työpajojen lopussa täytetyt havainnointilistat."},
+    {"id": "I2", "description": "Yhdistysten määrä, joilla on kirjallinen jatkosuunnitelma.", "result_ids": ["R2"], "measurement_method": "Tarkistetaan suunnitelmat yhteisellä lyhyellä tarkistuslistalla."}
+  ],
+  "assumptions": ["Kuvitteelliset osallistujat voivat varata aikaa harjoitteluun."],
+  "open_questions": ["Millaista tukea yhteisöt tarvitsevat työpajojen jälkeen?", "Miten saavutettavuus varmistetaan?"]
+}

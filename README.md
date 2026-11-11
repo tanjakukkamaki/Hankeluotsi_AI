@@ -22,6 +22,8 @@ streamlit run app.py
 
 ## Interface review
 
+Use the **Suomi / English** selector in the top-right header. English is the initial default; the choice persists during Streamlit reruns in the current session. New concept generation requests the selected language from the existing local Qwen model. Switching changes interface/PDF labels, never saved project text, JSON keys or IDs. Official funding content stays in its original language. See [bilingual support and review steps](docs/bilingual_support.md).
+
 For the completed Nordic UI, original logo, browser QA evidence and tomorrow's review checklist, see [UI verification](docs/ui_qa.md). Restart Streamlit after pulling or reviewing changes to Python modules/theme files; this avoids an old imported presentation module remaining in a long-running process. Run from the repository directory so the local theme configuration is loaded. The default database and UI assets are anchored to the project folder; an explicit `HANKELUOTSI_DB_PATH` override is respected.
 
 ## Local model setup
