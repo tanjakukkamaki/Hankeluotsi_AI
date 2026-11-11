@@ -1,0 +1,75 @@
+{
+  "version": "expert_quality_v1",
+  "scale": "1 = unusable; 2 = major revision; 3 = useful starting point; 4 = strong early concept; 5 = excellent early concept",
+  "criteria": {
+    "development_need": {
+      "title": "Understanding of the development need",
+      "anchors": {
+        "1": "Misunderstands or replaces the stated problem; repeats a desired solution without identifying a need.",
+        "2": "Mentions the topic but misses a central target-group need, constraint or ambiguity.",
+        "3": "Explains the main need and beneficiaries, with some generic wording or incomplete handling of uncertainty.",
+        "4": "Connects the specific gap, target group and context; distinguishes supplied evidence from proposed assumptions.",
+        "5": "Precisely frames causes and consequences, recognizes competing interpretations and prioritizes useful evidence/questions without inventing facts."
+      },
+      "weak_example": "The region needs innovation because innovation is important.",
+      "strong_example": "The eight fictional firms lack shared safe AI trial practices; establish their different starting skills using synthetic tasks before choosing a pilot."
+    },
+    "objectives": {
+      "title": "Clarity and measurability of objectives",
+      "anchors": {
+        "1": "No meaningful change objective, or guarantees an impossible outcome.",
+        "2": "Mostly vague ambitions or activity counts; scope/time/resources do not support the promised change.",
+        "3": "Understandable change objectives with some measurable elements, but a missing time frame or unclear baseline/target status.",
+        "4": "Specific, realistic changes with a credible measurement/time frame; proposed numeric targets are labelled provisional.",
+        "5": "Prioritized, testable objectives tightly tied to the need and stated capacity, with baseline/target reasoning and explicit decisions needed where evidence is missing."
+      },
+      "weak_example": "Make every business successful immediately.",
+      "strong_example": "During the two-month fictional pilot, volunteers demonstrate one accessible event task; agree a provisional competence target after the initial skills check."
+    },
+    "activities": {
+      "title": "Relevance and feasibility of activities",
+      "anchors": {
+        "1": "Activities do not address the need, are unsafe or are plainly impossible with the stated capacity.",
+        "2": "Generic workshops/platforms dominate; key dependencies, constraints or target-group access are ignored.",
+        "3": "Mostly relevant and plausible actions, but sequencing, capacity or accessibility remains underdeveloped.",
+        "4": "A coherent feasible sequence links activities to objectives and addresses known resources, access needs and missing decisions.",
+        "5": "An economical, well-justified pilot sequence tests critical assumptions, explains cross-border value when relevant and adapts scope honestly to uncertainty."
+      },
+      "weak_example": "Build a continent-wide platform in two weeks using one volunteer.",
+      "strong_example": "Use three guided practice sessions with the available instructor, then review a small event against a jointly agreed accessibility checklist."
+    },
+    "results_indicators": {
+      "title": "Quality of results and indicators",
+      "anchors": {
+        "1": "Results/indicators are missing, unmeasurable or unrelated to objectives; measurement methods contradict the claimed metric.",
+        "2": "Mostly counts of meetings/participants or vague improvement; little evidence of actual change or a usable method.",
+        "3": "Some outcome-oriented results and plausible indicators, but baseline, denominator, evidence or timing needs revision.",
+        "4": "Results and linked indicators describe observable change with clear definitions, methods and timing; missing baselines/targets are explicit.",
+        "5": "A proportionate evidence chain distinguishes outputs/outcomes/impact, specifies units/denominators and practical collection, and avoids unsupported attribution or invented baselines."
+      },
+      "weak_example": "Indicator: wellbeing improves a lot; method: count meetings.",
+      "strong_example": "Proportion of pilot participants completing the agreed task: successful demonstrations divided by assessed participants, measured at the final session; target agreed after baseline."
+    },
+    "coherence_usability": {
+      "title": "Overall coherence and professional usability",
+      "anchors": {
+        "1": "Contradictory or misleading plan; fabricated official rules or guarantees make it unsafe to use without rebuilding.",
+        "2": "Major gaps, unsupported assumptions or inconsistent links require substantial rewriting.",
+        "3": "Usable discussion draft with identifiable revisions; generally coherent but not yet a strong planning document.",
+        "4": "Clear professional early concept with consistent need/objectives/actions/results, explicit assumptions/questions and appropriate language.",
+        "5": "A concise decision-ready early planning concept: coherent, precise, realistic and transparent about all material unknowns; still subject to programme verification and human approval."
+      },
+      "weak_example": "This fictional project automatically meets all EU eligibility rules and is guaranteed funding.",
+      "strong_example": "This is a provisional pilot concept, not an eligibility assessment; verify partner commitment, geography, baseline and actual call requirements before proceeding."
+    }
+  },
+  "flags": {
+    "unsupported_assumptions": "Material invented baseline, partner commitment, resources or geography presented as established fact rather than a labelled proposal.",
+    "invented_funding_requirements": "Unsupported funding rate, deadline, mandatory partner rule, eligibility verdict or funding guarantee.",
+    "vague_indicators": "Unclear unit, denominator, data source or timing; activity count used as sole evidence of an outcome; inconsistent measurement method.",
+    "unrealistic_feasibility": "Ignores stated capacity or endorses deliberately impossible timing/impact promises.",
+    "language_problems": "Requested Finnish/English is not followed, meaning is unclear or substantial professional-language editing is required."
+  },
+  "review_instruction": "Score independently before unblinding. Cite field/ID evidence for scores and flags. A flag is true when the problem is present, false when checked and absent, null when not assessed. Do not infer quality from JSON validity.",
+  "proposed_usability_gate": "Owner-reviewed candidate gate: all five criteria at least 4, no flags true and no flags unassessed. This is early-concept usability, never eligibility or final application approval."
+}

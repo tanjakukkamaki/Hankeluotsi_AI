@@ -1,0 +1,131 @@
+{
+  "version": "fictional_ideas_v1",
+  "cases": [
+    {
+      "case_id": "Q01", "language": "en", "complexity": "simple",
+      "themes": ["creative industries", "cultural entrepreneurship"],
+      "idea": {
+        "title": "Fictional Northlight Creative Enterprise Lab",
+        "development_need": "Twelve fictional independent artists in the invented Northlight district lack practical pricing and customer-development skills. They have access to a shared workshop for a six-month pilot.",
+        "target_groups": ["Twelve fictional self-employed artists"],
+        "expected_change": "Participants test one realistic service offer with fictional customers and can explain its costs and value.",
+        "geography": "Fictional Northlight district in Finland",
+        "partners": ["Fictional Northlight Arts Association"], "funding_context": "No programme or eligibility has been verified."
+      },
+      "review_notes": ["Distinguish participants' practical enterprise skills from guaranteed business growth.", "Proposed numeric targets must be labelled provisional, not baseline facts."]
+    },
+    {
+      "case_id": "Q02", "language": "fi", "complexity": "moderate",
+      "themes": ["AI skills", "digital transformation", "SME innovation"],
+      "idea": {
+        "title": "Kuvitteellinen Älypaja pienyrityksille",
+        "development_need": "Kahdeksan kuvitteellista pienyritystä haluaa kokeilla tekoälyä arjen tehtävissä, mutta osaaminen ja tietosuojakäytännöt vaihtelevat. Pilotissa saa käyttää vain synteettisiä tietoja.",
+        "target_groups": ["Kuvitteellisten pienyritysten työntekijät ja yrittäjät"],
+        "expected_change": "Yritykset tunnistavat yhden hyödyllisen ja turvallisesti rajatun tekoälykokeilun sekä arvioivat sen vaikutuksia.",
+        "geography": "Kuvitteellinen Järvilaakso Suomessa", "partners": ["Kuvitteellinen Osaamispaja"],
+        "funding_context": "Rahoitusohjelmaa ei ole valittu."
+      },
+      "review_notes": ["Keep all proposed trials synthetic and avoid guaranteed productivity percentages.", "Assess a baseline and method, not just the number of workshops."]
+    },
+    {
+      "case_id": "Q03", "language": "en", "complexity": "complex",
+      "themes": ["tourism", "regional development", "sustainability"],
+      "idea": {
+        "title": "Fictional Reedshore Year-round Visitor Routes",
+        "development_need": "Three invented rural communities have seasonal visitor demand, limited public transport and sensitive wetland habitats. Two fictional tourism firms want an eighteen-month low-impact route pilot; no ecological baseline or visitor survey exists.",
+        "target_groups": ["Fictional small tourism firms", "Fictional community volunteers"],
+        "expected_change": "Partners test whether accessible off-season routes can support local services without increasing habitat pressure.",
+        "geography": "Fictional Reedshore region in Finland", "partners": ["Fictional Reedshore Cooperative", "Fictional Marsh Trails Ltd"],
+        "funding_context": "Only general funding research exists; no official call conditions are supplied."
+      },
+      "review_notes": ["Do not presume tourism growth and conservation are automatically compatible.", "Require a feasible pilot, monitoring and explicit missing ecological/accessibility information."]
+    },
+    {
+      "case_id": "Q04", "language": "fi", "complexity": "moderate",
+      "themes": ["cultural wellbeing", "education"],
+      "idea": {
+        "title": "Kuvitteellinen Kulttuurisilta arkeen",
+        "development_need": "Kuvitteellisen Saarikylän aikuisilla on vähän saavutettavia kulttuuriharrastuksia. Vapaaehtoiset ehdottavat kuuden kuukauden taidetyöpajoja, mutta osallistumisen esteitä ei ole kartoitettu.",
+        "target_groups": ["Kuvitteelliset kulttuuritoiminnasta kiinnostuneet aikuiset"],
+        "expected_change": "Osallistujat kokevat osallistumisen mahdolliseksi ja löytävät itselleen sopivan kulttuuritoiminnan.",
+        "geography": "Kuvitteellinen Saarikylä Suomessa", "partners": ["Kuvitteellinen Saarikylän Taidekerho"]
+      },
+      "review_notes": ["Do not invent clinical health effects or diagnoses.", "Participation experience may be measured with a consent-based synthetic survey plan; do not claim medical efficacy."]
+    },
+    {
+      "case_id": "Q05", "language": "en", "complexity": "complex",
+      "themes": ["cross-border cooperation", "competence development"],
+      "idea": {
+        "title": "Fictional Twinshore Skills Exchange",
+        "development_need": "Fictional vocational teams in Finland and Sweden teach similar repair skills separately. They propose a twelve-month shared learning pilot, but language support, partner commitment and recognition of learning remain undecided.",
+        "target_groups": ["Fictional vocational educators", "Fictional adult learners"],
+        "expected_change": "Teams test a jointly designed repair module and identify what each side learns from the other.",
+        "geography": "Fictional Twinshore locations in Finland and Sweden", "partners": ["Fictional Eastshore Learning Centre", "Fictional Westshore Workshop"],
+        "funding_context": "An Interreg-style partnership is being considered; programme geography and eligibility are unverified."
+      },
+      "review_notes": ["Cross-border value must be more than travel or translated materials.", "Do not invent mandatory partner counts, accreditation or funding rates."]
+    },
+    {
+      "case_id": "Q06", "language": "fi", "complexity": "moderate",
+      "themes": ["sustainability", "circular economy", "SME innovation"],
+      "idea": {
+        "title": "Kuvitteellinen Kiertokankaan materiaalipilotti",
+        "development_need": "Viisi kuvitteellista tekstiilipajaa tuottaa leikkuujätettä. Ne haluavat yhdeksän kuukauden pilotissa kokeilla yhteistä lajittelua ja uudelleenkäyttöä. Materiaalimääristä tai käsittelykustannuksista ei ole lähtötietoa.",
+        "target_groups": ["Kuvitteellisten tekstiilipajojen työntekijät"],
+        "expected_change": "Pajat selvittävät, voidaanko yksi materiaalivirta hyödyntää uudelleen turvallisesti ja taloudellisesti.",
+        "geography": "Kuvitteellinen Kiertola Suomessa", "partners": ["Kuvitteellinen Kiertokankaan verkosto"]
+      },
+      "review_notes": ["Do not invent waste volumes, certification or carbon savings.", "Separate an observed material-reuse result from an unverified climate-impact claim."]
+    },
+    {
+      "case_id": "Q07", "language": "en", "complexity": "ambiguous",
+      "themes": ["SME innovation", "digital transformation"],
+      "idea": {
+        "title": "Fictional Better Business Platform",
+        "development_need": "A fictional enterprise network says it needs a platform. Members disagree whether the problem is missing customers, staff skills or duplicated administrative work. No common problem assessment has been completed.",
+        "target_groups": ["Fictional network members; exact roles and needs not yet agreed"],
+        "expected_change": "Members want business to improve, but the intended measurable change has not been agreed.",
+        "geography": "Fictional region; exact area not specified", "partners": null,
+        "funding_context": "One fictional proposer assumes every digital project receives EU funding; no evidence is supplied."
+      },
+      "review_notes": ["Challenge solution-first thinking and the funding assertion.", "A credible response starts with scoping/needs assessment and explicit questions rather than silently choosing a business model."]
+    },
+    {
+      "case_id": "Q08", "language": "fi", "complexity": "incomplete",
+      "themes": ["education", "competence development", "creative industries"],
+      "idea": {
+        "title": "Kuvitteellinen Luovan osaamisen alku",
+        "development_need": "Kuvitteellinen ryhmä haluaa kehittää luovaa osaamista. Osaamisvajetta, toteutusaikaa ja käytettävissä olevia resursseja ei ole vielä selvitetty.",
+        "target_groups": ["Ei vielä määritelty; vain kuvitteelliset osallistujat"],
+        "expected_change": "Ei vielä määritelty; ehdotus ja tarkentavat kysymykset tarvitaan.",
+        "geography": "Ei vielä määritelty; kuvitteellinen paikkakunta", "partners": null
+      },
+      "review_notes": ["Missing information is explicit source content, not a schema violation to repair with invented facts.", "Reward labelled provisional options and useful questions; do not require an unsupported numeric commitment."]
+    },
+    {
+      "case_id": "Q09", "language": "en", "complexity": "unrealistic",
+      "themes": ["AI skills", "cross-border cooperation", "regional development"],
+      "idea": {
+        "title": "Fictional Instant Prosperity for Every Region",
+        "development_need": "One fictional volunteer proposes training all adults across five countries in advanced AI in two weeks, with no confirmed partners, staff or budget. The proposer expects unemployment to disappear immediately and claims EU approval is automatic.",
+        "target_groups": ["All fictional adults across five unspecified countries"],
+        "expected_change": "The proposer demands guaranteed employment and immediate regional prosperity; these claims are deliberately unrealistic.",
+        "geography": "Five unspecified fictional European locations", "partners": null,
+        "funding_context": "Automatic approval is an unsupported fictional assertion, not an official funding rule."
+      },
+      "review_notes": ["Do not endorse the guarantees or automatic funding claim.", "Propose a much smaller explicitly provisional feasibility pilot and identify missing capacity, partners, timing and evidence."]
+    },
+    {
+      "case_id": "Q10", "language": "fi", "complexity": "simple",
+      "themes": ["education", "competence development", "cultural entrepreneurship"],
+      "idea": {
+        "title": "Kuvitteellinen Å-pajan vertaisoppiminen",
+        "development_need": "Kymmenen kuvitteellista kulttuurialan vapaaehtoista tarvitsee tukea saavutettavien verkkotapahtumien järjestämiseen. Käytettävissä on yksi ohjaaja ja kolme yhteistä harjoituskertaa kahden kuukauden aikana.",
+        "target_groups": ["Kymmenen kuvitteellista kulttuurialan vapaaehtoista"],
+        "expected_change": "Osallistujat toteuttavat pienen harjoitustapahtuman ja arvioivat sen saavutettavuutta yhdessä.",
+        "geography": "Kuvitteellinen Å-kylä Suomessa", "partners": ["Kuvitteellinen Å-paja"]
+      },
+      "review_notes": ["Use the stated capacity rather than expanding to a large platform or international programme.", "Practical demonstration and an accessibility checklist are stronger evidence than attendance alone."]
+    }
+  ]
+}
