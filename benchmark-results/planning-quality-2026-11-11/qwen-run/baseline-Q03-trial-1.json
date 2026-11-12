@@ -1,0 +1,354 @@
+{
+  "case_id": "Q03",
+  "strategy": "baseline",
+  "trial": 1,
+  "language": "en",
+  "status": "candidate_ready",
+  "candidate": {
+    "schema_version": 1,
+    "background_need": "Three rural communities face seasonal tourism pressure on wetlands without transport alternatives.",
+    "objectives": [
+      {
+        "id": "O1",
+        "description": "Test if accessible off-season routes can support local services without increasing habitat pressure."
+      }
+    ],
+    "target_groups": [
+      "Fictional small tourism firms"
+    ],
+    "preliminary_activities": [
+      {
+        "id": "A1",
+        "description": "Design and pilot an eighteen-month low-impact route connecting the three communities.",
+        "objective_ids": [
+          "O1"
+        ]
+      }
+    ],
+    "expected_results": [
+      {
+        "id": "R1",
+        "description": "Demonstrate that visitor numbers remain stable while habitat disturbance stays below thresholds.",
+        "activity_ids": [
+          "A1"
+        ]
+      }
+    ],
+    "proposed_indicators": [
+      {
+        "id": "I1",
+        "description": "Percentage of wetland area with foot traffic exceeding one step per hour.",
+        "result_ids": [
+          "R1"
+        ],
+        "measurement_method": "Field sensors and volunteer counts"
+      }
+    ],
+    "assumptions": [],
+    "open_questions": []
+  },
+  "human_quality": null,
+  "stages": [
+    {
+      "stage": "baseline",
+      "prompt_version": "production_wording_control_v1",
+      "requested_model": "qwen3.5-4b",
+      "provider": "lm_studio",
+      "timestamp_utc": "2026-11-11T21:06:49.304346+00:00",
+      "request": {
+        "case_id": "Q03",
+        "trial": 1,
+        "language": "en",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Return a valid JSON object only."
+          },
+          {
+            "role": "user",
+            "content": "You are a careful EU project-planning assistant. Prompt version: concept_v1.\nReturn only valid JSON that matches the expected schema. Do not include markdown fences or explanatory text.\n\nStage: concept\n\nUser input:\nFictional project idea:\n{\"schema_version\":1,\"title\":\"Fictional Reedshore Year-round Visitor Routes\",\"development_need\":\"Three invented rural communities have seasonal visitor demand, limited public transport and sensitive wetland habitats. Two fictional tourism firms want an eighteen-month low-impact route pilot; no ecological baseline or visitor survey exists.\",\"target_groups\":[\"Fictional small tourism firms\",\"Fictional community volunteers\"],\"expected_change\":\"Partners test whether accessible off-season routes can support local services without increasing habitat pressure.\",\"geography\":\"Fictional Reedshore region in Finland\",\"partners\":[\"Fictional Reedshore Cooperative\",\"Fictional Marsh Trails Ltd\"],\"funding_context\":\"Only general funding research exists; no official call conditions are supplied.\"}\n\nCreate a concise ConceptPaper with exactly one objective (O1), one preliminary activity (A1) linked to O1, one expected result (R1) linked to A1, and one measurable proposed indicator (I1) linked to R1. Use one target group. Keep descriptions to one short sentence each. Use empty assumptions and open_questions.\n\nWrite all human-readable text fields in English. Keep JSON field names, schema_version and O/A/R/I identifiers unchanged. Do not translate keys or IDs.\n"
+          }
+        ],
+        "request_sha256": "cd0313d80e740dc97fd07c4b835e51ecd9b60d6b42f98c54b4faa284f01f6b85"
+      },
+      "response_format": {
+        "type": "json_schema",
+        "json_schema": {
+          "name": "conceptpaper",
+          "schema": {
+            "$defs": {
+              "ExpectedResult": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^R[1-9]\\d*$",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "title": "Description",
+                    "type": "string"
+                  },
+                  "activity_ids": {
+                    "items": {
+                      "pattern": "^A[1-9]\\d*$",
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "title": "Activity Ids",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "id",
+                  "description",
+                  "activity_ids"
+                ],
+                "title": "ExpectedResult",
+                "type": "object"
+              },
+              "Objective": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^O[1-9]\\d*$",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "title": "Description",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "description"
+                ],
+                "title": "Objective",
+                "type": "object"
+              },
+              "PreliminaryActivity": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^A[1-9]\\d*$",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "title": "Description",
+                    "type": "string"
+                  },
+                  "objective_ids": {
+                    "items": {
+                      "pattern": "^O[1-9]\\d*$",
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "title": "Objective Ids",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "id",
+                  "description",
+                  "objective_ids"
+                ],
+                "title": "PreliminaryActivity",
+                "type": "object"
+              },
+              "ProposedIndicator": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^I[1-9]\\d*$",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "title": "Description",
+                    "type": "string"
+                  },
+                  "result_ids": {
+                    "items": {
+                      "pattern": "^R[1-9]\\d*$",
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "title": "Result Ids",
+                    "type": "array"
+                  },
+                  "measurement_method": {
+                    "minLength": 1,
+                    "title": "Measurement Method",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "description",
+                  "result_ids",
+                  "measurement_method"
+                ],
+                "title": "ProposedIndicator",
+                "type": "object"
+              }
+            },
+            "additionalProperties": false,
+            "properties": {
+              "schema_version": {
+                "const": 1,
+                "default": 1,
+                "title": "Schema Version",
+                "type": "integer"
+              },
+              "background_need": {
+                "minLength": 1,
+                "title": "Background Need",
+                "type": "string"
+              },
+              "objectives": {
+                "items": {
+                  "$ref": "#/$defs/Objective"
+                },
+                "minItems": 1,
+                "title": "Objectives",
+                "type": "array"
+              },
+              "target_groups": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Target Groups",
+                "type": "array"
+              },
+              "preliminary_activities": {
+                "items": {
+                  "$ref": "#/$defs/PreliminaryActivity"
+                },
+                "minItems": 1,
+                "title": "Preliminary Activities",
+                "type": "array"
+              },
+              "expected_results": {
+                "items": {
+                  "$ref": "#/$defs/ExpectedResult"
+                },
+                "minItems": 1,
+                "title": "Expected Results",
+                "type": "array"
+              },
+              "proposed_indicators": {
+                "items": {
+                  "$ref": "#/$defs/ProposedIndicator"
+                },
+                "minItems": 1,
+                "title": "Proposed Indicators",
+                "type": "array"
+              },
+              "assumptions": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "title": "Assumptions",
+                "type": "array"
+              },
+              "open_questions": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "title": "Open Questions",
+                "type": "array"
+              }
+            },
+            "required": [
+              "background_need",
+              "objectives",
+              "target_groups",
+              "preliminary_activities",
+              "expected_results",
+              "proposed_indicators"
+            ],
+            "title": "ConceptPaper",
+            "type": "object"
+          }
+        }
+      },
+      "estimated_api_cost": null,
+      "reply": {
+        "text": "{\n  \"background_need\": \"Three rural communities face seasonal tourism pressure on wetlands without transport alternatives.\",\n  \"objectives\": [\n    {\n      \"id\": \"O1\",\n      \"description\": \"Test if accessible off-season routes can support local services without increasing habitat pressure.\"\n    }\n  ],\n  \"target_groups\": [\"Fictional small tourism firms\"],\n  \"preliminary_activities\": [\n    {\n      \"id\": \"A1\",\n      \"description\": \"Design and pilot an eighteen-month low-impact route connecting the three communities.\",\n      \"objective_ids\": [\"O1\"]\n    }\n  ],\n  \"expected_results\": [\n    {\n      \"id\": \"R1\",\n      \"description\": \"Demonstrate that visitor numbers remain stable while habitat disturbance stays below thresholds.\",\n      \"activity_ids\": [\"A1\"]\n    }\n  ],\n  \"proposed_indicators\": [\n    {\n      \"id\": \"I1\",\n      \"description\": \"Percentage of wetland area with foot traffic exceeding one step per hour.\",\n      \"result_ids\": [\"R1\"],\"measurement_method\":\"Field sensors and volunteer counts\"\n    }\n  ],\n  \"assumptions\": [],\n  \"open_questions\": []\n}",
+        "reported_model": "qwen3.5-4b",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 324,
+          "completion_tokens": 287,
+          "total_tokens": 611
+        },
+        "billing_basis": null,
+        "latency_seconds": 5.355084599985275,
+        "error": null
+      },
+      "timing_source": "measured",
+      "json_valid": true,
+      "pydantic_valid": true,
+      "first_attempt_success": true,
+      "truncated": false,
+      "incomplete_output": false,
+      "validation_errors": [],
+      "consistency_findings": [],
+      "validated_output": {
+        "schema_version": 1,
+        "background_need": "Three rural communities face seasonal tourism pressure on wetlands without transport alternatives.",
+        "objectives": [
+          {
+            "id": "O1",
+            "description": "Test if accessible off-season routes can support local services without increasing habitat pressure."
+          }
+        ],
+        "target_groups": [
+          "Fictional small tourism firms"
+        ],
+        "preliminary_activities": [
+          {
+            "id": "A1",
+            "description": "Design and pilot an eighteen-month low-impact route connecting the three communities.",
+            "objective_ids": [
+              "O1"
+            ]
+          }
+        ],
+        "expected_results": [
+          {
+            "id": "R1",
+            "description": "Demonstrate that visitor numbers remain stable while habitat disturbance stays below thresholds.",
+            "activity_ids": [
+              "A1"
+            ]
+          }
+        ],
+        "proposed_indicators": [
+          {
+            "id": "I1",
+            "description": "Percentage of wetland area with foot traffic exceeding one step per hour.",
+            "result_ids": [
+              "R1"
+            ],
+            "measurement_method": "Field sensors and volunteer counts"
+          }
+        ],
+        "assumptions": [],
+        "open_questions": []
+      }
+    }
+  ],
+  "stage_calls": 1,
+  "total_measured_latency_seconds": 5.355084599985275
+}

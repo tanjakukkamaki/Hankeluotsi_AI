@@ -1,0 +1,354 @@
+{
+  "case_id": "Q05",
+  "strategy": "baseline",
+  "trial": 1,
+  "language": "en",
+  "status": "candidate_ready",
+  "candidate": {
+    "schema_version": 1,
+    "background_need": "Fictional vocational teams in Finland and Sweden teach similar repair skills separately but lack a structured mechanism to share learning outcomes.",
+    "objectives": [
+      {
+        "id": "O1",
+        "description": "Establish a twelve-month shared learning pilot where Finnish and Swedish teams co-design and deliver a joint repair module."
+      }
+    ],
+    "target_groups": [
+      "Fictional vocational educators"
+    ],
+    "preliminary_activities": [
+      {
+        "id": "A1",
+        "description": "Organize two initial co-design workshops to align the curriculum and define shared learning objectives.",
+        "objective_ids": [
+          "O1"
+        ]
+      }
+    ],
+    "expected_results": [
+      {
+        "id": "R1",
+        "description": "Completion of a jointly delivered repair module with documented mutual skill acquisition by both teams.",
+        "activity_ids": [
+          "A1"
+        ]
+      }
+    ],
+    "proposed_indicators": [
+      {
+        "id": "I1",
+        "description": "Number of distinct repair techniques successfully taught and assessed by the partner team during the pilot.",
+        "result_ids": [
+          "R1"
+        ],
+        "measurement_method": "Post-pilot skill assessment survey"
+      }
+    ],
+    "assumptions": [],
+    "open_questions": []
+  },
+  "human_quality": null,
+  "stages": [
+    {
+      "stage": "baseline",
+      "prompt_version": "production_wording_control_v1",
+      "requested_model": "qwen3.5-4b",
+      "provider": "lm_studio",
+      "timestamp_utc": "2026-11-11T21:06:28.670269+00:00",
+      "request": {
+        "case_id": "Q05",
+        "trial": 1,
+        "language": "en",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Return a valid JSON object only."
+          },
+          {
+            "role": "user",
+            "content": "You are a careful EU project-planning assistant. Prompt version: concept_v1.\nReturn only valid JSON that matches the expected schema. Do not include markdown fences or explanatory text.\n\nStage: concept\n\nUser input:\nFictional project idea:\n{\"schema_version\":1,\"title\":\"Fictional Twinshore Skills Exchange\",\"development_need\":\"Fictional vocational teams in Finland and Sweden teach similar repair skills separately. They propose a twelve-month shared learning pilot, but language support, partner commitment and recognition of learning remain undecided.\",\"target_groups\":[\"Fictional vocational educators\",\"Fictional adult learners\"],\"expected_change\":\"Teams test a jointly designed repair module and identify what each side learns from the other.\",\"geography\":\"Fictional Twinshore locations in Finland and Sweden\",\"partners\":[\"Fictional Eastshore Learning Centre\",\"Fictional Westshore Workshop\"],\"funding_context\":\"An Interreg-style partnership is being considered; programme geography and eligibility are unverified.\"}\n\nCreate a concise ConceptPaper with exactly one objective (O1), one preliminary activity (A1) linked to O1, one expected result (R1) linked to A1, and one measurable proposed indicator (I1) linked to R1. Use one target group. Keep descriptions to one short sentence each. Use empty assumptions and open_questions.\n\nWrite all human-readable text fields in English. Keep JSON field names, schema_version and O/A/R/I identifiers unchanged. Do not translate keys or IDs.\n"
+          }
+        ],
+        "request_sha256": "9b932701d8b6b51acd64fc98cac8471e052af4b7ea0b9bf36350a50fd03ec6a3"
+      },
+      "response_format": {
+        "type": "json_schema",
+        "json_schema": {
+          "name": "conceptpaper",
+          "schema": {
+            "$defs": {
+              "ExpectedResult": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^R[1-9]\\d*$",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "title": "Description",
+                    "type": "string"
+                  },
+                  "activity_ids": {
+                    "items": {
+                      "pattern": "^A[1-9]\\d*$",
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "title": "Activity Ids",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "id",
+                  "description",
+                  "activity_ids"
+                ],
+                "title": "ExpectedResult",
+                "type": "object"
+              },
+              "Objective": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^O[1-9]\\d*$",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "title": "Description",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "description"
+                ],
+                "title": "Objective",
+                "type": "object"
+              },
+              "PreliminaryActivity": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^A[1-9]\\d*$",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "title": "Description",
+                    "type": "string"
+                  },
+                  "objective_ids": {
+                    "items": {
+                      "pattern": "^O[1-9]\\d*$",
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "title": "Objective Ids",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "id",
+                  "description",
+                  "objective_ids"
+                ],
+                "title": "PreliminaryActivity",
+                "type": "object"
+              },
+              "ProposedIndicator": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^I[1-9]\\d*$",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "title": "Description",
+                    "type": "string"
+                  },
+                  "result_ids": {
+                    "items": {
+                      "pattern": "^R[1-9]\\d*$",
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "title": "Result Ids",
+                    "type": "array"
+                  },
+                  "measurement_method": {
+                    "minLength": 1,
+                    "title": "Measurement Method",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "description",
+                  "result_ids",
+                  "measurement_method"
+                ],
+                "title": "ProposedIndicator",
+                "type": "object"
+              }
+            },
+            "additionalProperties": false,
+            "properties": {
+              "schema_version": {
+                "const": 1,
+                "default": 1,
+                "title": "Schema Version",
+                "type": "integer"
+              },
+              "background_need": {
+                "minLength": 1,
+                "title": "Background Need",
+                "type": "string"
+              },
+              "objectives": {
+                "items": {
+                  "$ref": "#/$defs/Objective"
+                },
+                "minItems": 1,
+                "title": "Objectives",
+                "type": "array"
+              },
+              "target_groups": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Target Groups",
+                "type": "array"
+              },
+              "preliminary_activities": {
+                "items": {
+                  "$ref": "#/$defs/PreliminaryActivity"
+                },
+                "minItems": 1,
+                "title": "Preliminary Activities",
+                "type": "array"
+              },
+              "expected_results": {
+                "items": {
+                  "$ref": "#/$defs/ExpectedResult"
+                },
+                "minItems": 1,
+                "title": "Expected Results",
+                "type": "array"
+              },
+              "proposed_indicators": {
+                "items": {
+                  "$ref": "#/$defs/ProposedIndicator"
+                },
+                "minItems": 1,
+                "title": "Proposed Indicators",
+                "type": "array"
+              },
+              "assumptions": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "title": "Assumptions",
+                "type": "array"
+              },
+              "open_questions": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "title": "Open Questions",
+                "type": "array"
+              }
+            },
+            "required": [
+              "background_need",
+              "objectives",
+              "target_groups",
+              "preliminary_activities",
+              "expected_results",
+              "proposed_indicators"
+            ],
+            "title": "ConceptPaper",
+            "type": "object"
+          }
+        }
+      },
+      "estimated_api_cost": null,
+      "reply": {
+        "text": "{\n  \"background_need\": \"Fictional vocational teams in Finland and Sweden teach similar repair skills separately but lack a structured mechanism to share learning outcomes.\",\n  \"objectives\": [\n    {\n      \"id\": \"O1\",\n      \"description\": \"Establish a twelve-month shared learning pilot where Finnish and Swedish teams co-design and deliver a joint repair module.\"\n    }\n  ],\n  \"target_groups\": [\n    \"Fictional vocational educators\"\n  ],\n  \"preliminary_activities\": [\n    {\n      \"id\": \"A1\",\n      \"description\": \"Organize two initial co-design workshops to align the curriculum and define shared learning objectives.\",\n      \"objective_ids\": [\"O1\"]\n    }\n  ],\n  \"expected_results\": [\n    {\n      \"id\": \"R1\",\n      \"description\": \"Completion of a jointly delivered repair module with documented mutual skill acquisition by both teams.\",\n      \"activity_ids\": [\"A1\"]\n    }\n  ],\n  \"proposed_indicators\": [\n    {\n      \"id\": \"I1\",\n      \"description\": \"Number of distinct repair techniques successfully taught and assessed by the partner team during the pilot.\",\n      \"result_ids\": [\"R1\"],\"measurement_method\":\"Post-pilot skill assessment survey\"\n    }\n  ],\n  \"assumptions\": [],\n  \"open_questions\": []\n}",
+        "reported_model": "qwen3.5-4b",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 325,
+          "completion_tokens": 316,
+          "total_tokens": 641
+        },
+        "billing_basis": null,
+        "latency_seconds": 5.764775299991015,
+        "error": null
+      },
+      "timing_source": "measured",
+      "json_valid": true,
+      "pydantic_valid": true,
+      "first_attempt_success": true,
+      "truncated": false,
+      "incomplete_output": false,
+      "validation_errors": [],
+      "consistency_findings": [],
+      "validated_output": {
+        "schema_version": 1,
+        "background_need": "Fictional vocational teams in Finland and Sweden teach similar repair skills separately but lack a structured mechanism to share learning outcomes.",
+        "objectives": [
+          {
+            "id": "O1",
+            "description": "Establish a twelve-month shared learning pilot where Finnish and Swedish teams co-design and deliver a joint repair module."
+          }
+        ],
+        "target_groups": [
+          "Fictional vocational educators"
+        ],
+        "preliminary_activities": [
+          {
+            "id": "A1",
+            "description": "Organize two initial co-design workshops to align the curriculum and define shared learning objectives.",
+            "objective_ids": [
+              "O1"
+            ]
+          }
+        ],
+        "expected_results": [
+          {
+            "id": "R1",
+            "description": "Completion of a jointly delivered repair module with documented mutual skill acquisition by both teams.",
+            "activity_ids": [
+              "A1"
+            ]
+          }
+        ],
+        "proposed_indicators": [
+          {
+            "id": "I1",
+            "description": "Number of distinct repair techniques successfully taught and assessed by the partner team during the pilot.",
+            "result_ids": [
+              "R1"
+            ],
+            "measurement_method": "Post-pilot skill assessment survey"
+          }
+        ],
+        "assumptions": [],
+        "open_questions": []
+      }
+    }
+  ],
+  "stage_calls": 1,
+  "total_measured_latency_seconds": 5.764775299991015
+}

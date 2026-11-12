@@ -1,0 +1,354 @@
+{
+  "case_id": "Q06",
+  "strategy": "baseline",
+  "trial": 1,
+  "language": "fi",
+  "status": "candidate_ready",
+  "candidate": {
+    "schema_version": 1,
+    "background_need": "Viisi kuvitteellista tekstiilipajaa tuottaa leikkuujätettä ja haluaa kokeilla yhteistä lajittelua ja uudelleenkäyttöä yhdeksän kuukauden pilotissa.",
+    "objectives": [
+      {
+        "id": "O1",
+        "description": "Pajat kehittävät turvallisen ja taloudellisen menetelmän leikkuujätteen uudelleenkäyttämiseksi."
+      }
+    ],
+    "target_groups": [
+      "Kuvitteellisten tekstiilipajojen työntekijät"
+    ],
+    "preliminary_activities": [
+      {
+        "id": "A1",
+        "description": "Pajat testaavat eri lajittelumenetelmiä ja uudelleenkäyttösmenetelmiä leikkuujätteestä.",
+        "objective_ids": [
+          "O1"
+        ]
+      }
+    ],
+    "expected_results": [
+      {
+        "id": "R1",
+        "description": "Pajat löytävät yhden menetelmän, joka mahdollistaa jätteen turvallisen ja taloudellisen uudelleenkäytön.",
+        "activity_ids": [
+          "A1"
+        ]
+      }
+    ],
+    "proposed_indicators": [
+      {
+        "id": "I1",
+        "description": "Uudelleenkäytettyjen materiaalien määrä kilogrammissa yhden kuukauden aikana.",
+        "result_ids": [
+          "R1"
+        ],
+        "measurement_method": "Pajat raportoidaan kuukausittain."
+      }
+    ],
+    "assumptions": [],
+    "open_questions": []
+  },
+  "human_quality": null,
+  "stages": [
+    {
+      "stage": "baseline",
+      "prompt_version": "production_wording_control_v1",
+      "requested_model": "qwen3.5-4b",
+      "provider": "lm_studio",
+      "timestamp_utc": "2026-11-11T21:11:24.883574+00:00",
+      "request": {
+        "case_id": "Q06",
+        "trial": 1,
+        "language": "fi",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Return a valid JSON object only."
+          },
+          {
+            "role": "user",
+            "content": "You are a careful EU project-planning assistant. Prompt version: concept_v1.\nReturn only valid JSON that matches the expected schema. Do not include markdown fences or explanatory text.\n\nStage: concept\n\nUser input:\nFictional project idea:\n{\"schema_version\":1,\"title\":\"Kuvitteellinen Kiertokankaan materiaalipilotti\",\"development_need\":\"Viisi kuvitteellista tekstiilipajaa tuottaa leikkuujätettä. Ne haluavat yhdeksän kuukauden pilotissa kokeilla yhteistä lajittelua ja uudelleenkäyttöä. Materiaalimääristä tai käsittelykustannuksista ei ole lähtötietoa.\",\"target_groups\":[\"Kuvitteellisten tekstiilipajojen työntekijät\"],\"expected_change\":\"Pajat selvittävät, voidaanko yksi materiaalivirta hyödyntää uudelleen turvallisesti ja taloudellisesti.\",\"geography\":\"Kuvitteellinen Kiertola Suomessa\",\"partners\":[\"Kuvitteellinen Kiertokankaan verkosto\"],\"funding_context\":null}\n\nCreate a concise ConceptPaper with exactly one objective (O1), one preliminary activity (A1) linked to O1, one expected result (R1) linked to A1, and one measurable proposed indicator (I1) linked to R1. Use one target group. Keep descriptions to one short sentence each. Use empty assumptions and open_questions.\n\nWrite all human-readable text fields in Finnish. Keep JSON field names, schema_version and O/A/R/I identifiers unchanged. Do not translate keys or IDs.\n"
+          }
+        ],
+        "request_sha256": "90900ba82f3a44051080da688cea9b779dcb893fde55492d2ddef52ceb4bec20"
+      },
+      "response_format": {
+        "type": "json_schema",
+        "json_schema": {
+          "name": "conceptpaper",
+          "schema": {
+            "$defs": {
+              "ExpectedResult": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^R[1-9]\\d*$",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "title": "Description",
+                    "type": "string"
+                  },
+                  "activity_ids": {
+                    "items": {
+                      "pattern": "^A[1-9]\\d*$",
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "title": "Activity Ids",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "id",
+                  "description",
+                  "activity_ids"
+                ],
+                "title": "ExpectedResult",
+                "type": "object"
+              },
+              "Objective": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^O[1-9]\\d*$",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "title": "Description",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "description"
+                ],
+                "title": "Objective",
+                "type": "object"
+              },
+              "PreliminaryActivity": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^A[1-9]\\d*$",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "title": "Description",
+                    "type": "string"
+                  },
+                  "objective_ids": {
+                    "items": {
+                      "pattern": "^O[1-9]\\d*$",
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "title": "Objective Ids",
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "id",
+                  "description",
+                  "objective_ids"
+                ],
+                "title": "PreliminaryActivity",
+                "type": "object"
+              },
+              "ProposedIndicator": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^I[1-9]\\d*$",
+                    "title": "Id",
+                    "type": "string"
+                  },
+                  "description": {
+                    "minLength": 1,
+                    "title": "Description",
+                    "type": "string"
+                  },
+                  "result_ids": {
+                    "items": {
+                      "pattern": "^R[1-9]\\d*$",
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "title": "Result Ids",
+                    "type": "array"
+                  },
+                  "measurement_method": {
+                    "minLength": 1,
+                    "title": "Measurement Method",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "description",
+                  "result_ids",
+                  "measurement_method"
+                ],
+                "title": "ProposedIndicator",
+                "type": "object"
+              }
+            },
+            "additionalProperties": false,
+            "properties": {
+              "schema_version": {
+                "const": 1,
+                "default": 1,
+                "title": "Schema Version",
+                "type": "integer"
+              },
+              "background_need": {
+                "minLength": 1,
+                "title": "Background Need",
+                "type": "string"
+              },
+              "objectives": {
+                "items": {
+                  "$ref": "#/$defs/Objective"
+                },
+                "minItems": 1,
+                "title": "Objectives",
+                "type": "array"
+              },
+              "target_groups": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Target Groups",
+                "type": "array"
+              },
+              "preliminary_activities": {
+                "items": {
+                  "$ref": "#/$defs/PreliminaryActivity"
+                },
+                "minItems": 1,
+                "title": "Preliminary Activities",
+                "type": "array"
+              },
+              "expected_results": {
+                "items": {
+                  "$ref": "#/$defs/ExpectedResult"
+                },
+                "minItems": 1,
+                "title": "Expected Results",
+                "type": "array"
+              },
+              "proposed_indicators": {
+                "items": {
+                  "$ref": "#/$defs/ProposedIndicator"
+                },
+                "minItems": 1,
+                "title": "Proposed Indicators",
+                "type": "array"
+              },
+              "assumptions": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "title": "Assumptions",
+                "type": "array"
+              },
+              "open_questions": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "title": "Open Questions",
+                "type": "array"
+              }
+            },
+            "required": [
+              "background_need",
+              "objectives",
+              "target_groups",
+              "preliminary_activities",
+              "expected_results",
+              "proposed_indicators"
+            ],
+            "title": "ConceptPaper",
+            "type": "object"
+          }
+        }
+      },
+      "estimated_api_cost": null,
+      "reply": {
+        "text": "{\n  \"background_need\": \"Viisi kuvitteellista tekstiilipajaa tuottaa leikkuujätettä ja haluaa kokeilla yhteistä lajittelua ja uudelleenkäyttöä yhdeksän kuukauden pilotissa.\",\n  \"objectives\": [\n    {\n      \"id\": \"O1\",\n      \"description\": \"Pajat kehittävät turvallisen ja taloudellisen menetelmän leikkuujätteen uudelleenkäyttämiseksi.\"\n    }\n  ],\n  \"target_groups\": [\n    \"Kuvitteellisten tekstiilipajojen työntekijät\"\n  ],\n  \"preliminary_activities\": [\n    {\n      \"id\": \"A1\",\n      \"description\": \"Pajat testaavat eri lajittelumenetelmiä ja uudelleenkäyttösmenetelmiä leikkuujätteestä.\",\n      \"objective_ids\": [\"O1\"]\n    }\n  ],\n  \"expected_results\": [\n    {\n      \"id\": \"R1\",\n      \"description\": \"Pajat löytävät yhden menetelmän, joka mahdollistaa jätteen turvallisen ja taloudellisen uudelleenkäytön.\",\n      \"activity_ids\": [\"A1\"]\n    }\n  ],\n  \"proposed_indicators\": [\n    {\n      \"id\": \"I1\",\n      \"description\": \"Uudelleenkäytettyjen materiaalien määrä kilogrammissa yhden kuukauden aikana.\",\n      \"result_ids\": [\"R1\"],\"measurement_method\":\"Pajat raportoidaan kuukausittain.\"\n    }\n  ],\n  \"assumptions\": [],\n  \"open_questions\": []\n}",
+        "reported_model": "qwen3.5-4b",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 365,
+          "completion_tokens": 398,
+          "total_tokens": 763
+        },
+        "billing_basis": null,
+        "latency_seconds": 7.363960399990901,
+        "error": null
+      },
+      "timing_source": "measured",
+      "json_valid": true,
+      "pydantic_valid": true,
+      "first_attempt_success": true,
+      "truncated": false,
+      "incomplete_output": false,
+      "validation_errors": [],
+      "consistency_findings": [],
+      "validated_output": {
+        "schema_version": 1,
+        "background_need": "Viisi kuvitteellista tekstiilipajaa tuottaa leikkuujätettä ja haluaa kokeilla yhteistä lajittelua ja uudelleenkäyttöä yhdeksän kuukauden pilotissa.",
+        "objectives": [
+          {
+            "id": "O1",
+            "description": "Pajat kehittävät turvallisen ja taloudellisen menetelmän leikkuujätteen uudelleenkäyttämiseksi."
+          }
+        ],
+        "target_groups": [
+          "Kuvitteellisten tekstiilipajojen työntekijät"
+        ],
+        "preliminary_activities": [
+          {
+            "id": "A1",
+            "description": "Pajat testaavat eri lajittelumenetelmiä ja uudelleenkäyttösmenetelmiä leikkuujätteestä.",
+            "objective_ids": [
+              "O1"
+            ]
+          }
+        ],
+        "expected_results": [
+          {
+            "id": "R1",
+            "description": "Pajat löytävät yhden menetelmän, joka mahdollistaa jätteen turvallisen ja taloudellisen uudelleenkäytön.",
+            "activity_ids": [
+              "A1"
+            ]
+          }
+        ],
+        "proposed_indicators": [
+          {
+            "id": "I1",
+            "description": "Uudelleenkäytettyjen materiaalien määrä kilogrammissa yhden kuukauden aikana.",
+            "result_ids": [
+              "R1"
+            ],
+            "measurement_method": "Pajat raportoidaan kuukausittain."
+          }
+        ],
+        "assumptions": [],
+        "open_questions": []
+      }
+    }
+  ],
+  "stage_calls": 1,
+  "total_measured_latency_seconds": 7.363960399990901
+}

@@ -285,7 +285,7 @@ class ImportedProvider:
         return self.replies[request.request_sha256]
 
 
-def assess(reply: Reply) -> dict:
+def assess(reply: Reply, *, response_model=ConceptPaper) -> dict:
     result = dict(json_valid=False, pydantic_valid=False, first_attempt_success=False,
                   truncated=reply.finish_reason == "length", incomplete_output=reply.finish_reason != "stop",
                   validation_errors=[], consistency_findings=[], validated_output=None)
@@ -302,7 +302,7 @@ def assess(reply: Reply) -> dict:
         return result
     result["json_valid"] = True
     try:
-        concept = ConceptPaper.model_validate(parsed)
+        concept = response_model.model_validate(parsed)
     except ValidationError as error:
         result["validation_errors"] = [{"location": list(e["loc"]), "type": e["type"]} for e in error.errors()]
         return result
@@ -310,7 +310,7 @@ def assess(reply: Reply) -> dict:
     result["validated_output"] = concept.model_dump(mode="json")
     result["consistency_findings"] = [
         {"code": f.code, "severity": f.severity.value, "message": f.message}
-        for f in check_concept_consistency(concept)]
+        for f in check_concept_consistency(concept)] if isinstance(concept, ConceptPaper) else []
     result["first_attempt_success"] = reply.error is None and reply.finish_reason == "stop"
     return result
 
@@ -347,6 +347,21 @@ def summarize(attempts: list[dict]) -> dict:
         "human_quality": None}
 
 
+def execute_request(request: Request, context, provider: Provider, *, response_model=ConceptPaper) -> dict:
+    """Shared one-call transport/validation path for concept and experimental stages."""
+    started = perf_counter()
+    try:
+        reply = Reply.model_validate(provider.generate(request, context))
+    except Exception as error:
+        # Exception messages can contain request headers; retain categories only.
+        kind = "timeout" if isinstance(error, TimeoutError) or "timeout" in type(error).__name__.lower() else "request_failed"
+        reply = Reply(error=kind)
+    if provider.measure_latency:
+        reply.latency_seconds = perf_counter() - started
+    return {"reply": reply.model_dump(mode="json"),
+            "timing_source": "measured" if provider.measure_latency else "imported_or_unknown", **assess(reply, response_model=response_model)}
+
+
 def run(manifest: Manifest, provider: Provider, *, metadata: ModelMetadata | None = None,
         pricing: Pricing | None = None, checkpoint: Path | None = None) -> dict:
     report = {"version": "quality_results_v1", "run_id": str(uuid.uuid4()),
@@ -361,21 +376,13 @@ def run(manifest: Manifest, provider: Provider, *, metadata: ModelMetadata | Non
     if checkpoint:
         checkpoint.mkdir(parents=True, exist_ok=False)
     for request in manifest.requests:
-        started = perf_counter()
-        try:
-            reply = Reply.model_validate(provider.generate(request, manifest))
-        except Exception as error:
-            # Do not persist exception strings: SDK errors can echo headers/credentials.
-            kind = "timeout" if isinstance(error, TimeoutError) or "timeout" in type(error).__name__.lower() else "request_failed"
-            reply = Reply(error=kind)
-        if provider.measure_latency:
-            reply.latency_seconds = perf_counter() - started
+        observation = execute_request(request, manifest, provider)
+        reply = Reply.model_validate(observation["reply"])
         attempt = {"request_sha256": request.request_sha256, "case_id": request.case_id,
             "provider": provider.provider, "requested_model": provider.requested_model,
             "prompt_version": manifest.prompt_version, "base_prompt_version": manifest.base_prompt_version,
             "trial": request.trial, "language": request.language, "timestamp_utc": datetime.now(timezone.utc).isoformat(),
-            "reply": reply.model_dump(mode="json"), "timing_source": "measured" if provider.measure_latency else "imported_or_unknown",
-            "estimated_api_cost": estimate_cost(reply, provider.provider, pricing), **assess(reply)}
+            "estimated_api_cost": estimate_cost(reply, provider.provider, pricing), **observation}
         report["attempts"].append(attempt)
         if checkpoint:
             write_new(checkpoint / f'attempt-{len(report["attempts"]):03}.json', attempt)

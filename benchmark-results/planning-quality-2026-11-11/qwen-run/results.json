@@ -1,0 +1,569 @@
+{
+  "version": "planning_results_v1",
+  "plan_sha256": "9d2f337dabbe8d7ad8f3654658ce0f8028b72b40f890be9f1b0cf5bb0a451de1",
+  "created_at_utc": "2026-11-11T21:18:36.589554+00:00",
+  "requested_model": "qwen3.5-4b",
+  "jobs": [
+    {
+      "case_id": "Q08",
+      "strategy": "B",
+      "trial": 1,
+      "language": "fi",
+      "status": "awaiting_clarification",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 12.238737300038338
+    },
+    {
+      "case_id": "Q06",
+      "strategy": "B",
+      "trial": 1,
+      "language": "fi",
+      "status": "awaiting_clarification",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 11.255426799994893
+    },
+    {
+      "case_id": "Q05",
+      "strategy": "baseline",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 5.764775299991015
+    },
+    {
+      "case_id": "Q10",
+      "strategy": "A",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 15.268120799970347
+    },
+    {
+      "case_id": "Q03",
+      "strategy": "baseline",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 5.355084599985275
+    },
+    {
+      "case_id": "Q02",
+      "strategy": "C",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 4,
+      "total_measured_latency_seconds": 65.37164939998183
+    },
+    {
+      "case_id": "Q07",
+      "strategy": "B",
+      "trial": 1,
+      "language": "en",
+      "status": "awaiting_clarification",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 9.842383300012443
+    },
+    {
+      "case_id": "Q01",
+      "strategy": "C",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 4,
+      "total_measured_latency_seconds": 46.18604959989898
+    },
+    {
+      "case_id": "Q01",
+      "strategy": "baseline",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 5.839451699983329
+    },
+    {
+      "case_id": "Q07",
+      "strategy": "C",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 4,
+      "total_measured_latency_seconds": 37.272474900004454
+    },
+    {
+      "case_id": "Q03",
+      "strategy": "B",
+      "trial": 1,
+      "language": "en",
+      "status": "awaiting_clarification",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 10.350234000012279
+    },
+    {
+      "case_id": "Q10",
+      "strategy": "C",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 4,
+      "total_measured_latency_seconds": 54.127069999987725
+    },
+    {
+      "case_id": "Q07",
+      "strategy": "baseline",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 6.021325999987312
+    },
+    {
+      "case_id": "Q05",
+      "strategy": "B",
+      "trial": 1,
+      "language": "en",
+      "status": "awaiting_clarification",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 8.838197000033688
+    },
+    {
+      "case_id": "Q04",
+      "strategy": "C",
+      "trial": 1,
+      "language": "fi",
+      "status": "stage_failed",
+      "human_quality": null,
+      "failed_stage": "C_generate",
+      "stage_calls": 2,
+      "total_measured_latency_seconds": 24.295941100048367
+    },
+    {
+      "case_id": "Q06",
+      "strategy": "baseline",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 7.363960399990901
+    },
+    {
+      "case_id": "Q03",
+      "strategy": "C",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 4,
+      "total_measured_latency_seconds": 42.491609500022605
+    },
+    {
+      "case_id": "Q09",
+      "strategy": "B",
+      "trial": 1,
+      "language": "en",
+      "status": "awaiting_clarification",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 7.838733199983835
+    },
+    {
+      "case_id": "Q05",
+      "strategy": "A",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 12.137473100039642
+    },
+    {
+      "case_id": "Q06",
+      "strategy": "A",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 14.70535479998216
+    },
+    {
+      "case_id": "Q08",
+      "strategy": "C",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 4,
+      "total_measured_latency_seconds": 43.73015649995068
+    },
+    {
+      "case_id": "Q10",
+      "strategy": "baseline",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 7.039737000013702
+    },
+    {
+      "case_id": "Q01",
+      "strategy": "A",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 13.541474599973299
+    },
+    {
+      "case_id": "Q02",
+      "strategy": "baseline",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 7.44713009998668
+    },
+    {
+      "case_id": "Q04",
+      "strategy": "B",
+      "trial": 1,
+      "language": "fi",
+      "status": "awaiting_clarification",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 13.089963499980513
+    },
+    {
+      "case_id": "Q04",
+      "strategy": "A",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 19.391582800017204
+    },
+    {
+      "case_id": "Q09",
+      "strategy": "C",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 4,
+      "total_measured_latency_seconds": 44.31015179993119
+    },
+    {
+      "case_id": "Q04",
+      "strategy": "baseline",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 7.474477500014473
+    },
+    {
+      "case_id": "Q03",
+      "strategy": "A",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 11.165110000001732
+    },
+    {
+      "case_id": "Q07",
+      "strategy": "A",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 16.905505900038406
+    },
+    {
+      "case_id": "Q05",
+      "strategy": "C",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 4,
+      "total_measured_latency_seconds": 36.48555080004735
+    },
+    {
+      "case_id": "Q08",
+      "strategy": "A",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 10.405837400001474
+    },
+    {
+      "case_id": "Q02",
+      "strategy": "B",
+      "trial": 1,
+      "language": "fi",
+      "status": "awaiting_clarification",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 10.592220599995926
+    },
+    {
+      "case_id": "Q09",
+      "strategy": "A",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 12.752540500019677
+    },
+    {
+      "case_id": "Q08",
+      "strategy": "baseline",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 6.2522522999788634
+    },
+    {
+      "case_id": "Q06",
+      "strategy": "C",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 4,
+      "total_measured_latency_seconds": 51.27235479996307
+    },
+    {
+      "case_id": "Q01",
+      "strategy": "B",
+      "trial": 1,
+      "language": "en",
+      "status": "awaiting_clarification",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 8.016770899994299
+    },
+    {
+      "case_id": "Q09",
+      "strategy": "baseline",
+      "trial": 1,
+      "language": "en",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 6.086933800019324
+    },
+    {
+      "case_id": "Q02",
+      "strategy": "A",
+      "trial": 1,
+      "language": "fi",
+      "status": "candidate_ready",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 15.895166699949186
+    },
+    {
+      "case_id": "Q10",
+      "strategy": "B",
+      "trial": 1,
+      "language": "fi",
+      "status": "awaiting_clarification",
+      "human_quality": null,
+      "stage_calls": 1,
+      "total_measured_latency_seconds": 12.561387100024149
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "planned_jobs": 10,
+      "candidate_ready": 10,
+      "awaiting_clarification": 0,
+      "stage_failed": 0,
+      "stage_calls": 10,
+      "total_measured_seconds": 64.64512869995087,
+      "final_concept_checks": {
+        "attempts": 10,
+        "first_attempt_successes": 10,
+        "first_attempt_success_rate": 1.0,
+        "json_valid": 10,
+        "pydantic_valid": 10,
+        "truncated_outputs": 0,
+        "unknown_or_incomplete_finish": 0,
+        "errors": 0,
+        "structural_error_outputs": 0,
+        "latency_observations": 10,
+        "mean_latency_seconds": 6.464512869995088,
+        "median_latency_seconds": 6.169593049999094,
+        "latency_stddev_seconds": 0.7902639614135328,
+        "usage_observations": 10,
+        "known_token_totals": {
+          "prompt_tokens": 3324,
+          "completion_tokens": 3472,
+          "total_tokens": 6796
+        },
+        "token_observation_counts": {
+          "prompt_tokens": 10,
+          "completion_tokens": 10,
+          "total_tokens": 10
+        },
+        "cost_estimates_available": 0,
+        "estimated_cost_total_known": null,
+        "human_quality": null
+      },
+      "human_quality": null
+    },
+    "A": {
+      "planned_jobs": 10,
+      "candidate_ready": 10,
+      "awaiting_clarification": 0,
+      "stage_failed": 0,
+      "stage_calls": 10,
+      "total_measured_seconds": 142.16816659999313,
+      "final_concept_checks": {
+        "attempts": 10,
+        "first_attempt_successes": 10,
+        "first_attempt_success_rate": 1.0,
+        "json_valid": 10,
+        "pydantic_valid": 10,
+        "truncated_outputs": 0,
+        "unknown_or_incomplete_finish": 0,
+        "errors": 0,
+        "structural_error_outputs": 1,
+        "latency_observations": 10,
+        "mean_latency_seconds": 14.216816659999314,
+        "median_latency_seconds": 14.12341469997773,
+        "latency_stddev_seconds": 2.7674368580329474,
+        "usage_observations": 10,
+        "known_token_totals": {
+          "prompt_tokens": 5614,
+          "completion_tokens": 7585,
+          "total_tokens": 13199
+        },
+        "token_observation_counts": {
+          "prompt_tokens": 10,
+          "completion_tokens": 10,
+          "total_tokens": 10
+        },
+        "cost_estimates_available": 0,
+        "estimated_cost_total_known": null,
+        "human_quality": null
+      },
+      "human_quality": null
+    },
+    "B": {
+      "planned_jobs": 10,
+      "candidate_ready": 0,
+      "awaiting_clarification": 10,
+      "stage_failed": 0,
+      "stage_calls": 10,
+      "total_measured_seconds": 104.62405370007036,
+      "final_concept_checks": {
+        "attempts": 0,
+        "first_attempt_successes": 0,
+        "first_attempt_success_rate": null,
+        "json_valid": 0,
+        "pydantic_valid": 0,
+        "truncated_outputs": 0,
+        "unknown_or_incomplete_finish": 0,
+        "errors": 0,
+        "structural_error_outputs": 0,
+        "latency_observations": 0,
+        "mean_latency_seconds": null,
+        "median_latency_seconds": null,
+        "latency_stddev_seconds": null,
+        "usage_observations": 0,
+        "known_token_totals": {
+          "prompt_tokens": null,
+          "completion_tokens": null,
+          "total_tokens": null
+        },
+        "token_observation_counts": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        },
+        "cost_estimates_available": 0,
+        "estimated_cost_total_known": null,
+        "human_quality": null
+      },
+      "human_quality": null
+    },
+    "C": {
+      "planned_jobs": 10,
+      "candidate_ready": 9,
+      "awaiting_clarification": 0,
+      "stage_failed": 1,
+      "stage_calls": 38,
+      "total_measured_seconds": 445.54300839983625,
+      "final_concept_checks": {
+        "attempts": 9,
+        "first_attempt_successes": 9,
+        "first_attempt_success_rate": 1.0,
+        "json_valid": 9,
+        "pydantic_valid": 9,
+        "truncated_outputs": 0,
+        "unknown_or_incomplete_finish": 0,
+        "errors": 0,
+        "structural_error_outputs": 0,
+        "latency_observations": 9,
+        "mean_latency_seconds": 15.532528411105481,
+        "median_latency_seconds": 14.445447899983265,
+        "latency_stddev_seconds": 4.140157960069563,
+        "usage_observations": 9,
+        "known_token_totals": {
+          "prompt_tokens": 14496,
+          "completion_tokens": 7998,
+          "total_tokens": 22494
+        },
+        "token_observation_counts": {
+          "prompt_tokens": 9,
+          "completion_tokens": 9,
+          "total_tokens": 9
+        },
+        "cost_estimates_available": 0,
+        "estimated_cost_total_known": null,
+        "human_quality": null
+      },
+      "human_quality": null
+    }
+  },
+  "human_quality": null,
+  "limits": [
+    "Single-model role-separated critique is not independent human review.",
+    "Clarification pauses are not successful plans or model-request failures.",
+    "One trial per case is exploratory evidence, not proof of a superior strategy."
+  ]
+}
