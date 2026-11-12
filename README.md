@@ -28,7 +28,7 @@ For the completed Nordic UI, original logo, browser QA evidence and tomorrow's r
 
 ## Local model setup
 
-Start the LM Studio local server at `http://127.0.0.1:1234/v1`, load `qwen3.5-4b`, and disable **Enable Thinking** in the model's inference settings. The app uses only the configured local endpoint; it does not call cloud APIs. Use fictional information only.
+Start the LM Studio local server at `http://127.0.0.1:1234/v1`, load `qwen3.5-4b`, and disable **Enable Thinking** in the model's inference settings. Local Qwen is the default. Optional Mistral Cloud requires explicit selection, environment configuration and fictional-data/cloud/cost consent; it never activates as a fallback. See [Mistral setup and safe testing](docs/mistral_setup.md). Use fictional information only.
 
 Launch the prototype from the repository root:
 

@@ -17,7 +17,7 @@ from hankeluotsi.funding import compare_locally, retrieve_funding_opportunities
 from hankeluotsi.funding_calls import compare_call_locally
 from hankeluotsi.funding_matching import RELEVANCE_CATEGORIES, rank_funding_calls
 from hankeluotsi.live_funding import search_live_funding_calls
-from hankeluotsi.llm_client import LLMClient
+from hankeluotsi.mistral_client import CloudConsent, CloudError, check_configuration, select_client
 from hankeluotsi.i18n import language_code, localize
 from hankeluotsi.pdf_exporter import concept_pdf_filename, generate_concept_pdf
 from hankeluotsi.presentation import (
@@ -523,6 +523,28 @@ with st.container(key="project_workspace"):
         context = st.expander(ui("Start a new project idea"), expanded=False, key="new_idea") if selected_project_id is not None else nullcontext()
         with context:
             st.subheader(ui("New project idea"))
+            provider = st.selectbox(
+                ui("Generation provider"), options=("local", "mistral"),
+                format_func={"local": ui("Local Qwen (default)"), "mistral": ui("Mistral Cloud (optional)")}.get,
+                key="generation_provider",
+                on_change=lambda: st.session_state.pop("cloud_consent", None),
+            )
+            cloud_ready = True
+            consent = CloudConsent()
+            if provider == "mistral":
+                st.warning(ui("Mistral sends this new idea to an external cloud service and may incur charges. Use fictional data only. Saved projects are not sent."))
+                try:
+                    cloud_model = check_configuration()
+                    st.caption(ui(f"Cloud model: {cloud_model}"))
+                except CloudError as error:
+                    cloud_ready = False
+                    st.info(ui(str(error)))
+                confirmed = st.checkbox(
+                    ui("I confirm all entered data is fictional and consent to Mistral cloud processing and possible charges for this submission."),
+                    key="cloud_consent", disabled=not cloud_ready,
+                )
+                consent = CloudConsent(fictional_data=confirmed, cloud_processing=confirmed)
+                cloud_ready = cloud_ready and confirmed
             st.caption(ui("Start with fictional information. A few structured details are enough."))
             with st.form("project_idea_form", clear_on_submit=False):
                 title = st.text_input(ui("Project title"), key="idea_title", placeholder=ui("e.g. Fictional Nordic creative futures"))
@@ -542,7 +564,8 @@ with st.container(key="project_workspace"):
                     )
                 with funding_column:
                     funding_context = st.text_input(ui("Funding context (optional)"), key="idea_funding_context")
-                submitted = st.form_submit_button(ui("Generate concept"), type="primary", use_container_width=True)
+                submitted = st.form_submit_button(ui("Generate concept"), type="primary", use_container_width=True,
+                    disabled=provider == "mistral" and not cloud_ready)
         if selected_project_id is not None:
             _render_project_context(project_by_id[selected_project_id])
 
@@ -591,6 +614,8 @@ if submitted:
         idea_operation_id = _operation_id("create", submission_id)
         concept_operation_id = _operation_id("concept", submission_id)
         try:
+            # Enforce consent/configuration again at the service boundary before saving/calling.
+            client = select_client(provider, consent=consent)
             project = repository.create_project(idea, operation_id=idea_operation_id)
             if project.concept is not None:
                 st.session_state["pr5_pending_project_id"] = project.project_id
@@ -599,8 +624,9 @@ if submitted:
                 )
                 st.rerun()
 
-            with st.spinner(ui("Generating and validating the concept with the local model...")):
-                result = LLMClient().generate(
+            progress = "Generating and validating the concept with the local model..." if provider == "local" else "Generating and validating the concept with Mistral Cloud..."
+            with st.spinner(ui(progress)):
+                result = client.generate(
                     "concept",
                     _concept_generation_input(idea, st.session_state.get("ui_language", "en")),
                     response_model=ConceptPaper,
@@ -619,6 +645,8 @@ if submitted:
                 f"response time: {result.response_time_seconds:.2f} s."
             )
             st.rerun()
+        except CloudError as error:
+            st.error(ui(str(error)))
         except ValidationError as error:
             st.error(ui(f"The generated concept did not pass validation and was not saved: {error}"))
         except Exception as error:

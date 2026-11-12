@@ -1,6 +1,44 @@
-# Qwen and future Mistral comparison: exact operating procedure
+# Qwen and Mistral comparison: exact operating procedure
 
-Prepared 11 November 2026. **No live Mistral connector, cloud key handling, paid call or completed model comparison is included.** Qwen execution is opt-in; preparation/import/review are offline. All benchmark data is fictional. Do not use this command as a route to send saved projects or private information to a provider.
+Prepared 11 November; updated 12 November 2026. An explicit Mistral collector is now implemented and tested offline; **no real cloud call or completed model comparison was performed**. Qwen/cloud execution is opt-in; preparation/import/review are offline. All benchmark data is fictional. Never use this as a route to send saved projects or private information to a provider. The implemented collector below supersedes the historical future-caller instructions retained later in this document.
+
+## Implemented cloud collector — 12 November 2026
+
+First configure the key and exact approved `MISTRAL_MODEL` as described in [Mistral setup](mistral_setup.md). Do not execute real requests until you approve the model, terms and budget. All commands below are owner-run instructions, not evidence of live comparison results.
+
+Prepare one new common manifest using the existing offline `model_quality plan` command below. Run Qwen and Mistral from the same reviewed source version and **the same manifest file**; preserve its hash. For a separate pilot use one trial; the proposed study uses three trials × ten ideas. Do not mix the earlier adaptive A/B/C experiment or its different prompt recipes into this comparison.
+
+```powershell
+.\.venv\Scripts\python.exe -m hankeluotsi.model_quality plan `
+  --trials 3 --max-tokens 2048 --timeout-seconds 120 --order-seed 37 `
+  --output benchmark-results/paired-study-01/plan
+
+.\.venv\Scripts\python.exe -m hankeluotsi.model_quality run-local `
+  --manifest benchmark-results/paired-study-01/plan/manifest.json `
+  --model qwen3.5-4b --endpoint http://127.0.0.1:1234/v1 `
+  --output benchmark-results/paired-study-01/qwen
+
+# REAL CLOUD CALLS: execute only after owner approval of costs/privacy/model.
+.\.venv\Scripts\python.exe -m hankeluotsi.mistral_benchmark `
+  --manifest benchmark-results/paired-study-01/plan/manifest.json `
+  --output benchmark-results/paired-study-01/mistral `
+  --execute-cloud --fictional-only --accept-costs
+
+# Offline: give only the packet/template to the evaluator; retain PRIVATE-key.json separately.
+.\.venv\Scripts\python.exe -m hankeluotsi.model_quality_review prepare `
+  --reports benchmark-results/paired-study-01/qwen/results.json benchmark-results/paired-study-01/mistral/results.json `
+  --output benchmark-results/paired-study-01/blind
+```
+
+Both providers receive identical manifest messages, schema, temperature, token limit and request order with no automatic retries. Equal token limits do not establish equal compute or identical server behavior. Record the exact local model/runtime metadata using the optional `--metadata` file described below. Pin a supported Mistral model version if available; actual returned IDs are retained and unknowns remain unknown.
+
+The cloud collector uses existing transport-independent `model_quality.run`, checkpointing and assessment. `results.json` remains compatible with the existing blinded-review validator and records provider/requested/reported model, prompt/base version, case/trial/language, JSON/schema/finish/truncation, timing, tokens and null human scores. Additive `error_type` distinguishes sanitized auth/rate-limit/connection/timeout/protocol/JSON/schema/incomplete failures; collector source hashes record adapter code. Generic per-attempt checkpoints are written immediately; detailed adapter categories are added in the completed report. An interrupted run retains checkpoints but is incomplete and cannot be silently resumed or used as a complete comparison.
+
+Estimated costs remain **null**: no verified pricing or uncached billing basis is asserted. Use the existing reviewed pricing/import mechanism only when exact-model prices, currency/date/source, token counts and billing basis are independently established. Neither token totals nor a European provider establish costs, data residency or privacy guarantees.
+
+Cloud connection failures do not fall back to local. The collector preserves every planned request/failure, with one bounded call per slot; a rate limit/auth failure may therefore be recorded for multiple independent slots. Stop/review account settings before initiating another run. Changed inputs, missing flags/configuration, unreviewed free text and existing output directories are rejected before requests. Only the fixed synthetic dataset is accepted, including for programmatic collection.
+
+The packet contains original outputs, which may self-identify; blinding is imperfect. The human evaluator fills a **copy** of ratings-template.json, records evidence using `expert_quality_v1` and returns it for the existing offline `analyze` command. Never distribute PRIVATE-key.json before ratings are complete. Mocked comparison tests validate packet compatibility and blank scores; they are not quality evidence. No real-key request, live model availability/schema support, pricing or quality advantage was verified during implementation.
 
 ## Prepare one experiment offline
 
@@ -48,7 +86,7 @@ This is **30 real local requests**, one per planned attempt; allow time for comp
 
 ## Future Mistral: approval and official API work still required
 
-There is deliberately **no `run-mistral` command**. After separate owner approval of model, budget, privacy and transport work, the owner or a separately reviewed connector can make the corresponding requests through the [official Chat Completion API](https://docs.mistral.ai/api/endpoint/chat), documented as `POST https://api.mistral.ai/v1/chat/completions`. Mistral documents [custom structured outputs](https://docs.mistral.ai/inference/conversations/structured-output/custom). No Mistral SDK or executable cloud request is installed/implemented here. Consult current official documentation again before that later work.
+**Historical manual-import alternative (11 November design):** This section remains useful for separately collected responses. The implemented `mistral_benchmark` collector above now provides executable, opt-in collection without a Mistral SDK. Manual collection must still use the [official Chat Completion API](https://docs.mistral.ai/api) and [custom structured outputs](https://docs.mistral.ai/inference/conversations/structured-output/custom), with separate owner approval of model, budget and privacy. No real collection was performed during this implementation.
 
 For **each request, in manifest order**, the future caller must:
 
