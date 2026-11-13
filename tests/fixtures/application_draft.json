@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "project_summary": "Proposed fictional six-month pilot for twelve artists to practise pricing and test one simulated service offer each.",
+  "background_need": "The fictional artists report limited pricing and customer-development skills; a starting-skills assessment is still needed.",
+  "target_groups": ["Twelve fictional self-employed artists"],
+  "beneficiaries": ["The participating fictional artists; wider local benefit is a hypothesis to examine"],
+  "general_objective": "Improve participants' ability to explain and test a service offer without promising increased income.",
+  "objectives": [
+    {"id": "O1", "description": "By the pilot end, participants demonstrate the cost and value reasoning of one proposed service offer."}
+  ],
+  "work_packages": [
+    {"id": "WP1", "description": "Proposed guided practice and simulated offer testing", "objective_ids": ["O1"]}
+  ],
+  "activities": [
+    {"id": "A1", "description": "Proposed three guided sessions: assess starting skills, build an offer and practise a simulated customer discussion.", "objective_ids": ["O1"], "work_package_id": "WP1"}
+  ],
+  "outputs": ["A proposed service offer and cost worksheet from each participating fictional artist"],
+  "expected_results": [
+    {"id": "R1", "description": "Participants can explain the cost and customer value assumptions of their simulated offer.", "activity_ids": ["A1"]}
+  ],
+  "proposed_indicators": [
+    {"id": "I1", "description": "Proportion of assessed participants who explain all agreed cost and value components.", "result_ids": ["R1"], "measurement_method": "Facilitator observes a simulated discussion at the final session using an agreed checklist; successful unique participants divided by all assessed participants. Starting level and a provisional target must be agreed first."}
+  ],
+  "longer_term_impact": "Improved enterprise confidence is a hypothesis; income or employment effects are not established by this pilot.",
+  "partner_roles": [
+    {"partner": "Fictional Northlight Arts Association", "role": "Proposed facilitator; capacity and commitment require confirmation.", "status": "proposed"}
+  ],
+  "timeline": [
+    {"work_package_id": "WP1", "period": "Proposed months 1–6, with starting assessment before practice and final demonstration at the end."}
+  ],
+  "risks": [
+    {"description": "Participants may have uneven starting skills or limited attendance.", "mitigation": "Confirm availability and adapt the practice tasks after the initial skills check."}
+  ],
+  "assumptions": ["The six-month shared workshop access stated in the fictional idea remains available; facilitation is not yet confirmed."],
+  "sustainability": "Proposed reusable worksheets and peer practice can continue if participants and the association confirm time and ownership.",
+  "open_questions": ["Who can facilitate the sessions?", "What starting-skill checklist and provisional target should participants agree?"]
+}

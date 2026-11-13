@@ -1,0 +1,84 @@
+{
+  "version": "five_case_ai_assessment_v1",
+  "rubric_version": "expert_quality_v1",
+  "assessment_method": "Unblinded Codex review of recorded content and validation only; do not fabricate numerical scores for absent content.",
+  "items": [
+    {
+      "case_id": "Q01",
+      "provider": "lm_studio",
+      "assessment_type": "AI-assisted qualitative assessment, not independent human expertise",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "reason": "Empty captured assistant content; finish_reason=length. No need/objective/activity/result/indicator/language text can be assessed.",
+      "semantic_completeness": "no assessable concept",
+      "human_scores": null
+    },
+    {
+      "case_id": "Q02",
+      "provider": "lm_studio",
+      "assessment_type": "AI-assisted qualitative assessment, not independent human expertise",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "reason": "Empty captured assistant content; finish_reason=length. No need/objective/activity/result/indicator/language text can be assessed.",
+      "semantic_completeness": "no assessable concept",
+      "human_scores": null
+    },
+    {
+      "case_id": "Q03",
+      "provider": "lm_studio",
+      "assessment_type": "AI-assisted qualitative assessment, not independent human expertise",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "reason": "Empty captured assistant content; finish_reason=length. No need/objective/activity/result/indicator/language text can be assessed.",
+      "semantic_completeness": "no assessable concept",
+      "human_scores": null
+    },
+    {
+      "case_id": "Q08",
+      "provider": "lm_studio",
+      "assessment_type": "AI-assisted qualitative assessment, not independent human expertise",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "reason": "Empty captured assistant content; finish_reason=length. No need/objective/activity/result/indicator/language text can be assessed.",
+      "semantic_completeness": "no assessable concept",
+      "human_scores": null
+    },
+    {
+      "case_id": "Q09",
+      "provider": "lm_studio",
+      "assessment_type": "AI-assisted qualitative assessment, not independent human expertise",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "reason": "Empty captured assistant content; finish_reason=length. No need/objective/activity/result/indicator/language text can be assessed.",
+      "semantic_completeness": "no assessable concept",
+      "human_scores": null
+    }
+  ],
+  "mistral_assessment_status": "not_run",
+  "winner": null
+}

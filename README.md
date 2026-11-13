@@ -6,7 +6,7 @@ AI-assisted EU project planning prototype for the HAMK AI Expert course (2026).
 
 ## Current status
 
-The PR5 prototype accepts a fictional project idea, generates a `ConceptPaper` with the local LM Studio model, validates it with Pydantic, saves it to SQLite, and lets you reopen saved projects. Later workflow stages are not part of this prototype. The planned workflow is documented in [PLANS.md](PLANS.md); the project and data boundaries are in [AGENTS.md](AGENTS.md).
+The app accepts fictional project ideas, generates validated concepts and reopens saved SQLite records. Saved concepts now also support a bounded application draft, deterministic checks, evidence-linked AI review, explicit human approval and approved Markdown export. These new stages are covered by offline provider mocks and temporary-database UI tests; real-model reliability and professional content quality remain evaluation gates. See [Draft & Review behavior and limitations](docs/draft_review.md), the controlling [PLANS.md](PLANS.md) and [AGENTS.md](AGENTS.md).
 
 ## Windows setup
 
@@ -25,6 +25,8 @@ streamlit run app.py
 Use the **Suomi / English** selector in the top-right header. English is the initial default; the choice persists during Streamlit reruns in the current session. New concept generation requests the selected language from the existing local Qwen model. Switching changes interface/PDF labels, never saved project text, JSON keys or IDs. Official funding content stays in its original language. See [bilingual support and review steps](docs/bilingual_support.md).
 
 For the completed Nordic UI, original logo, browser QA evidence and tomorrow's review checklist, see [UI verification](docs/ui_qa.md). Restart Streamlit after pulling or reviewing changes to Python modules/theme files; this avoids an old imported presentation module remaining in a long-running process. Run from the repository directory so the local theme configuration is loaded. The default database and UI assets are anchored to the project folder; an explicit `HANKELUOTSI_DB_PATH` override is respected.
+
+If Draft & Review reports a missing `StaleProjectError` import after updating files, fully stop and restart the Streamlit process. See [verified startup recovery and isolated demonstration commands](docs/startup_troubleshooting.md).
 
 ## Local model setup
 

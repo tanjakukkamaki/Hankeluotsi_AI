@@ -1,6 +1,6 @@
 # Draft & Review: proposal for owner approval
 
-Prepared during the November planning-quality experiments. **Architecture only: no production stage, prompt, project schema, database migration, UI or exporter is implemented here.** Experimental needs/critique JSON is a benchmark artifact, not a production `ApplicationDraft` or `ReviewReport`.
+Prepared during the November planning-quality experiments. **Historical architecture proposal:** the owner authorized a bounded implementation on 12 November. The actual implemented contract, workflow, tests and remaining limits are in [Draft & Review](draft_review.md). The broader clarification/correction proposal below remains historical; not every proposed feature is implemented. Experimental needs/critique JSON remains a benchmark artifact, not the production `ApplicationDraft` or `ReviewReport`.
 
 ## Proposed bounded workflow
 

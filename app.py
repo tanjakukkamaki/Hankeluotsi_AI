@@ -18,6 +18,7 @@ from hankeluotsi.funding_calls import compare_call_locally
 from hankeluotsi.funding_matching import RELEVANCE_CATEGORIES, rank_funding_calls
 from hankeluotsi.live_funding import search_live_funding_calls
 from hankeluotsi.mistral_client import CloudConsent, CloudError, check_configuration, select_client
+from hankeluotsi.draft_ui import render_draft_review
 from hankeluotsi.i18n import language_code, localize
 from hankeluotsi.pdf_exporter import concept_pdf_filename, generate_concept_pdf
 from hankeluotsi.presentation import (
@@ -577,6 +578,7 @@ if info_message:
     st.info(ui(info_message))
 if selected_project_id is not None:
     _render_saved_project(project_by_id[selected_project_id])
+    render_draft_review(repository, selected_project_id, st.session_state.get("ui_language", "en"))
     _render_funding_research(project_by_id[selected_project_id])
 
 if submitted:
@@ -647,6 +649,8 @@ if submitted:
             st.rerun()
         except CloudError as error:
             st.error(ui(str(error)))
+            if error.http_status is not None:
+                st.caption("HTTP " + str(error.http_status))
         except ValidationError as error:
             st.error(ui(f"The generated concept did not pass validation and was not saved: {error}"))
         except Exception as error:
@@ -655,4 +659,6 @@ if submitted:
 if selected_project_id is None:
     anchor("concept-paper")
     anchor("funding-opportunities")
+    anchor("draft-review")
+    st.caption(ui("Open a saved concept to generate an application draft and AI review."))
 st.markdown('<div class="workspace-footer"><span>HankeLuotsi AI · ' + ui('A clearer direction for project ideas.') + '</span><span>' + ui('Fictional data only · Human review required') + '</span></div>', unsafe_allow_html=True)

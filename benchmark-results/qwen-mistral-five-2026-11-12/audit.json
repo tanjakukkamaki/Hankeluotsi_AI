@@ -1,0 +1,10 @@
+{
+  "source_manifest_hash_matches": true,
+  "selected_request_hashes_match_source": true,
+  "reassessed_by_existing_verify_report": true,
+  "local_attempts": 5,
+  "local_retries": 0,
+  "cloud_attempts": 0,
+  "cloud_retries": 0,
+  "mismatches": 0
+}

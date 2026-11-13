@@ -1,0 +1,22 @@
+{
+  "label": "B",
+  "case_id": "Q02",
+  "language": "fi",
+  "fictional_idea": {
+    "schema_version": 1,
+    "title": "Kuvitteellinen Älypaja pienyrityksille",
+    "development_need": "Kahdeksan kuvitteellista pienyritystä haluaa kokeilla tekoälyä arjen tehtävissä, mutta osaaminen ja tietosuojakäytännöt vaihtelevat. Pilotissa saa käyttää vain synteettisiä tietoja.",
+    "target_groups": [
+      "Kuvitteellisten pienyritysten työntekijät ja yrittäjät"
+    ],
+    "expected_change": "Yritykset tunnistavat yhden hyödyllisen ja turvallisesti rajatun tekoälykokeilun sekä arvioivat sen vaikutuksia.",
+    "geography": "Kuvitteellinen Järvilaakso Suomessa",
+    "partners": [
+      "Kuvitteellinen Osaamispaja"
+    ],
+    "funding_context": "Rahoitusohjelmaa ei ole valittu."
+  },
+  "status": "no_assessable_output",
+  "output": "",
+  "note": "This is not a usable concept; missing output is not a fabricated model response."
+}

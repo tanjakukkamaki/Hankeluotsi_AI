@@ -1,0 +1,146 @@
+{
+  "rubric_version": "expert_quality_v1",
+  "ratings": [
+    {
+      "case_id": "Q01",
+      "label": "A",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "evidence": "",
+      "reviewer_type": "human",
+      "assessment_status": "unscored"
+    },
+    {
+      "case_id": "Q01",
+      "label": "B",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "evidence": "",
+      "reviewer_type": "human",
+      "assessment_status": "unscored"
+    },
+    {
+      "case_id": "Q02",
+      "label": "A",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "evidence": "",
+      "reviewer_type": "human",
+      "assessment_status": "unscored"
+    },
+    {
+      "case_id": "Q02",
+      "label": "B",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "evidence": "",
+      "reviewer_type": "human",
+      "assessment_status": "unscored"
+    },
+    {
+      "case_id": "Q03",
+      "label": "A",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "evidence": "",
+      "reviewer_type": "human",
+      "assessment_status": "unscored"
+    },
+    {
+      "case_id": "Q03",
+      "label": "B",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "evidence": "",
+      "reviewer_type": "human",
+      "assessment_status": "unscored"
+    },
+    {
+      "case_id": "Q08",
+      "label": "A",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "evidence": "",
+      "reviewer_type": "human",
+      "assessment_status": "unscored"
+    },
+    {
+      "case_id": "Q08",
+      "label": "B",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "evidence": "",
+      "reviewer_type": "human",
+      "assessment_status": "unscored"
+    },
+    {
+      "case_id": "Q09",
+      "label": "A",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "evidence": "",
+      "reviewer_type": "human",
+      "assessment_status": "unscored"
+    },
+    {
+      "case_id": "Q09",
+      "label": "B",
+      "scores": {
+        "development_need": null,
+        "objectives": null,
+        "activities": null,
+        "results_indicators": null,
+        "coherence_usability": null
+      },
+      "evidence": "",
+      "reviewer_type": "human",
+      "assessment_status": "unscored"
+    }
+  ],
+  "limits": "No completed paired study. Do not score missing outputs as if they were concepts or infer a winner."
+}

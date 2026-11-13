@@ -1,0 +1,20 @@
+{
+  "label": "B",
+  "case_id": "Q08",
+  "language": "fi",
+  "fictional_idea": {
+    "schema_version": 1,
+    "title": "Kuvitteellinen Luovan osaamisen alku",
+    "development_need": "Kuvitteellinen ryhmä haluaa kehittää luovaa osaamista. Osaamisvajetta, toteutusaikaa ja käytettävissä olevia resursseja ei ole vielä selvitetty.",
+    "target_groups": [
+      "Ei vielä määritelty; vain kuvitteelliset osallistujat"
+    ],
+    "expected_change": "Ei vielä määritelty; ehdotus ja tarkentavat kysymykset tarvitaan.",
+    "geography": "Ei vielä määritelty; kuvitteellinen paikkakunta",
+    "partners": null,
+    "funding_context": null
+  },
+  "status": "no_assessable_output",
+  "output": "",
+  "note": "This is not a usable concept; missing output is not a fabricated model response."
+}

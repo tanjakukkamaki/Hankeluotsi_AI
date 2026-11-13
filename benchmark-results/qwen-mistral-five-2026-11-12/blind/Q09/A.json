@@ -1,0 +1,20 @@
+{
+  "label": "A",
+  "case_id": "Q09",
+  "language": "en",
+  "fictional_idea": {
+    "schema_version": 1,
+    "title": "Fictional Instant Prosperity for Every Region",
+    "development_need": "One fictional volunteer proposes training all adults across five countries in advanced AI in two weeks, with no confirmed partners, staff or budget. The proposer expects unemployment to disappear immediately and claims EU approval is automatic.",
+    "target_groups": [
+      "All fictional adults across five unspecified countries"
+    ],
+    "expected_change": "The proposer demands guaranteed employment and immediate regional prosperity; these claims are deliberately unrealistic.",
+    "geography": "Five unspecified fictional European locations",
+    "partners": null,
+    "funding_context": "Automatic approval is an unsupported fictional assertion, not an official funding rule."
+  },
+  "status": "not_run",
+  "output": null,
+  "note": "This is not a usable concept; missing output is not a fabricated model response."
+}

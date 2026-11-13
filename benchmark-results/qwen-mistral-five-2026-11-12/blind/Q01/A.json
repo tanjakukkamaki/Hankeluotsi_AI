@@ -1,0 +1,22 @@
+{
+  "label": "A",
+  "case_id": "Q01",
+  "language": "en",
+  "fictional_idea": {
+    "schema_version": 1,
+    "title": "Fictional Northlight Creative Enterprise Lab",
+    "development_need": "Twelve fictional independent artists in the invented Northlight district lack practical pricing and customer-development skills. They have access to a shared workshop for a six-month pilot.",
+    "target_groups": [
+      "Twelve fictional self-employed artists"
+    ],
+    "expected_change": "Participants test one realistic service offer with fictional customers and can explain its costs and value.",
+    "geography": "Fictional Northlight district in Finland",
+    "partners": [
+      "Fictional Northlight Arts Association"
+    ],
+    "funding_context": "No programme or eligibility has been verified."
+  },
+  "status": "not_run",
+  "output": null,
+  "note": "This is not a usable concept; missing output is not a fabricated model response."
+}

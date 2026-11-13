@@ -1,0 +1,37 @@
+{
+  "version": "five_case_selection_v1",
+  "source_manifest_sha256": "b63ac6ab0d0c389defb80206e7f98cdd478c9f8a1ccf35f5632f8f856fa3678a",
+  "selected_manifest_sha256": "ed4e601ac4a3fef3dde0e8d1dba4254c50d9ab1ceb6fc01c7a6acda7c523619e",
+  "case_ids": [
+    "Q01",
+    "Q02",
+    "Q03",
+    "Q08",
+    "Q09"
+  ],
+  "request_sha256": [
+    "1d7b96f15b3de9c4b826560a47c85bae2defb7316d016c073a1692aac421bef0",
+    "451360e116f0dbfe920cfd8d425991cd007738a9cac5516c7145053e3d4d3e7b",
+    "0fabdd6188eefa838fb5513eaa982974321048a353eaf5fd95db02261ac97603",
+    "e3e6a271a7a94d42e1cc4ad0510b3d4f34038dfdc394ce075249752893000418",
+    "07b6df65d21bba618eb50dd73695080a91d719013e53dbd648355a9f30297888"
+  ],
+  "settings": {
+    "trials": 1,
+    "order_seed": 37,
+    "temperature": 0.2,
+    "max_tokens": 2048,
+    "timeout_seconds": 120
+  },
+  "reason": "Preselected simple enterprise, synthetic AI skills, complex tourism, incomplete and unrealistic concepts; three English/two Finnish.",
+  "retries": 0,
+  "mistral_preflight": {
+    "key_available": false,
+    "model": null,
+    "balance_verified": false,
+    "pricing_verified": false,
+    "cost_ceiling_verified": false,
+    "generation_calls": 0
+  },
+  "note": "Source manifest retains ten frozen cases. Execution manifest selects only five existing requests; stock load_manifest/collector reject subsets. Do not run stock ten-case cloud command for this five-case study."
+}

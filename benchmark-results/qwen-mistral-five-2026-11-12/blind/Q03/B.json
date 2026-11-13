@@ -1,0 +1,24 @@
+{
+  "label": "B",
+  "case_id": "Q03",
+  "language": "en",
+  "fictional_idea": {
+    "schema_version": 1,
+    "title": "Fictional Reedshore Year-round Visitor Routes",
+    "development_need": "Three invented rural communities have seasonal visitor demand, limited public transport and sensitive wetland habitats. Two fictional tourism firms want an eighteen-month low-impact route pilot; no ecological baseline or visitor survey exists.",
+    "target_groups": [
+      "Fictional small tourism firms",
+      "Fictional community volunteers"
+    ],
+    "expected_change": "Partners test whether accessible off-season routes can support local services without increasing habitat pressure.",
+    "geography": "Fictional Reedshore region in Finland",
+    "partners": [
+      "Fictional Reedshore Cooperative",
+      "Fictional Marsh Trails Ltd"
+    ],
+    "funding_context": "Only general funding research exists; no official call conditions are supplied."
+  },
+  "status": "no_assessable_output",
+  "output": "",
+  "note": "This is not a usable concept; missing output is not a fabricated model response."
+}

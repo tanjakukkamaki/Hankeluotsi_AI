@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "strengths": ["The pilot distinguishes simulated offer practice from unverified income impacts."],
+  "findings": [
+    {
+      "reference": "I1",
+      "evidence_quote": "successful unique participants divided by all assessed participants",
+      "observation": "The denominator is defined, but treatment of participants missing the final assessment still requires a decision.",
+      "suggestion": "Agree and report assessment coverage separately from the competence proportion.",
+      "severity": "question"
+    }
+  ],
+  "missing_information": ["Facilitator availability and the starting-level assessment are not confirmed."],
+  "overall_assessment": "A useful early planning draft for human review; it is not an eligibility assessment.",
+  "uncertainties": ["The feasibility of facilitation and any longer-term enterprise effects remain unverified."]
+}

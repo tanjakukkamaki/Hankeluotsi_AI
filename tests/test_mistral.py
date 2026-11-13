@@ -90,14 +90,18 @@ def test_official_contract_defaults_validation_and_no_ambient_credentials(monkey
     client.__exit__.assert_called_once()
 
 
-@pytest.mark.parametrize("status,code", [(401, "authentication"), (403, "authentication"),
-    (429, "rate_limit"), (301, "http_error"), (400, "http_error"), (500, "http_error")])
+@pytest.mark.parametrize("status,code", [(401, "authentication"), (403, "authorization"),
+    (429, "rate_limit"), (301, "http_error"), (400, "bad_request"), (500, "service_unavailable"),
+    (402, "billing_required"), (404, "model_unavailable"), (408, "timeout"),
+    (413, "request_too_large"), (422, "bad_request"), (503, "service_unavailable"), (504, "timeout")])
 def test_http_failures_are_safe_and_not_retried(monkeypatch, caplog, status, code):
     _, client = transport(monkeypatch, status=status, body={"error": KEY})
     with pytest.raises(m.CloudError) as e:
         generate()
     assert e.value.code == code and KEY not in str(e.value)
+    assert e.value.http_status == status
     assert KEY not in caplog.text and client.post.call_count == 1
+    client.post.return_value.json.assert_not_called()
 
 
 @pytest.mark.parametrize("error,code", [(httpx.ReadTimeout(KEY), "timeout"),
@@ -108,10 +112,13 @@ def test_transport_errors_hide_exception_detail(monkeypatch, error, code):
     with pytest.raises(m.CloudError) as e:
         generate()
     assert e.value.code == code and KEY not in str(e.value)
+    assert e.value.http_status is None
     assert e.value.__suppress_context__ and client.post.call_count == 1
 
 
 @pytest.mark.parametrize("body,code", [(payload("{"), "invalid_json"), (payload(""), "invalid_json"),
+    (payload('{"untrusted":NaN}'), "invalid_json"),
+    (payload('{"untrusted":Infinity}'), "invalid_json"),
     (payload("{}"), "invalid_schema"), (payload(finish="length"), "incomplete"),
     (payload(finish=None), "incomplete"), (payload(finish="model_length"), "incomplete"),
     ({"choices": []}, "invalid_response"), (payload(text=[]), "invalid_response"),
@@ -223,3 +230,28 @@ def test_benchmark_rejects_project_text_and_cli_without_opt_in(monkeypatch, tmp_
     with pytest.raises(SystemExit):
         benchmark.main(["--manifest", "missing", "--output", str(tmp_path / "run")])
     client.post.assert_not_called()
+
+
+def test_cloud_stage_budgets_are_explicit_and_leave_concept_defaults_unchanged(monkeypatch):
+    factory, client = transport(monkeypatch)
+    result = m.MistralClient(CONSENT).generate("draft", "Fictional draft instructions",
+        ConceptPaper, max_attempts=1, max_tokens=4096, timeout_seconds=180)
+    assert result.prompt_version == "draft_v1" and result.stage == "draft"
+    factory.assert_called_once_with(timeout=180, follow_redirects=False, trust_env=False)
+    assert client.post.call_args.kwargs["json"]["max_tokens"] == 4096
+    assert client.post.call_count == 1
+
+
+@pytest.mark.parametrize("kwargs", [{"max_tokens": 0}, {"max_tokens": 8193}, {"max_tokens": True},
+    {"timeout_seconds": 0}, {"timeout_seconds": 601}, {"timeout_seconds": True}])
+def test_invalid_stage_limits_rejected_before_network(monkeypatch, kwargs):
+    _, client = transport(monkeypatch)
+    with pytest.raises(ValueError):
+        m.MistralClient(CONSENT).generate("draft", "Fictional", ConceptPaper, **kwargs)
+    client.post.assert_not_called()
+
+
+def test_numeric_status_diagnostic_cannot_echo_untrusted_data():
+    assert m.CloudError("http_error", http_status=KEY).http_status is None
+    assert m.CloudError("http_error", http_status=True).http_status is None
+    assert m.CloudError("http_error", http_status=999).http_status is None

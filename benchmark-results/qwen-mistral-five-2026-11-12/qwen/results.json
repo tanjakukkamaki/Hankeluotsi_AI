@@ -1,0 +1,1262 @@
+{
+  "version": "quality_results_v1",
+  "run_id": "b9238525-8519-4e00-a417-29114e24eb0c",
+  "created_at_utc": "2026-11-12T18:39:38.094276+00:00",
+  "provider": "lm_studio",
+  "requested_model": "qwen3.5-4b",
+  "manifest_sha256": "ed4e601ac4a3fef3dde0e8d1dba4254c50d9ab1ceb6fc01c7a6acda7c523619e",
+  "manifest": {
+    "version": "quality_manifest_v1",
+    "experiment_id": "1385cd8c-1767-43f6-bcfb-2705d59cef10",
+    "created_at_utc": "2026-11-12T18:39:37.969619+00:00",
+    "prompt_version": "quality_concept_v1",
+    "base_prompt_version": "concept_v1",
+    "python_version": "3.12.0",
+    "code_sha256": {
+      "model_quality.py": "0ec16ac8bc28f14acbca1eff31e666f5c50dd7a7b58d5f4e216909f1dd5278d4",
+      "model_quality_review.py": "7ccfedabbc53506c60ec03d55f330340fd1560d20fe248373ee0e1cc171dc3cf",
+      "prompts.py": "a8415776f99c4e96e8bb0da2efa9f7e9276b994c29af04d3058f97cea4e1bde9",
+      "schemas.py": "a4638840bf9739954f6390ae506c9b6ebed4a7f671dd8eb381f97123050abb81",
+      "consistency.py": "f38175266237ae453ee27167f9c4996d8fe7f75471aabd2688623e0c8695f1f3"
+    },
+    "dataset_sha256": "43d241fde06a2682a3c944362e65b959d115e9813b48f744dfedf3dc710aa672",
+    "rubric_sha256": "2677b504da9b6c06b505838a4011955b27045af71372457ff9442a5653618a29",
+    "schema_sha256": "eb86f246222ce254e2378e29fdc1d51b7f2d7259766dfed4151bd2c8fba752f8",
+    "settings": {
+      "trials": 1,
+      "order_seed": 37,
+      "temperature": 0.2,
+      "max_tokens": 2048,
+      "timeout_seconds": 120
+    },
+    "cases": [
+      {
+        "case_id": "Q01",
+        "language": "en",
+        "complexity": "simple",
+        "themes": [
+          "creative industries",
+          "cultural entrepreneurship"
+        ],
+        "idea": {
+          "schema_version": 1,
+          "title": "Fictional Northlight Creative Enterprise Lab",
+          "development_need": "Twelve fictional independent artists in the invented Northlight district lack practical pricing and customer-development skills. They have access to a shared workshop for a six-month pilot.",
+          "target_groups": [
+            "Twelve fictional self-employed artists"
+          ],
+          "expected_change": "Participants test one realistic service offer with fictional customers and can explain its costs and value.",
+          "geography": "Fictional Northlight district in Finland",
+          "partners": [
+            "Fictional Northlight Arts Association"
+          ],
+          "funding_context": "No programme or eligibility has been verified."
+        },
+        "review_notes": [
+          "Distinguish participants' practical enterprise skills from guaranteed business growth.",
+          "Proposed numeric targets must be labelled provisional, not baseline facts."
+        ]
+      },
+      {
+        "case_id": "Q02",
+        "language": "fi",
+        "complexity": "moderate",
+        "themes": [
+          "AI skills",
+          "digital transformation",
+          "SME innovation"
+        ],
+        "idea": {
+          "schema_version": 1,
+          "title": "Kuvitteellinen Älypaja pienyrityksille",
+          "development_need": "Kahdeksan kuvitteellista pienyritystä haluaa kokeilla tekoälyä arjen tehtävissä, mutta osaaminen ja tietosuojakäytännöt vaihtelevat. Pilotissa saa käyttää vain synteettisiä tietoja.",
+          "target_groups": [
+            "Kuvitteellisten pienyritysten työntekijät ja yrittäjät"
+          ],
+          "expected_change": "Yritykset tunnistavat yhden hyödyllisen ja turvallisesti rajatun tekoälykokeilun sekä arvioivat sen vaikutuksia.",
+          "geography": "Kuvitteellinen Järvilaakso Suomessa",
+          "partners": [
+            "Kuvitteellinen Osaamispaja"
+          ],
+          "funding_context": "Rahoitusohjelmaa ei ole valittu."
+        },
+        "review_notes": [
+          "Keep all proposed trials synthetic and avoid guaranteed productivity percentages.",
+          "Assess a baseline and method, not just the number of workshops."
+        ]
+      },
+      {
+        "case_id": "Q03",
+        "language": "en",
+        "complexity": "complex",
+        "themes": [
+          "tourism",
+          "regional development",
+          "sustainability"
+        ],
+        "idea": {
+          "schema_version": 1,
+          "title": "Fictional Reedshore Year-round Visitor Routes",
+          "development_need": "Three invented rural communities have seasonal visitor demand, limited public transport and sensitive wetland habitats. Two fictional tourism firms want an eighteen-month low-impact route pilot; no ecological baseline or visitor survey exists.",
+          "target_groups": [
+            "Fictional small tourism firms",
+            "Fictional community volunteers"
+          ],
+          "expected_change": "Partners test whether accessible off-season routes can support local services without increasing habitat pressure.",
+          "geography": "Fictional Reedshore region in Finland",
+          "partners": [
+            "Fictional Reedshore Cooperative",
+            "Fictional Marsh Trails Ltd"
+          ],
+          "funding_context": "Only general funding research exists; no official call conditions are supplied."
+        },
+        "review_notes": [
+          "Do not presume tourism growth and conservation are automatically compatible.",
+          "Require a feasible pilot, monitoring and explicit missing ecological/accessibility information."
+        ]
+      },
+      {
+        "case_id": "Q04",
+        "language": "fi",
+        "complexity": "moderate",
+        "themes": [
+          "cultural wellbeing",
+          "education"
+        ],
+        "idea": {
+          "schema_version": 1,
+          "title": "Kuvitteellinen Kulttuurisilta arkeen",
+          "development_need": "Kuvitteellisen Saarikylän aikuisilla on vähän saavutettavia kulttuuriharrastuksia. Vapaaehtoiset ehdottavat kuuden kuukauden taidetyöpajoja, mutta osallistumisen esteitä ei ole kartoitettu.",
+          "target_groups": [
+            "Kuvitteelliset kulttuuritoiminnasta kiinnostuneet aikuiset"
+          ],
+          "expected_change": "Osallistujat kokevat osallistumisen mahdolliseksi ja löytävät itselleen sopivan kulttuuritoiminnan.",
+          "geography": "Kuvitteellinen Saarikylä Suomessa",
+          "partners": [
+            "Kuvitteellinen Saarikylän Taidekerho"
+          ],
+          "funding_context": null
+        },
+        "review_notes": [
+          "Do not invent clinical health effects or diagnoses.",
+          "Participation experience may be measured with a consent-based synthetic survey plan; do not claim medical efficacy."
+        ]
+      },
+      {
+        "case_id": "Q05",
+        "language": "en",
+        "complexity": "complex",
+        "themes": [
+          "cross-border cooperation",
+          "competence development"
+        ],
+        "idea": {
+          "schema_version": 1,
+          "title": "Fictional Twinshore Skills Exchange",
+          "development_need": "Fictional vocational teams in Finland and Sweden teach similar repair skills separately. They propose a twelve-month shared learning pilot, but language support, partner commitment and recognition of learning remain undecided.",
+          "target_groups": [
+            "Fictional vocational educators",
+            "Fictional adult learners"
+          ],
+          "expected_change": "Teams test a jointly designed repair module and identify what each side learns from the other.",
+          "geography": "Fictional Twinshore locations in Finland and Sweden",
+          "partners": [
+            "Fictional Eastshore Learning Centre",
+            "Fictional Westshore Workshop"
+          ],
+          "funding_context": "An Interreg-style partnership is being considered; programme geography and eligibility are unverified."
+        },
+        "review_notes": [
+          "Cross-border value must be more than travel or translated materials.",
+          "Do not invent mandatory partner counts, accreditation or funding rates."
+        ]
+      },
+      {
+        "case_id": "Q06",
+        "language": "fi",
+        "complexity": "moderate",
+        "themes": [
+          "sustainability",
+          "circular economy",
+          "SME innovation"
+        ],
+        "idea": {
+          "schema_version": 1,
+          "title": "Kuvitteellinen Kiertokankaan materiaalipilotti",
+          "development_need": "Viisi kuvitteellista tekstiilipajaa tuottaa leikkuujätettä. Ne haluavat yhdeksän kuukauden pilotissa kokeilla yhteistä lajittelua ja uudelleenkäyttöä. Materiaalimääristä tai käsittelykustannuksista ei ole lähtötietoa.",
+          "target_groups": [
+            "Kuvitteellisten tekstiilipajojen työntekijät"
+          ],
+          "expected_change": "Pajat selvittävät, voidaanko yksi materiaalivirta hyödyntää uudelleen turvallisesti ja taloudellisesti.",
+          "geography": "Kuvitteellinen Kiertola Suomessa",
+          "partners": [
+            "Kuvitteellinen Kiertokankaan verkosto"
+          ],
+          "funding_context": null
+        },
+        "review_notes": [
+          "Do not invent waste volumes, certification or carbon savings.",
+          "Separate an observed material-reuse result from an unverified climate-impact claim."
+        ]
+      },
+      {
+        "case_id": "Q07",
+        "language": "en",
+        "complexity": "ambiguous",
+        "themes": [
+          "SME innovation",
+          "digital transformation"
+        ],
+        "idea": {
+          "schema_version": 1,
+          "title": "Fictional Better Business Platform",
+          "development_need": "A fictional enterprise network says it needs a platform. Members disagree whether the problem is missing customers, staff skills or duplicated administrative work. No common problem assessment has been completed.",
+          "target_groups": [
+            "Fictional network members; exact roles and needs not yet agreed"
+          ],
+          "expected_change": "Members want business to improve, but the intended measurable change has not been agreed.",
+          "geography": "Fictional region; exact area not specified",
+          "partners": null,
+          "funding_context": "One fictional proposer assumes every digital project receives EU funding; no evidence is supplied."
+        },
+        "review_notes": [
+          "Challenge solution-first thinking and the funding assertion.",
+          "A credible response starts with scoping/needs assessment and explicit questions rather than silently choosing a business model."
+        ]
+      },
+      {
+        "case_id": "Q08",
+        "language": "fi",
+        "complexity": "incomplete",
+        "themes": [
+          "education",
+          "competence development",
+          "creative industries"
+        ],
+        "idea": {
+          "schema_version": 1,
+          "title": "Kuvitteellinen Luovan osaamisen alku",
+          "development_need": "Kuvitteellinen ryhmä haluaa kehittää luovaa osaamista. Osaamisvajetta, toteutusaikaa ja käytettävissä olevia resursseja ei ole vielä selvitetty.",
+          "target_groups": [
+            "Ei vielä määritelty; vain kuvitteelliset osallistujat"
+          ],
+          "expected_change": "Ei vielä määritelty; ehdotus ja tarkentavat kysymykset tarvitaan.",
+          "geography": "Ei vielä määritelty; kuvitteellinen paikkakunta",
+          "partners": null,
+          "funding_context": null
+        },
+        "review_notes": [
+          "Missing information is explicit source content, not a schema violation to repair with invented facts.",
+          "Reward labelled provisional options and useful questions; do not require an unsupported numeric commitment."
+        ]
+      },
+      {
+        "case_id": "Q09",
+        "language": "en",
+        "complexity": "unrealistic",
+        "themes": [
+          "AI skills",
+          "cross-border cooperation",
+          "regional development"
+        ],
+        "idea": {
+          "schema_version": 1,
+          "title": "Fictional Instant Prosperity for Every Region",
+          "development_need": "One fictional volunteer proposes training all adults across five countries in advanced AI in two weeks, with no confirmed partners, staff or budget. The proposer expects unemployment to disappear immediately and claims EU approval is automatic.",
+          "target_groups": [
+            "All fictional adults across five unspecified countries"
+          ],
+          "expected_change": "The proposer demands guaranteed employment and immediate regional prosperity; these claims are deliberately unrealistic.",
+          "geography": "Five unspecified fictional European locations",
+          "partners": null,
+          "funding_context": "Automatic approval is an unsupported fictional assertion, not an official funding rule."
+        },
+        "review_notes": [
+          "Do not endorse the guarantees or automatic funding claim.",
+          "Propose a much smaller explicitly provisional feasibility pilot and identify missing capacity, partners, timing and evidence."
+        ]
+      },
+      {
+        "case_id": "Q10",
+        "language": "fi",
+        "complexity": "simple",
+        "themes": [
+          "education",
+          "competence development",
+          "cultural entrepreneurship"
+        ],
+        "idea": {
+          "schema_version": 1,
+          "title": "Kuvitteellinen Å-pajan vertaisoppiminen",
+          "development_need": "Kymmenen kuvitteellista kulttuurialan vapaaehtoista tarvitsee tukea saavutettavien verkkotapahtumien järjestämiseen. Käytettävissä on yksi ohjaaja ja kolme yhteistä harjoituskertaa kahden kuukauden aikana.",
+          "target_groups": [
+            "Kymmenen kuvitteellista kulttuurialan vapaaehtoista"
+          ],
+          "expected_change": "Osallistujat toteuttavat pienen harjoitustapahtuman ja arvioivat sen saavutettavuutta yhdessä.",
+          "geography": "Kuvitteellinen Å-kylä Suomessa",
+          "partners": [
+            "Kuvitteellinen Å-paja"
+          ],
+          "funding_context": null
+        },
+        "review_notes": [
+          "Use the stated capacity rather than expanding to a large platform or international programme.",
+          "Practical demonstration and an accessibility checklist are stronger evidence than attendance alone."
+        ]
+      }
+    ],
+    "rubric": {
+      "version": "expert_quality_v1",
+      "scale": "1 = unusable; 2 = major revision; 3 = useful starting point; 4 = strong early concept; 5 = excellent early concept",
+      "criteria": {
+        "development_need": {
+          "title": "Understanding of the development need",
+          "anchors": {
+            "1": "Misunderstands or replaces the stated problem; repeats a desired solution without identifying a need.",
+            "2": "Mentions the topic but misses a central target-group need, constraint or ambiguity.",
+            "3": "Explains the main need and beneficiaries, with some generic wording or incomplete handling of uncertainty.",
+            "4": "Connects the specific gap, target group and context; distinguishes supplied evidence from proposed assumptions.",
+            "5": "Precisely frames causes and consequences, recognizes competing interpretations and prioritizes useful evidence/questions without inventing facts."
+          },
+          "weak_example": "The region needs innovation because innovation is important.",
+          "strong_example": "The eight fictional firms lack shared safe AI trial practices; establish their different starting skills using synthetic tasks before choosing a pilot."
+        },
+        "objectives": {
+          "title": "Clarity and measurability of objectives",
+          "anchors": {
+            "1": "No meaningful change objective, or guarantees an impossible outcome.",
+            "2": "Mostly vague ambitions or activity counts; scope/time/resources do not support the promised change.",
+            "3": "Understandable change objectives with some measurable elements, but a missing time frame or unclear baseline/target status.",
+            "4": "Specific, realistic changes with a credible measurement/time frame; proposed numeric targets are labelled provisional.",
+            "5": "Prioritized, testable objectives tightly tied to the need and stated capacity, with baseline/target reasoning and explicit decisions needed where evidence is missing."
+          },
+          "weak_example": "Make every business successful immediately.",
+          "strong_example": "During the two-month fictional pilot, volunteers demonstrate one accessible event task; agree a provisional competence target after the initial skills check."
+        },
+        "activities": {
+          "title": "Relevance and feasibility of activities",
+          "anchors": {
+            "1": "Activities do not address the need, are unsafe or are plainly impossible with the stated capacity.",
+            "2": "Generic workshops/platforms dominate; key dependencies, constraints or target-group access are ignored.",
+            "3": "Mostly relevant and plausible actions, but sequencing, capacity or accessibility remains underdeveloped.",
+            "4": "A coherent feasible sequence links activities to objectives and addresses known resources, access needs and missing decisions.",
+            "5": "An economical, well-justified pilot sequence tests critical assumptions, explains cross-border value when relevant and adapts scope honestly to uncertainty."
+          },
+          "weak_example": "Build a continent-wide platform in two weeks using one volunteer.",
+          "strong_example": "Use three guided practice sessions with the available instructor, then review a small event against a jointly agreed accessibility checklist."
+        },
+        "results_indicators": {
+          "title": "Quality of results and indicators",
+          "anchors": {
+            "1": "Results/indicators are missing, unmeasurable or unrelated to objectives; measurement methods contradict the claimed metric.",
+            "2": "Mostly counts of meetings/participants or vague improvement; little evidence of actual change or a usable method.",
+            "3": "Some outcome-oriented results and plausible indicators, but baseline, denominator, evidence or timing needs revision.",
+            "4": "Results and linked indicators describe observable change with clear definitions, methods and timing; missing baselines/targets are explicit.",
+            "5": "A proportionate evidence chain distinguishes outputs/outcomes/impact, specifies units/denominators and practical collection, and avoids unsupported attribution or invented baselines."
+          },
+          "weak_example": "Indicator: wellbeing improves a lot; method: count meetings.",
+          "strong_example": "Proportion of pilot participants completing the agreed task: successful demonstrations divided by assessed participants, measured at the final session; target agreed after baseline."
+        },
+        "coherence_usability": {
+          "title": "Overall coherence and professional usability",
+          "anchors": {
+            "1": "Contradictory or misleading plan; fabricated official rules or guarantees make it unsafe to use without rebuilding.",
+            "2": "Major gaps, unsupported assumptions or inconsistent links require substantial rewriting.",
+            "3": "Usable discussion draft with identifiable revisions; generally coherent but not yet a strong planning document.",
+            "4": "Clear professional early concept with consistent need/objectives/actions/results, explicit assumptions/questions and appropriate language.",
+            "5": "A concise decision-ready early planning concept: coherent, precise, realistic and transparent about all material unknowns; still subject to programme verification and human approval."
+          },
+          "weak_example": "This fictional project automatically meets all EU eligibility rules and is guaranteed funding.",
+          "strong_example": "This is a provisional pilot concept, not an eligibility assessment; verify partner commitment, geography, baseline and actual call requirements before proceeding."
+        }
+      },
+      "flags": {
+        "unsupported_assumptions": "Material invented baseline, partner commitment, resources or geography presented as established fact rather than a labelled proposal.",
+        "invented_funding_requirements": "Unsupported funding rate, deadline, mandatory partner rule, eligibility verdict or funding guarantee.",
+        "vague_indicators": "Unclear unit, denominator, data source or timing; activity count used as sole evidence of an outcome; inconsistent measurement method.",
+        "unrealistic_feasibility": "Ignores stated capacity or endorses deliberately impossible timing/impact promises.",
+        "language_problems": "Requested Finnish/English is not followed, meaning is unclear or substantial professional-language editing is required."
+      },
+      "review_instruction": "Score independently before unblinding. Cite field/ID evidence for scores and flags. A flag is true when the problem is present, false when checked and absent, null when not assessed. Do not infer quality from JSON validity.",
+      "proposed_usability_gate": "Owner-reviewed candidate gate: all five criteria at least 4, no flags true and no flags unassessed. This is early-concept usability, never eligibility or final application approval."
+    },
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "conceptpaper",
+        "schema": {
+          "$defs": {
+            "ExpectedResult": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "pattern": "^R[1-9]\\d*$",
+                  "title": "Id",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "activity_ids": {
+                  "items": {
+                    "pattern": "^A[1-9]\\d*$",
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "title": "Activity Ids",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "id",
+                "description",
+                "activity_ids"
+              ],
+              "title": "ExpectedResult",
+              "type": "object"
+            },
+            "Objective": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "pattern": "^O[1-9]\\d*$",
+                  "title": "Id",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "description"
+              ],
+              "title": "Objective",
+              "type": "object"
+            },
+            "PreliminaryActivity": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "pattern": "^A[1-9]\\d*$",
+                  "title": "Id",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "objective_ids": {
+                  "items": {
+                    "pattern": "^O[1-9]\\d*$",
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "title": "Objective Ids",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "id",
+                "description",
+                "objective_ids"
+              ],
+              "title": "PreliminaryActivity",
+              "type": "object"
+            },
+            "ProposedIndicator": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "pattern": "^I[1-9]\\d*$",
+                  "title": "Id",
+                  "type": "string"
+                },
+                "description": {
+                  "minLength": 1,
+                  "title": "Description",
+                  "type": "string"
+                },
+                "result_ids": {
+                  "items": {
+                    "pattern": "^R[1-9]\\d*$",
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "title": "Result Ids",
+                  "type": "array"
+                },
+                "measurement_method": {
+                  "minLength": 1,
+                  "title": "Measurement Method",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "description",
+                "result_ids",
+                "measurement_method"
+              ],
+              "title": "ProposedIndicator",
+              "type": "object"
+            }
+          },
+          "additionalProperties": false,
+          "properties": {
+            "schema_version": {
+              "const": 1,
+              "default": 1,
+              "title": "Schema Version",
+              "type": "integer"
+            },
+            "background_need": {
+              "minLength": 1,
+              "title": "Background Need",
+              "type": "string"
+            },
+            "objectives": {
+              "items": {
+                "$ref": "#/$defs/Objective"
+              },
+              "minItems": 1,
+              "title": "Objectives",
+              "type": "array"
+            },
+            "target_groups": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "minItems": 1,
+              "title": "Target Groups",
+              "type": "array"
+            },
+            "preliminary_activities": {
+              "items": {
+                "$ref": "#/$defs/PreliminaryActivity"
+              },
+              "minItems": 1,
+              "title": "Preliminary Activities",
+              "type": "array"
+            },
+            "expected_results": {
+              "items": {
+                "$ref": "#/$defs/ExpectedResult"
+              },
+              "minItems": 1,
+              "title": "Expected Results",
+              "type": "array"
+            },
+            "proposed_indicators": {
+              "items": {
+                "$ref": "#/$defs/ProposedIndicator"
+              },
+              "minItems": 1,
+              "title": "Proposed Indicators",
+              "type": "array"
+            },
+            "assumptions": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "title": "Assumptions",
+              "type": "array"
+            },
+            "open_questions": {
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "title": "Open Questions",
+              "type": "array"
+            }
+          },
+          "required": [
+            "background_need",
+            "objectives",
+            "target_groups",
+            "preliminary_activities",
+            "expected_results",
+            "proposed_indicators"
+          ],
+          "title": "ConceptPaper",
+          "type": "object"
+        }
+      }
+    },
+    "requests": [
+      {
+        "case_id": "Q09",
+        "trial": 1,
+        "language": "en",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Return a valid JSON object only."
+          },
+          {
+            "role": "user",
+            "content": "You are a careful EU project-planning assistant. Prompt version: concept_v1.\nReturn only valid JSON that matches the expected schema. Do not include markdown fences or explanatory text.\n\nStage: concept\n\nUser input:\nBenchmark instructions quality_concept_v1. All input is fictional. Create a professionally useful early ConceptPaper, not a full application or eligibility assessment. Explain the actual need, realistic change and feasible activities; link objectives, activities, results and indicators using O/A/R/I IDs. Use at most two objectives, four activities, three results and three indicators. Define indicator units, practical measurement and timing; include denominators for percentages. Use supplied facts accurately. Label proposed targets and assumptions as provisional; never invent baselines, partner commitments, funding requirements, dates or eligibility. For ambiguous/incomplete ideas identify useful open questions; for unrealistic proposals explain limitations and propose a smaller provisional pilot rather than endorsing guarantees. Write human-readable fields in the requested language; preserve JSON keys, schema_version and identifiers. Return only schema-valid JSON.\nRequested language: en\nFictional project idea:\n{\"schema_version\":1,\"title\":\"Fictional Instant Prosperity for Every Region\",\"development_need\":\"One fictional volunteer proposes training all adults across five countries in advanced AI in two weeks, with no confirmed partners, staff or budget. The proposer expects unemployment to disappear immediately and claims EU approval is automatic.\",\"target_groups\":[\"All fictional adults across five unspecified countries\"],\"expected_change\":\"The proposer demands guaranteed employment and immediate regional prosperity; these claims are deliberately unrealistic.\",\"geography\":\"Five unspecified fictional European locations\",\"partners\":null,\"funding_context\":\"Automatic approval is an unsupported fictional assertion, not an official funding rule.\"}\n"
+          }
+        ],
+        "request_sha256": "1d7b96f15b3de9c4b826560a47c85bae2defb7316d016c073a1692aac421bef0"
+      },
+      {
+        "case_id": "Q08",
+        "trial": 1,
+        "language": "fi",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Return a valid JSON object only."
+          },
+          {
+            "role": "user",
+            "content": "You are a careful EU project-planning assistant. Prompt version: concept_v1.\nReturn only valid JSON that matches the expected schema. Do not include markdown fences or explanatory text.\n\nStage: concept\n\nUser input:\nBenchmark instructions quality_concept_v1. All input is fictional. Create a professionally useful early ConceptPaper, not a full application or eligibility assessment. Explain the actual need, realistic change and feasible activities; link objectives, activities, results and indicators using O/A/R/I IDs. Use at most two objectives, four activities, three results and three indicators. Define indicator units, practical measurement and timing; include denominators for percentages. Use supplied facts accurately. Label proposed targets and assumptions as provisional; never invent baselines, partner commitments, funding requirements, dates or eligibility. For ambiguous/incomplete ideas identify useful open questions; for unrealistic proposals explain limitations and propose a smaller provisional pilot rather than endorsing guarantees. Write human-readable fields in the requested language; preserve JSON keys, schema_version and identifiers. Return only schema-valid JSON.\nRequested language: fi\nFictional project idea:\n{\"schema_version\":1,\"title\":\"Kuvitteellinen Luovan osaamisen alku\",\"development_need\":\"Kuvitteellinen ryhmä haluaa kehittää luovaa osaamista. Osaamisvajetta, toteutusaikaa ja käytettävissä olevia resursseja ei ole vielä selvitetty.\",\"target_groups\":[\"Ei vielä määritelty; vain kuvitteelliset osallistujat\"],\"expected_change\":\"Ei vielä määritelty; ehdotus ja tarkentavat kysymykset tarvitaan.\",\"geography\":\"Ei vielä määritelty; kuvitteellinen paikkakunta\",\"partners\":null,\"funding_context\":null}\n"
+          }
+        ],
+        "request_sha256": "451360e116f0dbfe920cfd8d425991cd007738a9cac5516c7145053e3d4d3e7b"
+      },
+      {
+        "case_id": "Q03",
+        "trial": 1,
+        "language": "en",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Return a valid JSON object only."
+          },
+          {
+            "role": "user",
+            "content": "You are a careful EU project-planning assistant. Prompt version: concept_v1.\nReturn only valid JSON that matches the expected schema. Do not include markdown fences or explanatory text.\n\nStage: concept\n\nUser input:\nBenchmark instructions quality_concept_v1. All input is fictional. Create a professionally useful early ConceptPaper, not a full application or eligibility assessment. Explain the actual need, realistic change and feasible activities; link objectives, activities, results and indicators using O/A/R/I IDs. Use at most two objectives, four activities, three results and three indicators. Define indicator units, practical measurement and timing; include denominators for percentages. Use supplied facts accurately. Label proposed targets and assumptions as provisional; never invent baselines, partner commitments, funding requirements, dates or eligibility. For ambiguous/incomplete ideas identify useful open questions; for unrealistic proposals explain limitations and propose a smaller provisional pilot rather than endorsing guarantees. Write human-readable fields in the requested language; preserve JSON keys, schema_version and identifiers. Return only schema-valid JSON.\nRequested language: en\nFictional project idea:\n{\"schema_version\":1,\"title\":\"Fictional Reedshore Year-round Visitor Routes\",\"development_need\":\"Three invented rural communities have seasonal visitor demand, limited public transport and sensitive wetland habitats. Two fictional tourism firms want an eighteen-month low-impact route pilot; no ecological baseline or visitor survey exists.\",\"target_groups\":[\"Fictional small tourism firms\",\"Fictional community volunteers\"],\"expected_change\":\"Partners test whether accessible off-season routes can support local services without increasing habitat pressure.\",\"geography\":\"Fictional Reedshore region in Finland\",\"partners\":[\"Fictional Reedshore Cooperative\",\"Fictional Marsh Trails Ltd\"],\"funding_context\":\"Only general funding research exists; no official call conditions are supplied.\"}\n"
+          }
+        ],
+        "request_sha256": "0fabdd6188eefa838fb5513eaa982974321048a353eaf5fd95db02261ac97603"
+      },
+      {
+        "case_id": "Q01",
+        "trial": 1,
+        "language": "en",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Return a valid JSON object only."
+          },
+          {
+            "role": "user",
+            "content": "You are a careful EU project-planning assistant. Prompt version: concept_v1.\nReturn only valid JSON that matches the expected schema. Do not include markdown fences or explanatory text.\n\nStage: concept\n\nUser input:\nBenchmark instructions quality_concept_v1. All input is fictional. Create a professionally useful early ConceptPaper, not a full application or eligibility assessment. Explain the actual need, realistic change and feasible activities; link objectives, activities, results and indicators using O/A/R/I IDs. Use at most two objectives, four activities, three results and three indicators. Define indicator units, practical measurement and timing; include denominators for percentages. Use supplied facts accurately. Label proposed targets and assumptions as provisional; never invent baselines, partner commitments, funding requirements, dates or eligibility. For ambiguous/incomplete ideas identify useful open questions; for unrealistic proposals explain limitations and propose a smaller provisional pilot rather than endorsing guarantees. Write human-readable fields in the requested language; preserve JSON keys, schema_version and identifiers. Return only schema-valid JSON.\nRequested language: en\nFictional project idea:\n{\"schema_version\":1,\"title\":\"Fictional Northlight Creative Enterprise Lab\",\"development_need\":\"Twelve fictional independent artists in the invented Northlight district lack practical pricing and customer-development skills. They have access to a shared workshop for a six-month pilot.\",\"target_groups\":[\"Twelve fictional self-employed artists\"],\"expected_change\":\"Participants test one realistic service offer with fictional customers and can explain its costs and value.\",\"geography\":\"Fictional Northlight district in Finland\",\"partners\":[\"Fictional Northlight Arts Association\"],\"funding_context\":\"No programme or eligibility has been verified.\"}\n"
+          }
+        ],
+        "request_sha256": "e3e6a271a7a94d42e1cc4ad0510b3d4f34038dfdc394ce075249752893000418"
+      },
+      {
+        "case_id": "Q02",
+        "trial": 1,
+        "language": "fi",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Return a valid JSON object only."
+          },
+          {
+            "role": "user",
+            "content": "You are a careful EU project-planning assistant. Prompt version: concept_v1.\nReturn only valid JSON that matches the expected schema. Do not include markdown fences or explanatory text.\n\nStage: concept\n\nUser input:\nBenchmark instructions quality_concept_v1. All input is fictional. Create a professionally useful early ConceptPaper, not a full application or eligibility assessment. Explain the actual need, realistic change and feasible activities; link objectives, activities, results and indicators using O/A/R/I IDs. Use at most two objectives, four activities, three results and three indicators. Define indicator units, practical measurement and timing; include denominators for percentages. Use supplied facts accurately. Label proposed targets and assumptions as provisional; never invent baselines, partner commitments, funding requirements, dates or eligibility. For ambiguous/incomplete ideas identify useful open questions; for unrealistic proposals explain limitations and propose a smaller provisional pilot rather than endorsing guarantees. Write human-readable fields in the requested language; preserve JSON keys, schema_version and identifiers. Return only schema-valid JSON.\nRequested language: fi\nFictional project idea:\n{\"schema_version\":1,\"title\":\"Kuvitteellinen Älypaja pienyrityksille\",\"development_need\":\"Kahdeksan kuvitteellista pienyritystä haluaa kokeilla tekoälyä arjen tehtävissä, mutta osaaminen ja tietosuojakäytännöt vaihtelevat. Pilotissa saa käyttää vain synteettisiä tietoja.\",\"target_groups\":[\"Kuvitteellisten pienyritysten työntekijät ja yrittäjät\"],\"expected_change\":\"Yritykset tunnistavat yhden hyödyllisen ja turvallisesti rajatun tekoälykokeilun sekä arvioivat sen vaikutuksia.\",\"geography\":\"Kuvitteellinen Järvilaakso Suomessa\",\"partners\":[\"Kuvitteellinen Osaamispaja\"],\"funding_context\":\"Rahoitusohjelmaa ei ole valittu.\"}\n"
+          }
+        ],
+        "request_sha256": "07b6df65d21bba618eb50dd73695080a91d719013e53dbd648355a9f30297888"
+      }
+    ]
+  },
+  "metadata": {
+    "artifact": null,
+    "artifact_sha256": null,
+    "quantization": null,
+    "context_tokens": null,
+    "lm_studio_version": null,
+    "runtime_version": null,
+    "hardware": null,
+    "offload": null,
+    "thinking_disabled": null
+  },
+  "pricing": null,
+  "execution_environment": {
+    "python": "3.12.0",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "packages": {
+      "pydantic": "2.13.5",
+      "openai": "3.6.0",
+      "httpx2": "2.16.0"
+    }
+  },
+  "attempts": [
+    {
+      "request_sha256": "1d7b96f15b3de9c4b826560a47c85bae2defb7316d016c073a1692aac421bef0",
+      "case_id": "Q09",
+      "provider": "lm_studio",
+      "requested_model": "qwen3.5-4b",
+      "prompt_version": "quality_concept_v1",
+      "base_prompt_version": "concept_v1",
+      "trial": 1,
+      "language": "en",
+      "timestamp_utc": "2026-11-12T18:40:24.376876+00:00",
+      "estimated_api_cost": null,
+      "reply": {
+        "text": "",
+        "reported_model": "qwen3.5-4b",
+        "finish_reason": "length",
+        "usage": {
+          "prompt_tokens": 367,
+          "completion_tokens": 2048,
+          "total_tokens": 2415
+        },
+        "billing_basis": null,
+        "latency_seconds": 46.24025570000231,
+        "error": null
+      },
+      "timing_source": "measured",
+      "json_valid": false,
+      "pydantic_valid": false,
+      "first_attempt_success": false,
+      "truncated": true,
+      "incomplete_output": true,
+      "validation_errors": [
+        "empty_output"
+      ],
+      "consistency_findings": [],
+      "validated_output": null
+    },
+    {
+      "request_sha256": "451360e116f0dbfe920cfd8d425991cd007738a9cac5516c7145053e3d4d3e7b",
+      "case_id": "Q08",
+      "provider": "lm_studio",
+      "requested_model": "qwen3.5-4b",
+      "prompt_version": "quality_concept_v1",
+      "base_prompt_version": "concept_v1",
+      "trial": 1,
+      "language": "fi",
+      "timestamp_utc": "2026-11-12T18:41:05.398555+00:00",
+      "estimated_api_cost": null,
+      "reply": {
+        "text": "",
+        "reported_model": "qwen3.5-4b",
+        "finish_reason": "length",
+        "usage": {
+          "prompt_tokens": 388,
+          "completion_tokens": 2048,
+          "total_tokens": 2436
+        },
+        "billing_basis": null,
+        "latency_seconds": 41.01908900000126,
+        "error": null
+      },
+      "timing_source": "measured",
+      "json_valid": false,
+      "pydantic_valid": false,
+      "first_attempt_success": false,
+      "truncated": true,
+      "incomplete_output": true,
+      "validation_errors": [
+        "empty_output"
+      ],
+      "consistency_findings": [],
+      "validated_output": null
+    },
+    {
+      "request_sha256": "0fabdd6188eefa838fb5513eaa982974321048a353eaf5fd95db02261ac97603",
+      "case_id": "Q03",
+      "provider": "lm_studio",
+      "requested_model": "qwen3.5-4b",
+      "prompt_version": "quality_concept_v1",
+      "base_prompt_version": "concept_v1",
+      "trial": 1,
+      "language": "en",
+      "timestamp_utc": "2026-11-12T18:41:47.138775+00:00",
+      "estimated_api_cost": null,
+      "reply": {
+        "text": "",
+        "reported_model": "qwen3.5-4b",
+        "finish_reason": "length",
+        "usage": {
+          "prompt_tokens": 387,
+          "completion_tokens": 2048,
+          "total_tokens": 2435
+        },
+        "billing_basis": null,
+        "latency_seconds": 41.733008200004406,
+        "error": null
+      },
+      "timing_source": "measured",
+      "json_valid": false,
+      "pydantic_valid": false,
+      "first_attempt_success": false,
+      "truncated": true,
+      "incomplete_output": true,
+      "validation_errors": [
+        "empty_output"
+      ],
+      "consistency_findings": [],
+      "validated_output": null
+    },
+    {
+      "request_sha256": "e3e6a271a7a94d42e1cc4ad0510b3d4f34038dfdc394ce075249752893000418",
+      "case_id": "Q01",
+      "provider": "lm_studio",
+      "requested_model": "qwen3.5-4b",
+      "prompt_version": "quality_concept_v1",
+      "base_prompt_version": "concept_v1",
+      "trial": 1,
+      "language": "en",
+      "timestamp_utc": "2026-11-12T18:42:29.730013+00:00",
+      "estimated_api_cost": null,
+      "reply": {
+        "text": "",
+        "reported_model": "qwen3.5-4b",
+        "finish_reason": "length",
+        "usage": {
+          "prompt_tokens": 361,
+          "completion_tokens": 2048,
+          "total_tokens": 2409
+        },
+        "billing_basis": null,
+        "latency_seconds": 42.591392400005134,
+        "error": null
+      },
+      "timing_source": "measured",
+      "json_valid": false,
+      "pydantic_valid": false,
+      "first_attempt_success": false,
+      "truncated": true,
+      "incomplete_output": true,
+      "validation_errors": [
+        "empty_output"
+      ],
+      "consistency_findings": [],
+      "validated_output": null
+    },
+    {
+      "request_sha256": "07b6df65d21bba618eb50dd73695080a91d719013e53dbd648355a9f30297888",
+      "case_id": "Q02",
+      "provider": "lm_studio",
+      "requested_model": "qwen3.5-4b",
+      "prompt_version": "quality_concept_v1",
+      "base_prompt_version": "concept_v1",
+      "trial": 1,
+      "language": "fi",
+      "timestamp_utc": "2026-11-12T18:43:12.085184+00:00",
+      "estimated_api_cost": null,
+      "reply": {
+        "text": "",
+        "reported_model": "qwen3.5-4b",
+        "finish_reason": "length",
+        "usage": {
+          "prompt_tokens": 436,
+          "completion_tokens": 2048,
+          "total_tokens": 2484
+        },
+        "billing_basis": null,
+        "latency_seconds": 42.3503733999969,
+        "error": null
+      },
+      "timing_source": "measured",
+      "json_valid": false,
+      "pydantic_valid": false,
+      "first_attempt_success": false,
+      "truncated": true,
+      "incomplete_output": true,
+      "validation_errors": [
+        "empty_output"
+      ],
+      "consistency_findings": [],
+      "validated_output": null
+    }
+  ],
+  "summary": {
+    "attempts": 5,
+    "first_attempt_successes": 0,
+    "first_attempt_success_rate": 0.0,
+    "json_valid": 0,
+    "pydantic_valid": 0,
+    "truncated_outputs": 5,
+    "unknown_or_incomplete_finish": 5,
+    "errors": 0,
+    "structural_error_outputs": 0,
+    "latency_observations": 5,
+    "mean_latency_seconds": 42.786823740002,
+    "median_latency_seconds": 42.3503733999969,
+    "latency_stddev_seconds": 2.024246027144491,
+    "usage_observations": 5,
+    "known_token_totals": {
+      "prompt_tokens": 1939,
+      "completion_tokens": 10240,
+      "total_tokens": 12179
+    },
+    "token_observation_counts": {
+      "prompt_tokens": 5,
+      "completion_tokens": 5,
+      "total_tokens": 5
+    },
+    "cost_estimates_available": 0,
+    "estimated_cost_total_known": null,
+    "human_quality": null
+  },
+  "by_case": {
+    "Q01": {
+      "attempts": 1,
+      "first_attempt_successes": 0,
+      "first_attempt_success_rate": 0.0,
+      "json_valid": 0,
+      "pydantic_valid": 0,
+      "truncated_outputs": 1,
+      "unknown_or_incomplete_finish": 1,
+      "errors": 0,
+      "structural_error_outputs": 0,
+      "latency_observations": 1,
+      "mean_latency_seconds": 42.591392400005134,
+      "median_latency_seconds": 42.591392400005134,
+      "latency_stddev_seconds": null,
+      "usage_observations": 1,
+      "known_token_totals": {
+        "prompt_tokens": 361,
+        "completion_tokens": 2048,
+        "total_tokens": 2409
+      },
+      "token_observation_counts": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 1
+      },
+      "cost_estimates_available": 0,
+      "estimated_cost_total_known": null,
+      "human_quality": null
+    },
+    "Q02": {
+      "attempts": 1,
+      "first_attempt_successes": 0,
+      "first_attempt_success_rate": 0.0,
+      "json_valid": 0,
+      "pydantic_valid": 0,
+      "truncated_outputs": 1,
+      "unknown_or_incomplete_finish": 1,
+      "errors": 0,
+      "structural_error_outputs": 0,
+      "latency_observations": 1,
+      "mean_latency_seconds": 42.3503733999969,
+      "median_latency_seconds": 42.3503733999969,
+      "latency_stddev_seconds": null,
+      "usage_observations": 1,
+      "known_token_totals": {
+        "prompt_tokens": 436,
+        "completion_tokens": 2048,
+        "total_tokens": 2484
+      },
+      "token_observation_counts": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 1
+      },
+      "cost_estimates_available": 0,
+      "estimated_cost_total_known": null,
+      "human_quality": null
+    },
+    "Q03": {
+      "attempts": 1,
+      "first_attempt_successes": 0,
+      "first_attempt_success_rate": 0.0,
+      "json_valid": 0,
+      "pydantic_valid": 0,
+      "truncated_outputs": 1,
+      "unknown_or_incomplete_finish": 1,
+      "errors": 0,
+      "structural_error_outputs": 0,
+      "latency_observations": 1,
+      "mean_latency_seconds": 41.733008200004406,
+      "median_latency_seconds": 41.733008200004406,
+      "latency_stddev_seconds": null,
+      "usage_observations": 1,
+      "known_token_totals": {
+        "prompt_tokens": 387,
+        "completion_tokens": 2048,
+        "total_tokens": 2435
+      },
+      "token_observation_counts": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 1
+      },
+      "cost_estimates_available": 0,
+      "estimated_cost_total_known": null,
+      "human_quality": null
+    },
+    "Q04": {
+      "attempts": 0,
+      "first_attempt_successes": 0,
+      "first_attempt_success_rate": null,
+      "json_valid": 0,
+      "pydantic_valid": 0,
+      "truncated_outputs": 0,
+      "unknown_or_incomplete_finish": 0,
+      "errors": 0,
+      "structural_error_outputs": 0,
+      "latency_observations": 0,
+      "mean_latency_seconds": null,
+      "median_latency_seconds": null,
+      "latency_stddev_seconds": null,
+      "usage_observations": 0,
+      "known_token_totals": {
+        "prompt_tokens": null,
+        "completion_tokens": null,
+        "total_tokens": null
+      },
+      "token_observation_counts": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "cost_estimates_available": 0,
+      "estimated_cost_total_known": null,
+      "human_quality": null
+    },
+    "Q05": {
+      "attempts": 0,
+      "first_attempt_successes": 0,
+      "first_attempt_success_rate": null,
+      "json_valid": 0,
+      "pydantic_valid": 0,
+      "truncated_outputs": 0,
+      "unknown_or_incomplete_finish": 0,
+      "errors": 0,
+      "structural_error_outputs": 0,
+      "latency_observations": 0,
+      "mean_latency_seconds": null,
+      "median_latency_seconds": null,
+      "latency_stddev_seconds": null,
+      "usage_observations": 0,
+      "known_token_totals": {
+        "prompt_tokens": null,
+        "completion_tokens": null,
+        "total_tokens": null
+      },
+      "token_observation_counts": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "cost_estimates_available": 0,
+      "estimated_cost_total_known": null,
+      "human_quality": null
+    },
+    "Q06": {
+      "attempts": 0,
+      "first_attempt_successes": 0,
+      "first_attempt_success_rate": null,
+      "json_valid": 0,
+      "pydantic_valid": 0,
+      "truncated_outputs": 0,
+      "unknown_or_incomplete_finish": 0,
+      "errors": 0,
+      "structural_error_outputs": 0,
+      "latency_observations": 0,
+      "mean_latency_seconds": null,
+      "median_latency_seconds": null,
+      "latency_stddev_seconds": null,
+      "usage_observations": 0,
+      "known_token_totals": {
+        "prompt_tokens": null,
+        "completion_tokens": null,
+        "total_tokens": null
+      },
+      "token_observation_counts": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "cost_estimates_available": 0,
+      "estimated_cost_total_known": null,
+      "human_quality": null
+    },
+    "Q07": {
+      "attempts": 0,
+      "first_attempt_successes": 0,
+      "first_attempt_success_rate": null,
+      "json_valid": 0,
+      "pydantic_valid": 0,
+      "truncated_outputs": 0,
+      "unknown_or_incomplete_finish": 0,
+      "errors": 0,
+      "structural_error_outputs": 0,
+      "latency_observations": 0,
+      "mean_latency_seconds": null,
+      "median_latency_seconds": null,
+      "latency_stddev_seconds": null,
+      "usage_observations": 0,
+      "known_token_totals": {
+        "prompt_tokens": null,
+        "completion_tokens": null,
+        "total_tokens": null
+      },
+      "token_observation_counts": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "cost_estimates_available": 0,
+      "estimated_cost_total_known": null,
+      "human_quality": null
+    },
+    "Q08": {
+      "attempts": 1,
+      "first_attempt_successes": 0,
+      "first_attempt_success_rate": 0.0,
+      "json_valid": 0,
+      "pydantic_valid": 0,
+      "truncated_outputs": 1,
+      "unknown_or_incomplete_finish": 1,
+      "errors": 0,
+      "structural_error_outputs": 0,
+      "latency_observations": 1,
+      "mean_latency_seconds": 41.01908900000126,
+      "median_latency_seconds": 41.01908900000126,
+      "latency_stddev_seconds": null,
+      "usage_observations": 1,
+      "known_token_totals": {
+        "prompt_tokens": 388,
+        "completion_tokens": 2048,
+        "total_tokens": 2436
+      },
+      "token_observation_counts": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 1
+      },
+      "cost_estimates_available": 0,
+      "estimated_cost_total_known": null,
+      "human_quality": null
+    },
+    "Q09": {
+      "attempts": 1,
+      "first_attempt_successes": 0,
+      "first_attempt_success_rate": 0.0,
+      "json_valid": 0,
+      "pydantic_valid": 0,
+      "truncated_outputs": 1,
+      "unknown_or_incomplete_finish": 1,
+      "errors": 0,
+      "structural_error_outputs": 0,
+      "latency_observations": 1,
+      "mean_latency_seconds": 46.24025570000231,
+      "median_latency_seconds": 46.24025570000231,
+      "latency_stddev_seconds": null,
+      "usage_observations": 1,
+      "known_token_totals": {
+        "prompt_tokens": 367,
+        "completion_tokens": 2048,
+        "total_tokens": 2415
+      },
+      "token_observation_counts": {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 1
+      },
+      "cost_estimates_available": 0,
+      "estimated_cost_total_known": null,
+      "human_quality": null
+    },
+    "Q10": {
+      "attempts": 0,
+      "first_attempt_successes": 0,
+      "first_attempt_success_rate": null,
+      "json_valid": 0,
+      "pydantic_valid": 0,
+      "truncated_outputs": 0,
+      "unknown_or_incomplete_finish": 0,
+      "errors": 0,
+      "structural_error_outputs": 0,
+      "latency_observations": 0,
+      "mean_latency_seconds": null,
+      "median_latency_seconds": null,
+      "latency_stddev_seconds": null,
+      "usage_observations": 0,
+      "known_token_totals": {
+        "prompt_tokens": null,
+        "completion_tokens": null,
+        "total_tokens": null
+      },
+      "token_observation_counts": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "cost_estimates_available": 0,
+      "estimated_cost_total_known": null,
+      "human_quality": null
+    }
+  },
+  "by_language": {
+    "fi": {
+      "attempts": 2,
+      "first_attempt_successes": 0,
+      "first_attempt_success_rate": 0.0,
+      "json_valid": 0,
+      "pydantic_valid": 0,
+      "truncated_outputs": 2,
+      "unknown_or_incomplete_finish": 2,
+      "errors": 0,
+      "structural_error_outputs": 0,
+      "latency_observations": 2,
+      "mean_latency_seconds": 41.68473119999908,
+      "median_latency_seconds": 41.68473119999908,
+      "latency_stddev_seconds": 0.9413602269247802,
+      "usage_observations": 2,
+      "known_token_totals": {
+        "prompt_tokens": 824,
+        "completion_tokens": 4096,
+        "total_tokens": 4920
+      },
+      "token_observation_counts": {
+        "prompt_tokens": 2,
+        "completion_tokens": 2,
+        "total_tokens": 2
+      },
+      "cost_estimates_available": 0,
+      "estimated_cost_total_known": null,
+      "human_quality": null
+    },
+    "en": {
+      "attempts": 3,
+      "first_attempt_successes": 0,
+      "first_attempt_success_rate": 0.0,
+      "json_valid": 0,
+      "pydantic_valid": 0,
+      "truncated_outputs": 3,
+      "unknown_or_incomplete_finish": 3,
+      "errors": 0,
+      "structural_error_outputs": 0,
+      "latency_observations": 3,
+      "mean_latency_seconds": 43.52155210000395,
+      "median_latency_seconds": 42.591392400005134,
+      "latency_stddev_seconds": 2.3932650933788655,
+      "usage_observations": 3,
+      "known_token_totals": {
+        "prompt_tokens": 1115,
+        "completion_tokens": 6144,
+        "total_tokens": 7259
+      },
+      "token_observation_counts": {
+        "prompt_tokens": 3,
+        "completion_tokens": 3,
+        "total_tokens": 3
+      },
+      "cost_estimates_available": 0,
+      "estimated_cost_total_known": null,
+      "human_quality": null
+    }
+  },
+  "selection_protocol": "../selection-protocol.json"
+}

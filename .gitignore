@@ -225,3 +225,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Private benchmark identity mappings and runtime/diagnostic evidence
+.benchmark-private/
+**/PRIVATE-*.json
+benchmark-results/**/local-model-metadata.json
+benchmark-results/**/raw-response*.json

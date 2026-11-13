@@ -74,7 +74,7 @@ def render_intro() -> None:
         ("01", "Shape the idea", "A focused starting point", "#project-workspace", "available"),
         ("02", "Build the concept", "A structured working draft", concept_target, "available"),
         ("03", "Check & explore", "Consistency and official sources", funding_target, "available"),
-        ("04", "Draft & review", "Planned · not available yet", None, "planned"),
+        ("04", "Draft & review", "Draft, review and human approval", "#draft-review", "available"),
     )
     cards = []
     for number, title, subtitle, target, state in steps:

@@ -49,6 +49,10 @@ class IdempotencyConflict(RepositoryError):
     pass
 
 
+class StaleProjectError(RepositoryError):
+    pass
+
+
 class UnsupportedSchemaVersion(RepositoryError):
     pass
 
@@ -216,8 +220,8 @@ class ProjectRepository:
 
     @staticmethod
     def _deserialize(row: sqlite3.Row) -> ProjectRecord:
-        version = int(row["schema_version"])
-        if version != SCHEMA_VERSION:
+        version = row["schema_version"]
+        if type(version) is not int or version != SCHEMA_VERSION:
             raise UnsupportedSchemaVersion(
                 f"project schema version {version} is not supported (expected {SCHEMA_VERSION})"
             )
@@ -250,6 +254,33 @@ class ProjectRepository:
 
     def _load_with_connection(self, connection: sqlite3.Connection, project_id: str) -> ProjectRecord:
         return self._deserialize(self._row(connection, project_id))
+
+    @staticmethod
+    def _source_fingerprint(row: sqlite3.Row) -> str:
+        fields = ("schema_version", "state", "updated_at", "approved_at", "idea_json", "concept_json",
+                  "draft_json", "findings_json", "review_json")
+        payload = json.dumps({field: row[field] for field in fields}, sort_keys=True, ensure_ascii=False)
+        return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+    def source_fingerprint(self, project_id: str) -> str:
+        return self.load_snapshot(project_id)[1]
+
+    def load_snapshot(self, project_id: str) -> tuple[ProjectRecord, str]:
+        """Read content and its CAS token from one row, never two different revisions."""
+        with self._connection() as connection:
+            row = self._row(connection, project_id)
+            return self._deserialize(row), self._source_fingerprint(row)
+
+    def operation_completed(self, project_id: str, operation_id: str, operation_type: str) -> bool:
+        operation_id = self._operation_id(operation_id)
+        with self._connection() as connection:
+            row = connection.execute("SELECT project_id, operation_type FROM operations WHERE operation_id = ?",
+                (operation_id,)).fetchone()
+            if row is None:
+                return False
+            if row["project_id"] != project_id or row["operation_type"] != operation_type:
+                raise IdempotencyConflict("operation ID already belongs to another project or action")
+            return True
 
     def create_project(
         self,
@@ -349,6 +380,7 @@ class ProjectRepository:
         *,
         model_type: Type[BaseModel],
         operation_id: str,
+        expected_source: str | None = None,
     ) -> ProjectRecord:
         draft_json = self._validated_json(model_type, draft)
         return self._mutate(
@@ -369,6 +401,7 @@ class ProjectRepository:
                 ProjectState.REVIEWED,
             },
             required_columns=("concept_json",),
+            expected_source=expected_source,
         )
 
     def save_review(
@@ -379,6 +412,7 @@ class ProjectRepository:
         model_type: Type[BaseModel],
         deterministic_findings: list[dict[str, Any]],
         operation_id: str,
+        expected_source: str | None = None,
     ) -> ProjectRecord:
         review_json = self._validated_json(model_type, review)
         findings_json = self._validated_findings(deterministic_findings)
@@ -395,6 +429,7 @@ class ProjectRepository:
             ProjectState.REVIEWED,
             {ProjectState.DRAFT_READY, ProjectState.REVIEWED},
             required_columns=("draft_json",),
+            expected_source=expected_source,
         )
 
     def _mutate(
@@ -407,6 +442,7 @@ class ProjectRepository:
         next_state: ProjectState,
         allowed_states: set[ProjectState],
         required_columns: tuple[str, ...] = (),
+        expected_source: str | None = None,
     ) -> ProjectRecord:
         operation_id = self._operation_id(operation_id)
         payload_hash = self._payload_hash(operation_type, payload)
@@ -420,6 +456,9 @@ class ProjectRepository:
                 return self._load_with_connection(connection, replay_id)
 
             row = self._row(connection, project_id)
+            self._deserialize(row)
+            if expected_source is not None and self._source_fingerprint(row) != expected_source:
+                raise StaleProjectError("project changed during this operation; reload and review the current record")
             state = ProjectState(row["state"])
             if state == ProjectState.APPROVED:
                 raise ApprovedProjectLocked("approved projects are immutable")
@@ -454,7 +493,7 @@ class ProjectRepository:
             )
             return self._load_with_connection(connection, project_id)
 
-    def approve_project(self, project_id: str, *, operation_id: str) -> ProjectRecord:
+    def approve_project(self, project_id: str, *, operation_id: str, expected_source: str | None = None) -> ProjectRecord:
         operation_id = self._operation_id(operation_id)
         operation_type = "approve_project"
         payload_hash = self._payload_hash(operation_type, {"approved": True})
@@ -468,6 +507,9 @@ class ProjectRepository:
                 return self._load_with_connection(connection, replay_id)
 
             row = self._row(connection, project_id)
+            self._deserialize(row)
+            if expected_source is not None and self._source_fingerprint(row) != expected_source:
+                raise StaleProjectError("project changed before approval; reload and review the current record")
             state = ProjectState(row["state"])
             if state != ProjectState.REVIEWED:
                 if state == ProjectState.APPROVED:

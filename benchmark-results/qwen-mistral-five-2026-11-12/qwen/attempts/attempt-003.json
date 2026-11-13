@@ -1,0 +1,36 @@
+{
+  "request_sha256": "0fabdd6188eefa838fb5513eaa982974321048a353eaf5fd95db02261ac97603",
+  "case_id": "Q03",
+  "provider": "lm_studio",
+  "requested_model": "qwen3.5-4b",
+  "prompt_version": "quality_concept_v1",
+  "base_prompt_version": "concept_v1",
+  "trial": 1,
+  "language": "en",
+  "timestamp_utc": "2026-11-12T18:41:47.138775+00:00",
+  "estimated_api_cost": null,
+  "reply": {
+    "text": "",
+    "reported_model": "qwen3.5-4b",
+    "finish_reason": "length",
+    "usage": {
+      "prompt_tokens": 387,
+      "completion_tokens": 2048,
+      "total_tokens": 2435
+    },
+    "billing_basis": null,
+    "latency_seconds": 41.733008200004406,
+    "error": null
+  },
+  "timing_source": "measured",
+  "json_valid": false,
+  "pydantic_valid": false,
+  "first_attempt_success": false,
+  "truncated": true,
+  "incomplete_output": true,
+  "validation_errors": [
+    "empty_output"
+  ],
+  "consistency_findings": [],
+  "validated_output": null
+}
