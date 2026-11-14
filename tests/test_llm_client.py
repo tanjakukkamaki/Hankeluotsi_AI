@@ -25,8 +25,8 @@ def test_default_config_uses_local_lm_studio():
 def test_prompt_version_and_context_are_used_for_each_stage():
     prompt = build_prompt("concept", "Test idea for a digital skills project")
 
-    assert prompt_version_for_stage("concept") == "concept_v1"
-    assert "concept_v1" in prompt
+    assert prompt_version_for_stage("concept") == "concept_v2"
+    assert "concept_v2" in prompt
     assert "Test idea for a digital skills project" in prompt
 
 
@@ -65,7 +65,7 @@ def test_generate_success_parses_json_and_validates_pydantic_model():
         result = client.generate("concept", "Digital skills project idea", response_model=ProjectIdea)
 
     assert result.model == DEFAULT_MODEL
-    assert result.prompt_version == "concept_v1"
+    assert result.prompt_version == "concept_v2"
     assert result.finish_reason == "stop"
     assert result.truncated is False
     assert result.response_time_seconds >= 0
@@ -134,7 +134,7 @@ def test_generate_retries_once_and_records_truncation_metadata():
     assert mock_create.call_count == 2
     assert error.value.stage == "concept"
     assert error.value.model == DEFAULT_MODEL
-    assert error.value.prompt_version == "concept_v1"
+    assert error.value.prompt_version == "concept_v2"
     assert error.value.finish_reason == "length"
     assert error.value.truncated is True
     assert error.value.response_time_seconds >= 0

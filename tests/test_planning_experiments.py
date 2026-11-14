@@ -1,6 +1,7 @@
 """Offline experimental orchestration, not an implemented application workflow."""
 
 import ast
+import hashlib
 import json
 import socket
 import sqlite3
@@ -12,6 +13,7 @@ from pydantic import ValidationError
 from hankeluotsi import model_quality as q
 from hankeluotsi import planning_experiments as experiment
 from hankeluotsi.i18n import language_code
+from hankeluotsi.prompts import concept_generation_input
 
 
 @pytest.fixture(autouse=True)
@@ -69,13 +71,20 @@ def test_ten_diverse_original_cases_and_all_four_strategies_are_frozen(plan):
 
 
 @pytest.mark.parametrize("locale", ["fi", "en"])
-def test_control_input_exactly_matches_current_production_wording(plan, locale):
+def test_historical_control_stays_frozen_and_is_distinct_from_current_production_v2(plan, locale):
     tree = ast.parse((q.ROOT / "app.py").read_text(encoding="utf-8"))
     function = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "_concept_generation_input")
-    namespace = {"ProjectIdea": q.ProjectIdea, "language_code": language_code}
+    namespace = {"ProjectIdea": q.ProjectIdea, "language_code": language_code,
+        "concept_generation_input": concept_generation_input}
     exec(compile(ast.Module(body=[function], type_ignores=[]), "trusted-production-helper", "exec"), namespace)
     case = next(c for c in q.load_cases() if c.language == locale)
-    assert experiment.baseline_input(case, plan["recipes"]) == namespace["_concept_generation_input"](case.idea, locale)
+    instruction = plan["recipes"]["baseline"]["instruction"]
+    assert hashlib.sha256(instruction.encode("utf-8")).hexdigest() == "69f0c90d50b04805ab6da0143683938db30a383cab63947507ee4a57201c5184"
+    archived = experiment.baseline_input(case, plan["recipes"])
+    current = namespace["_concept_generation_input"](case.idea, locale)
+    assert instruction in archived and "Use empty assumptions and open_questions." in archived
+    assert current == concept_generation_input(case.idea, locale) and current != archived
+    assert "at most one short assumption" in current
 
 
 @pytest.mark.parametrize("strategy,expected_calls", [("baseline", 1), ("A", 1), ("B", 2), ("C", 4)])

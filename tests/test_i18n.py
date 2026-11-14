@@ -57,10 +57,10 @@ def test_dictionary_placeholders_are_consistent_and_preserve_values():
 
 
 def test_known_ui_literals_have_finnish_translations():
-    for filename in ("app.py", "hankeluotsi/presentation.py"):
+    for filename in ("app.py", "hankeluotsi/presentation.py", "hankeluotsi/workflow_navigation.py", "hankeluotsi/draft_ui.py"):
         tree = ast.parse((ROOT / filename).read_text(encoding="utf-8"))
         for node in ast.walk(tree):
-            if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in ("ui", "_ui") and node.args:
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in ("ui", "_ui", "tr") and node.args:
                 value = node.args[0]
                 if isinstance(value, ast.Constant) and isinstance(value.value, str) and value.value:
                     assert localize(value.value, "fi") != value.value, value.value

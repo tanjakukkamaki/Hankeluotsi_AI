@@ -92,7 +92,7 @@ def create_plan(settings: q.Settings, model: str, case_ids=None) -> dict:
         "model": model, "settings": settings.model_dump(mode="json"), "case_ids": selected, "jobs": jobs,
         "base_manifest": q.create_manifest(settings).model_dump(mode="json"), "recipes": recipes,
         "source_sha256": source_hashes(), "base_prompt_version": prompt_version_for_stage("concept"),
-        "notes": ["Common per-call token budget; baseline uses production wording, not its 512-token budget.",
+        "notes": ["Common per-call token budget; baseline retains historical compact v1 input wording, not current production v2 or its 512-token budget; wrapper version is recorded separately.",
                   "B pauses for essential unanswered questions; no fictional answers are invented.",
                   "C critique uses the same model in a fresh role, not independent expert validation."]}
 
@@ -111,7 +111,7 @@ def load_plan(path: Path) -> dict:
 
 
 def baseline_input(case: q.Case, recipes: dict) -> str:
-    # Exact compact production wording, guarded by comparison with app.py in tests.
+    # Frozen historical compact-v1 wording; never silently replace it with new production prompts.
     return ("Fictional project idea:\n" + case.idea.model_dump_json() + "\n\n" +
         recipes["baseline"]["instruction"] + "\n\n" +
         f"Write all human-readable text fields in {'Finnish' if case.language == 'fi' else 'English'}. "

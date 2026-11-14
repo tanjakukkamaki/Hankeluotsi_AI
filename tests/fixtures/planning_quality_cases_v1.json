@@ -1,0 +1,672 @@
+{
+  "version": "planning_cases_v1",
+  "authorship": "Hand-authored synthetic fixtures, not generated model performance",
+  "cases": [
+    {
+      "case_id": "P01",
+      "source_idea_case": "Q01",
+      "language": "en",
+      "stages": [
+        "concept",
+        "draft",
+        "review"
+      ],
+      "idea": {
+        "schema_version": 1,
+        "title": "Fictional Northlight Creative Enterprise Lab",
+        "development_need": "Twelve fictional independent artists in the invented Northlight district lack practical pricing and customer-development skills. They have access to a shared workshop for a six-month pilot.",
+        "target_groups": [
+          "Twelve fictional self-employed artists"
+        ],
+        "expected_change": "Participants test one realistic service offer with fictional customers and can explain its costs and value.",
+        "geography": "Fictional Northlight district in Finland",
+        "partners": [
+          "Fictional Northlight Arts Association"
+        ],
+        "funding_context": "No programme or eligibility has been verified."
+      },
+      "concept": {
+        "schema_version": 1,
+        "background_need": "The fictional artists report limited pricing and customer-development skills; a starting-skills assessment is still needed.",
+        "objectives": [
+          {
+            "id": "O1",
+            "description": "By the pilot end, participants demonstrate the cost and value reasoning of one proposed service offer."
+          }
+        ],
+        "target_groups": [
+          "Twelve fictional self-employed artists"
+        ],
+        "preliminary_activities": [
+          {
+            "id": "A1",
+            "description": "Proposed three guided sessions: assess starting skills, build an offer and practise a simulated customer discussion.",
+            "objective_ids": [
+              "O1"
+            ]
+          }
+        ],
+        "expected_results": [
+          {
+            "id": "R1",
+            "description": "Participants can explain the cost and customer value assumptions of their simulated offer.",
+            "activity_ids": [
+              "A1"
+            ]
+          }
+        ],
+        "proposed_indicators": [
+          {
+            "id": "I1",
+            "description": "Proportion of assessed participants who explain all agreed cost and value components.",
+            "result_ids": [
+              "R1"
+            ],
+            "measurement_method": "Facilitator observes a simulated discussion at the final session using an agreed checklist; successful unique participants divided by all assessed participants. Starting level and a provisional target must be agreed first."
+          }
+        ],
+        "assumptions": [
+          "The six-month shared workshop access stated in the fictional idea remains available; facilitation is not yet confirmed."
+        ],
+        "open_questions": [
+          "Who can facilitate the sessions?",
+          "What starting-skill checklist and provisional target should participants agree?"
+        ]
+      },
+      "draft": {
+        "schema_version": 1,
+        "generation_metadata": null,
+        "project_summary": "Proposed fictional six-month pilot for twelve artists to practise pricing and test one simulated service offer each.",
+        "background_need": "The fictional artists report limited pricing and customer-development skills; a starting-skills assessment is still needed.",
+        "target_groups": [
+          "Twelve fictional self-employed artists"
+        ],
+        "beneficiaries": [
+          "The participating fictional artists; wider local benefit is a hypothesis to examine"
+        ],
+        "general_objective": "Improve participants' ability to explain and test a service offer without promising increased income.",
+        "objectives": [
+          {
+            "id": "O1",
+            "description": "By the pilot end, participants demonstrate the cost and value reasoning of one proposed service offer."
+          }
+        ],
+        "work_packages": [
+          {
+            "id": "WP1",
+            "description": "Proposed guided practice and simulated offer testing",
+            "objective_ids": [
+              "O1"
+            ]
+          }
+        ],
+        "activities": [
+          {
+            "id": "A1",
+            "description": "Proposed three guided sessions: assess starting skills, build an offer and practise a simulated customer discussion.",
+            "objective_ids": [
+              "O1"
+            ],
+            "work_package_id": "WP1"
+          }
+        ],
+        "outputs": [
+          "A proposed service offer and cost worksheet from each participating fictional artist"
+        ],
+        "expected_results": [
+          {
+            "id": "R1",
+            "description": "Participants can explain the cost and customer value assumptions of their simulated offer.",
+            "activity_ids": [
+              "A1"
+            ]
+          }
+        ],
+        "proposed_indicators": [
+          {
+            "id": "I1",
+            "description": "Proportion of assessed participants who explain all agreed cost and value components.",
+            "result_ids": [
+              "R1"
+            ],
+            "measurement_method": "Facilitator observes a simulated discussion at the final session using an agreed checklist; successful unique participants divided by all assessed participants. Starting level and a provisional target must be agreed first."
+          }
+        ],
+        "longer_term_impact": "Improved enterprise confidence is a hypothesis; income or employment effects are not established by this pilot.",
+        "partner_roles": [
+          {
+            "partner": "Fictional Northlight Arts Association",
+            "role": "Proposed facilitator; capacity and commitment require confirmation.",
+            "status": "proposed"
+          }
+        ],
+        "timeline": [
+          {
+            "work_package_id": "WP1",
+            "period": "Proposed months 1–6, with starting assessment before practice and final demonstration at the end."
+          }
+        ],
+        "risks": [
+          {
+            "description": "Participants may have uneven starting skills or limited attendance.",
+            "mitigation": "Confirm availability and adapt the practice tasks after the initial skills check."
+          }
+        ],
+        "assumptions": [
+          "The six-month shared workshop access stated in the fictional idea remains available; facilitation is not yet confirmed."
+        ],
+        "sustainability": "Proposed reusable worksheets and peer practice can continue if participants and the association confirm time and ownership.",
+        "open_questions": [
+          "Who can facilitate the sessions?",
+          "What starting-skill checklist and provisional target should participants agree?"
+        ]
+      },
+      "review_notes": [
+        "Distinguish participants' practical enterprise skills from guaranteed business growth.",
+        "Proposed numeric targets must be labelled provisional, not baseline facts."
+      ],
+      "fixture_kind": "hand_authored_baseline_not_model_output"
+    },
+    {
+      "case_id": "P02",
+      "source_idea_case": "Q02",
+      "language": "fi",
+      "stages": [
+        "concept",
+        "draft",
+        "review"
+      ],
+      "idea": {
+        "schema_version": 1,
+        "title": "Kuvitteellinen Älypaja pienyrityksille",
+        "development_need": "Kahdeksan kuvitteellista pienyritystä haluaa kokeilla tekoälyä arjen tehtävissä, mutta osaaminen ja tietosuojakäytännöt vaihtelevat. Pilotissa saa käyttää vain synteettisiä tietoja.",
+        "target_groups": [
+          "Kuvitteellisten pienyritysten työntekijät ja yrittäjät"
+        ],
+        "expected_change": "Yritykset tunnistavat yhden hyödyllisen ja turvallisesti rajatun tekoälykokeilun sekä arvioivat sen vaikutuksia.",
+        "geography": "Kuvitteellinen Järvilaakso Suomessa",
+        "partners": [
+          "Kuvitteellinen Osaamispaja"
+        ],
+        "funding_context": "Rahoitusohjelmaa ei ole valittu."
+      },
+      "concept": {
+        "schema_version": 1,
+        "background_need": "Yritysten tekoälyosaaminen ja tietosuojakäytännöt vaihtelevat. Lähtötilanne on ensin selvitettävä.",
+        "objectives": [
+          {
+            "id": "O1",
+            "description": "Yritykset perustelevat yhden rajatun kokeilun hyödyt, tietosuojarajat ja arviointitavan."
+          }
+        ],
+        "target_groups": [
+          "Kuvitteellisten pienyritysten työntekijät ja yrittäjät"
+        ],
+        "preliminary_activities": [
+          {
+            "id": "A1",
+            "description": "Selvitetään lähtöosaaminen, harjoitellaan synteettisellä tehtävällä ja arvioidaan kokeilun hyötyjä ja rajoja.",
+            "objective_ids": [
+              "O1"
+            ]
+          }
+        ],
+        "expected_results": [
+          {
+            "id": "R1",
+            "description": "Yritykset pystyvät erottamaan perustellun käyttökohteen epävarmoista hyötylupauksista.",
+            "activity_ids": [
+              "A1"
+            ]
+          }
+        ],
+        "proposed_indicators": [
+          {
+            "id": "I1",
+            "description": "Osuus mukana olevista yrityksistä, jotka perustelevat kokeilun rajat ja arviointitavan.",
+            "result_ids": [
+              "R1"
+            ],
+            "measurement_method": "Arvioija tarkistaa kokeilumuistiot yhteisesti sovitulla tarkistuslistalla pilotin lopussa; hyväksytyt muistiot jaetaan kaikkien arvioitujen yritysten määrällä. Lähtötaso ja tavoite päätetään ensin."
+          }
+        ],
+        "assumptions": [
+          "Käytetään vain synteettisiä tietoja. Ohjaajan saatavuutta ei ole vahvistettu."
+        ],
+        "open_questions": [
+          "Kuka ohjaa kokeilut?",
+          "Mikä lähtötaso, tavoite ja aikataulu sovitaan?"
+        ]
+      },
+      "draft": {
+        "schema_version": 1,
+        "generation_metadata": null,
+        "project_summary": "Ehdotus rajatuksi synteettisen tekoälykokeilun pilotiksi kahdeksalle kuvitteelliselle pienyritykselle.",
+        "background_need": "Yritysten tekoälyosaaminen ja tietosuojakäytännöt vaihtelevat. Lähtötilanne on ensin selvitettävä.",
+        "target_groups": [
+          "Kuvitteellisten pienyritysten työntekijät ja yrittäjät"
+        ],
+        "beneficiaries": [
+          "Pilotissa mukana olevat kuvitteelliset yritykset"
+        ],
+        "general_objective": "Yritykset osaavat rajata ja arvioida yhden turvallisen synteettiseen aineistoon perustuvan tekoälykokeilun.",
+        "objectives": [
+          {
+            "id": "O1",
+            "description": "Yritykset perustelevat yhden rajatun kokeilun hyödyt, tietosuojarajat ja arviointitavan."
+          }
+        ],
+        "work_packages": [
+          {
+            "id": "WP1",
+            "description": "Lähtötilanteen kartoitus ja rajatun synteettisen kokeilun arviointi",
+            "objective_ids": [
+              "O1"
+            ]
+          }
+        ],
+        "activities": [
+          {
+            "id": "A1",
+            "description": "Selvitetään lähtöosaaminen, harjoitellaan synteettisellä tehtävällä ja arvioidaan kokeilun hyötyjä ja rajoja.",
+            "objective_ids": [
+              "O1"
+            ],
+            "work_package_id": "WP1"
+          }
+        ],
+        "outputs": [
+          "Yritysten kuvaamat rajatut kokeilut ja niiden arviointimuistiot"
+        ],
+        "expected_results": [
+          {
+            "id": "R1",
+            "description": "Yritykset pystyvät erottamaan perustellun käyttökohteen epävarmoista hyötylupauksista.",
+            "activity_ids": [
+              "A1"
+            ]
+          }
+        ],
+        "proposed_indicators": [
+          {
+            "id": "I1",
+            "description": "Osuus mukana olevista yrityksistä, jotka perustelevat kokeilun rajat ja arviointitavan.",
+            "result_ids": [
+              "R1"
+            ],
+            "measurement_method": "Arvioija tarkistaa kokeilumuistiot yhteisesti sovitulla tarkistuslistalla pilotin lopussa; hyväksytyt muistiot jaetaan kaikkien arvioitujen yritysten määrällä. Lähtötaso ja tavoite päätetään ensin."
+          }
+        ],
+        "longer_term_impact": "Mahdollinen tuottavuushyöty on hypoteesi, jota tämä rajattu pilotti ei yksin vahvista.",
+        "partner_roles": [
+          {
+            "partner": "Kuvitteellinen Osaamispaja",
+            "role": "Ehdotettu ohjaaja; osaaminen ja sitoutuminen pitää varmistaa.",
+            "status": "proposed"
+          }
+        ],
+        "timeline": [
+          {
+            "work_package_id": "WP1",
+            "period": "Alustavat vaiheet: lähtötilanteen kartoitus, harjoittelu ja loppuarviointi. Ajankohdat sovitaan."
+          }
+        ],
+        "risks": [
+          {
+            "description": "Osaamis- ja aikarajoitteet voivat estää kokeilun.",
+            "mitigation": "Varmistetaan resurssit ja rajataan tehtävä lähtötilanteen mukaan."
+          }
+        ],
+        "assumptions": [
+          "Käytetään vain synteettisiä tietoja. Ohjaajan saatavuutta ei ole vahvistettu."
+        ],
+        "sustainability": "Muistioita voidaan hyödyntää myöhemmin, jos yritykset sopivat vastuista ja resursseista.",
+        "open_questions": [
+          "Kuka ohjaa kokeilut?",
+          "Mikä lähtötaso, tavoite ja aikataulu sovitaan?"
+        ]
+      },
+      "review_notes": [
+        "Keep all proposed trials synthetic and avoid guaranteed productivity percentages.",
+        "Assess a baseline and method, not just the number of workshops."
+      ],
+      "fixture_kind": "hand_authored_baseline_not_model_output"
+    },
+    {
+      "case_id": "P03",
+      "source_idea_case": "Q01",
+      "language": "en",
+      "stages": [
+        "review"
+      ],
+      "idea": {
+        "schema_version": 1,
+        "title": "Fictional Northlight Creative Enterprise Lab",
+        "development_need": "Twelve fictional independent artists in the invented Northlight district lack practical pricing and customer-development skills. They have access to a shared workshop for a six-month pilot.",
+        "target_groups": [
+          "Twelve fictional self-employed artists"
+        ],
+        "expected_change": "Participants test one realistic service offer with fictional customers and can explain its costs and value.",
+        "geography": "Fictional Northlight district in Finland",
+        "partners": [
+          "Fictional Northlight Arts Association"
+        ],
+        "funding_context": "No programme or eligibility has been verified."
+      },
+      "concept": {
+        "schema_version": 1,
+        "background_need": "The fictional artists report limited pricing and customer-development skills; a starting-skills assessment is still needed.",
+        "objectives": [
+          {
+            "id": "O1",
+            "description": "By the pilot end, participants demonstrate the cost and value reasoning of one proposed service offer."
+          }
+        ],
+        "target_groups": [
+          "Twelve fictional self-employed artists"
+        ],
+        "preliminary_activities": [
+          {
+            "id": "A1",
+            "description": "Proposed three guided sessions: assess starting skills, build an offer and practise a simulated customer discussion.",
+            "objective_ids": [
+              "O1"
+            ]
+          }
+        ],
+        "expected_results": [
+          {
+            "id": "R1",
+            "description": "Participants can explain the cost and customer value assumptions of their simulated offer.",
+            "activity_ids": [
+              "A1"
+            ]
+          }
+        ],
+        "proposed_indicators": [
+          {
+            "id": "I1",
+            "description": "Proportion of assessed participants who explain all agreed cost and value components.",
+            "result_ids": [
+              "R1"
+            ],
+            "measurement_method": "Facilitator observes a simulated discussion at the final session using an agreed checklist; successful unique participants divided by all assessed participants. Starting level and a provisional target must be agreed first."
+          }
+        ],
+        "assumptions": [
+          "The six-month shared workshop access stated in the fictional idea remains available; facilitation is not yet confirmed."
+        ],
+        "open_questions": [
+          "Who can facilitate the sessions?",
+          "What starting-skill checklist and provisional target should participants agree?"
+        ]
+      },
+      "draft": {
+        "schema_version": 1,
+        "generation_metadata": null,
+        "project_summary": "Proposed fictional six-month pilot for twelve artists to practise pricing and test one simulated service offer each.",
+        "background_need": "The fictional artists report limited pricing and customer-development skills; a starting-skills assessment is still needed.",
+        "target_groups": [
+          "Twelve fictional self-employed artists"
+        ],
+        "beneficiaries": [
+          "The participating fictional artists; wider local benefit is a hypothesis to examine"
+        ],
+        "general_objective": "Transform the entire regional economy permanently.",
+        "objectives": [
+          {
+            "id": "O1",
+            "description": "By the pilot end, participants demonstrate the cost and value reasoning of one proposed service offer."
+          }
+        ],
+        "work_packages": [
+          {
+            "id": "WP1",
+            "description": "One introductory workshop",
+            "objective_ids": [
+              "O1"
+            ]
+          }
+        ],
+        "activities": [
+          {
+            "id": "A1",
+            "description": "Deliver one two-day introductory workshop. No follow-up implementation is described.",
+            "objective_ids": [
+              "O1"
+            ],
+            "work_package_id": "WP1"
+          }
+        ],
+        "outputs": [
+          "A proposed service offer and cost worksheet from each participating fictional artist"
+        ],
+        "expected_results": [
+          {
+            "id": "R1",
+            "description": "Participants can explain the cost and customer value assumptions of their simulated offer.",
+            "activity_ids": [
+              "A1"
+            ]
+          }
+        ],
+        "proposed_indicators": [
+          {
+            "id": "I1",
+            "description": "Proportion of assessed participants who explain all agreed cost and value components.",
+            "result_ids": [
+              "R1"
+            ],
+            "measurement_method": "Facilitator observes a simulated discussion at the final session using an agreed checklist; successful unique participants divided by all assessed participants. Starting level and a provisional target must be agreed first."
+          }
+        ],
+        "longer_term_impact": "All regional businesses will achieve sustained growth and employment gains.",
+        "partner_roles": [
+          {
+            "partner": "Partner: Partner: Fictional Northlight Arts Association",
+            "role": "Proposed facilitator",
+            "status": "proposed"
+          },
+          {
+            "partner": "fictional  northlight  arts  association",
+            "role": "Proposed support",
+            "status": "proposed"
+          }
+        ],
+        "timeline": [
+          {
+            "work_package_id": "WP1",
+            "period": "2024-05-01 ? 2024-05-02"
+          }
+        ],
+        "risks": [
+          {
+            "description": "Participants may have uneven starting skills or limited attendance.",
+            "mitigation": "Confirm availability and adapt the practice tasks after the initial skills check."
+          }
+        ],
+        "assumptions": [
+          "The six-month shared workshop access stated in the fictional idea remains available; facilitation is not yet confirmed."
+        ],
+        "sustainability": "Proposed reusable worksheets and peer practice can continue if participants and the association confirm time and ownership.",
+        "open_questions": [
+          "Who can facilitate the sessions?",
+          "What starting-skill checklist and provisional target should participants agree?"
+        ]
+      },
+      "review_notes": [
+        "Challenge broad regional impact against the only two-day activity and missing follow-up; a single work package is not inherently invalid.",
+        "Identify the past 2024 timeline and repeated/prefixed partner names without asserting funding eligibility or commitments."
+      ],
+      "fixture_kind": "intentionally_seeded_weak_draft_not_model_output"
+    },
+    {
+      "case_id": "P04",
+      "source_idea_case": "Q02",
+      "language": "fi",
+      "stages": [
+        "review"
+      ],
+      "idea": {
+        "schema_version": 1,
+        "title": "Kuvitteellinen Älypaja pienyrityksille",
+        "development_need": "Kahdeksan kuvitteellista pienyritystä haluaa kokeilla tekoälyä arjen tehtävissä, mutta osaaminen ja tietosuojakäytännöt vaihtelevat. Pilotissa saa käyttää vain synteettisiä tietoja.",
+        "target_groups": [
+          "Kuvitteellisten pienyritysten työntekijät ja yrittäjät"
+        ],
+        "expected_change": "Yritykset tunnistavat yhden hyödyllisen ja turvallisesti rajatun tekoälykokeilun sekä arvioivat sen vaikutuksia.",
+        "geography": "Kuvitteellinen Järvilaakso Suomessa",
+        "partners": [
+          "Kuvitteellinen Osaamispaja"
+        ],
+        "funding_context": "Rahoitusohjelmaa ei ole valittu."
+      },
+      "concept": {
+        "schema_version": 1,
+        "background_need": "Yritysten tekoälyosaaminen ja tietosuojakäytännöt vaihtelevat. Lähtötilanne on ensin selvitettävä.",
+        "objectives": [
+          {
+            "id": "O1",
+            "description": "Yritykset perustelevat yhden rajatun kokeilun hyödyt, tietosuojarajat ja arviointitavan."
+          }
+        ],
+        "target_groups": [
+          "Kuvitteellisten pienyritysten työntekijät ja yrittäjät"
+        ],
+        "preliminary_activities": [
+          {
+            "id": "A1",
+            "description": "Selvitetään lähtöosaaminen, harjoitellaan synteettisellä tehtävällä ja arvioidaan kokeilun hyötyjä ja rajoja.",
+            "objective_ids": [
+              "O1"
+            ]
+          }
+        ],
+        "expected_results": [
+          {
+            "id": "R1",
+            "description": "Yritykset pystyvät erottamaan perustellun käyttökohteen epävarmoista hyötylupauksista.",
+            "activity_ids": [
+              "A1"
+            ]
+          }
+        ],
+        "proposed_indicators": [
+          {
+            "id": "I1",
+            "description": "Osuus mukana olevista yrityksistä, jotka perustelevat kokeilun rajat ja arviointitavan.",
+            "result_ids": [
+              "R1"
+            ],
+            "measurement_method": "Arvioija tarkistaa kokeilumuistiot yhteisesti sovitulla tarkistuslistalla pilotin lopussa; hyväksytyt muistiot jaetaan kaikkien arvioitujen yritysten määrällä. Lähtötaso ja tavoite päätetään ensin."
+          }
+        ],
+        "assumptions": [
+          "Käytetään vain synteettisiä tietoja. Ohjaajan saatavuutta ei ole vahvistettu."
+        ],
+        "open_questions": [
+          "Kuka ohjaa kokeilut?",
+          "Mikä lähtötaso, tavoite ja aikataulu sovitaan?"
+        ]
+      },
+      "draft": {
+        "schema_version": 1,
+        "generation_metadata": null,
+        "project_summary": "Ehdotus rajatuksi synteettisen tekoälykokeilun pilotiksi kahdeksalle kuvitteelliselle pienyritykselle.",
+        "background_need": "Yritysten tekoälyosaaminen ja tietosuojakäytännöt vaihtelevat. Lähtötilanne on ensin selvitettävä.",
+        "target_groups": [
+          "Kuvitteellisten pienyritysten työntekijät ja yrittäjät"
+        ],
+        "beneficiaries": [
+          "Pilotissa mukana olevat kuvitteelliset yritykset"
+        ],
+        "general_objective": "Muuttakaa koko alueen elinkeinoelämä pysyvästi.",
+        "objectives": [
+          {
+            "id": "O1",
+            "description": "Yritykset perustelevat yhden rajatun kokeilun hyödyt, tietosuojarajat ja arviointitavan."
+          }
+        ],
+        "work_packages": [
+          {
+            "id": "WP1",
+            "description": "Yksi johdantotyöpaja",
+            "objective_ids": [
+              "O1"
+            ]
+          }
+        ],
+        "activities": [
+          {
+            "id": "A1",
+            "description": "Järjestetään yksi kahden päivän johdantotyöpaja. Jatkotoimia ei ole kuvattu.",
+            "objective_ids": [
+              "O1"
+            ],
+            "work_package_id": "WP1"
+          }
+        ],
+        "outputs": [
+          "Yritysten kuvaamat rajatut kokeilut ja niiden arviointimuistiot"
+        ],
+        "expected_results": [
+          {
+            "id": "R1",
+            "description": "Yritykset pystyvät erottamaan perustellun käyttökohteen epävarmoista hyötylupauksista.",
+            "activity_ids": [
+              "A1"
+            ]
+          }
+        ],
+        "proposed_indicators": [
+          {
+            "id": "I1",
+            "description": "Osuus mukana olevista yrityksistä, jotka perustelevat kokeilun rajat ja arviointitavan.",
+            "result_ids": [
+              "R1"
+            ],
+            "measurement_method": "Arvioija tarkistaa kokeilumuistiot yhteisesti sovitulla tarkistuslistalla pilotin lopussa; hyväksytyt muistiot jaetaan kaikkien arvioitujen yritysten määrällä. Lähtötaso ja tavoite päätetään ensin."
+          }
+        ],
+        "longer_term_impact": "Koko alueen yritysten tuottavuus ja työllisyys paranevat pysyvästi.",
+        "partner_roles": [
+          {
+            "partner": "Kumppani: Kumppani: Kuvitteellinen Osaamispaja",
+            "role": "Ehdotettu ohjaaja",
+            "status": "proposed"
+          },
+          {
+            "partner": "kuvitteellinen  osaamispaja",
+            "role": "Ehdotettu tuki",
+            "status": "proposed"
+          }
+        ],
+        "timeline": [
+          {
+            "work_package_id": "WP1",
+            "period": "2024-05-01 – 2024-05-02"
+          }
+        ],
+        "risks": [
+          {
+            "description": "Osaamis- ja aikarajoitteet voivat estää kokeilun.",
+            "mitigation": "Varmistetaan resurssit ja rajataan tehtävä lähtötilanteen mukaan."
+          }
+        ],
+        "assumptions": [
+          "Käytetään vain synteettisiä tietoja. Ohjaajan saatavuutta ei ole vahvistettu."
+        ],
+        "sustainability": "Muistioita voidaan hyödyntää myöhemmin, jos yritykset sopivat vastuista ja resursseista.",
+        "open_questions": [
+          "Kuka ohjaa kokeilut?",
+          "Mikä lähtötaso, tavoite ja aikataulu sovitaan?"
+        ]
+      },
+      "review_notes": [
+        "Challenge broad regional impact against the only two-day activity and missing follow-up; a single work package is not inherently invalid.",
+        "Identify the past 2024 timeline and repeated/prefixed partner names without asserting funding eligibility or commitments."
+      ],
+      "fixture_kind": "intentionally_seeded_weak_draft_not_model_output"
+    }
+  ]
+}

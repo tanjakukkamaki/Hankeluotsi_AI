@@ -66,21 +66,6 @@ def render_intro() -> None:
         '<div><strong>' + _ui('AI-generated draft.') + '</strong> ' + _ui('Not a funding eligibility assessment. Verify requirements against the relevant funding programme.') + '</div></div>',
         unsafe_allow_html=True,
     )
-    active_project_key = "open_project_id_fi" if st.session_state.get("ui_language") == "fi" else "open_project_id"
-    has_project = bool(st.session_state.get(active_project_key) or st.session_state.get("pr5_pending_project_id"))
-    concept_target = "#concept-paper" if has_project else "#project-workspace"
-    funding_target = "#funding-opportunities" if has_project else "#project-workspace"
-    steps = (
-        ("01", "Shape the idea", "A focused starting point", "#project-workspace", "available"),
-        ("02", "Build the concept", "A structured working draft", concept_target, "available"),
-        ("03", "Check & explore", "Consistency and official sources", funding_target, "available"),
-        ("04", "Draft & review", "Draft, review and human approval", "#draft-review", "available"),
-    )
-    cards = []
-    for number, title, subtitle, target, state in steps:
-        content = f'<span class="workflow-number">{number}</span><span><strong>{_ui(title)}</strong><small>{_ui(subtitle)}</small></span>'
-        cards.append(f'<a class="workflow-step {state}" href="{target}">{content}</a>' if target else f'<div class="workflow-step {state}" aria-disabled="true">{content}</div>')
-    st.markdown('<nav class="workflow-strip" aria-label="' + _ui('Planning workflow') + '">' + "".join(cards) + '</nav>', unsafe_allow_html=True)
 
 
 def anchor(name: str) -> None:

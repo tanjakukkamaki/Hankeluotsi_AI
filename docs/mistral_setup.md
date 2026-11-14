@@ -1,6 +1,6 @@
 # Optional Mistral Cloud: setup and review
 
-Prepared 12 November 2026 on `feature/mistral-integration`. This is an offline-tested foundation, **not a completed live integration or model-quality comparison**. No paid request was made. Local Qwen remains the default, with no automatic fallback. Production prompts and data contracts are unchanged.
+Initially prepared 12 November 2026 on `feature/mistral-integration`. This is an offline-tested foundation, **not a completed live integration or model-quality comparison**. No paid request was made. Local Qwen remains the default, with no automatic fallback. Current13November prompt versions, checks, safe one-call command and exact same-PowerShell verification are in the [Finnish readiness report](mistral_readiness.md); the original foundation notes below are historical where marked. Persisted data contracts remain unchanged.
 
 ## Secure Windows configuration
 
@@ -31,7 +31,7 @@ Remove-Item Env:MISTRAL_API_KEY, Env:MISTRAL_MODEL -ErrorAction SilentlyContinue
 
 ## Selection and fictional smoke test
 
-In **New project idea / Uusi hankeidea**, choose **Local Qwen (default) / Paikallinen Qwen (oletus)** or **Mistral Cloud (optional) / Mistral-pilvipalvelu (valinnainen)**. Mistral uses the same compact concept prompt and 512-token limit as Qwen; the longer experimental recipes were not rolled out. Interface language controls labels and requested output language, never saved text.
+In **New project idea / Uusi hankeidea**, choose **Local Qwen (default) / Paikallinen Qwen (oletus)** or **Mistral Cloud (optional) / Mistral-pilvipalvelu (valinnainen)**. Mistral uses the same compact concept input and512-token limit as Qwen. Current concept instructions are version concept_v2; the historical A/B/C experimental recipes remain separate. Interface language controls labels and requested output language, never saved text. Draft/review provider and cost consent are inside Advanced options; each stage needs fresh source-bound cloud consent.
 
 Mistral shows an external-processing/cost notice. Confirm that **all entered data is fictional**, cloud processing is accepted and the submission may incur charges. Generate stays disabled until configuration and consent are present. Each call requires explicit form submission; choosing a provider, rerunning, changing language and opening saved projects do not send data. Switching providers resets consent. There is no silent fallback.
 
@@ -47,9 +47,9 @@ The idea is saved locally before generation. Failure may leave a new idea-only r
 
 ## Transport, privacy and errors
 
-The adapter uses the fixed documented HTTPS chat-completion endpoint, bearer auth, JSON-schema output and the existing `httpx2` dependency. No SDK/dependency was added. There are no tools, redirects, environment proxies or automatic retries. Only submitted idea/prompt/schema goes to Mistral; saved projects are not read by the adapter. Credentials come from the environment at call time and are not intentionally logged/serialized. A server-echoed key is redacted.
+The adapter uses the fixed documented HTTPS chat-completion endpoint, bearer auth, JSON-schema output and directly declared `httpx2==2.16.0`. The existing direct TLS import also has `certifi==2026.10.23` declared. These versions were verified locally; no Mistral SDK or package installation was added. There are no tools, redirects, environment proxies or automatic retries (`HTTPTransport(retries=0)`). Only submitted idea/prompt/schema goes to Mistral; saved projects are not read by the adapter. Credentials come from the environment at call time and are not logged/serialized. A server-echoed key is redacted.
 
-Fixed bilingual errors distinguish consent/configuration, authentication, rate limits, network/TLS failure, timeout, HTTP rejection, invalid envelope/JSON/schema and incomplete output. HTTP bodies and raw exception strings are not displayed. Unknown/incomplete finish reasons cannot produce saved cloud concepts. One request per invocation, no repair retry. The 120-second timeout applies to HTTP phases, not a strict total deadline. A 1 MB response check happens after buffering, not as a streaming memory bound.
+Fixed bilingual errors distinguish consent/configuration, authentication, rate limits, network/TLS failure, timeout, HTTP rejection, invalid envelope/JSON/schema and incomplete output. HTTP bodies and raw exception strings are not displayed. The actual production transport now preserves bounded, sanitized provider code/parameter/message fields in CloudError; see the current [transport diagnosis and test results](mistral_diagnosis.md). Unknown/incomplete finish reasons cannot produce saved cloud concepts. One request per invocation, no repair retry. The 120-second timeout applies to HTTP phases, not a strict total deadline. A 1 MB response check happens after buffering, not as a streaming memory bound.
 
 Do not enable verbose third-party HTTP tracing with real keys. Fictional-data consent is a human assertion; software cannot prove arbitrary text is synthetic. No cloud residency or retention promise is inferred from the provider being European. TLS verification uses library defaults; proxy environments may need separately reviewed configuration, never disabled certificate validation. Tokens are recorded when reported; usage details are not assumed to establish billing.
 
@@ -57,7 +57,9 @@ Do not enable verbose third-party HTTP tracing with real keys. Fictional-data co
 
 Follow the [implemented collector procedure](model_comparison_plan.md#implemented-cloud-collector--12-november-2026). The existing frozen manifest enforces identical synthetic cases/messages/schema/settings. Cloud collection requires `--execute-cloud --fictional-only --accept-costs`; no project database is read. Blinded review hides provider metadata in a separate private key, but outputs may self-identify. Human scores stay null until supplied by a person.
 
-Still unverified: live authentication, account/model access, exact-model schema support, actual latency/usage/billing and planning quality. A paired study and human rubric ratings remain necessary. The adaptive A/B/C journals are preserved and are not interchangeable with this single-stage manifest. Exact local GGUF/runtime configuration also needs owner evidence. No winning model or improved production prompt is claimed.
+Current milestone, 14 November: the owner reports working Large 4 authentication and live text generation with a valid key, usage of 26 prompt / 32 completion / 58 total tokens and approximately 1.45 seconds for the short probe. Completion was reported as incomplete at the 32-token cap; the exact original finish reason was not supplied. See [updated smoke diagnostics and the prepared 256-token test](mistral_connectivity_2026-11-14.md). No new live request was made by the agent.
+
+Still unverified: complete short-response success with the new cap, exact-model production schema support, per-stage reliability/latency, actual billing and planning quality. The existing Streamlit process must inherit the working key/model from its launching shell; its current credentials were not inspected. A paired study and human rubric ratings remain necessary. The adaptive A/B/C journals are preserved and are not interchangeable with this single-stage manifest. Exact local GGUF/runtime configuration also needs owner evidence. No winning model or improved production prompt is claimed.
 
 Final automated results and code-review findings are in the [development log](development_log.md). Slow-call UX, browser layout/accessibility of the new controls and live cancellation behavior remain manual checks; synchronous AppTest cannot click during a running request. No commit/push is included.
 

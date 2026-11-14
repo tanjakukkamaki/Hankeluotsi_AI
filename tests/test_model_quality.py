@@ -61,7 +61,7 @@ def test_ten_diverse_cases_are_valid_fictional_and_rubric_has_all_anchors(manife
     for request in manifest.requests:
         assert "review_notes" not in json.dumps(request.messages)
         assert "quality_concept_v1" in request.messages[1]["content"]
-        assert "concept_v1" in request.messages[1]["content"]
+        assert "concept_v2" in request.messages[1]["content"]
     assert "Å" in json.dumps(manifest.model_dump(mode="json"), ensure_ascii=False)
 
 

@@ -1,0 +1,20 @@
+{
+  "version": "planning_quality_rubric_v1",
+  "scale": {"1": "Unusable or seriously unsupported", "2": "Major gaps", "3": "Usable only after substantial clarification", "4": "Professionally useful draft with explicit manageable gaps", "5": "Clear, proportionate and well-grounded for the stated early-planning purpose"},
+  "criteria": {
+    "need_reasoning": "Development need and reasoning grounded in the original fictional source",
+    "objective_activity_alignment": "Clear intended change and credible objective/activity/work-package pathway",
+    "results_indicator_realism": "Outputs separated from results/impact; meaningful measurement rather than attendance alone",
+    "scope_implementation": "Duration, reach, capacity, risks and follow-up proportionate to claimed impact",
+    "critical_review": "Review identifies consequential scope/implementation/claim gaps using correct source evidence",
+    "unsupported_facts_language": "No invented facts, eligibility, partners, budgets or commitments; professional requested language"
+  },
+  "rules": [
+    "Structural/schema completeness and reference checks are automated facts, not these subjective scores.",
+    "Human scores remain null until supplied by a person, with field/ID evidence.",
+    "AI-assisted judgments are recorded separately and never labelled independent human assessment.",
+    "Critical review applies to review outputs; leave other non-applicable criteria null and explain in notes.",
+    "One work package is not inherently inadequate; compare actual intervention and claims.",
+    "Latency, tokens and cost are measured/recorded separately, never inferred from prose."
+  ]
+}

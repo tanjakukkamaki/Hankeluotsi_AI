@@ -1,5 +1,7 @@
 # Expert planning prompt experiments — 11 November 2026
 
+**Historical study notice,13 November:** This document and its source recipe/results retain the earlier compact-v1 control wording. Current production prompts have since changed under a separate owner-authorized task; see [readiness and current planning pilot](mistral_readiness.md). The historical recipes and outputs were not rewritten. New plans record their current outer wrapper version and source hashes and are not the old study. The old baseline is explicitly tested as distinct from current concept_v2 input; do not present it as today's production control or combine cohorts across revisions.
+
 This is an exploratory local-model study, not a production prompt rollout, completed funding application or independent human expert validation. The production application, prompts, schemas, SQLite and approved workflows remain unchanged. The final results and AI-assisted content observations below concern fictional cases only.
 
 ## Questions and experimental design

@@ -27,6 +27,28 @@ $env:HANKELUOTSI_DB_PATH = Join-Path $env:TEMP ("hankeluotsi-demo-" + [guid]::Ne
 
 That instance opens at <http://localhost:8502>; do not reuse an existing project database for a demonstration.
 
+## Navigation import error: check the actual hostname route
+
+The later `cannot import name 'render_workflow_navigation' from 'hankeluotsi.presentation'` had two integration/runtime causes. The helper had been added to presentation while an older server retained its previous interface; a second newer server had been started on IPv4 only. The older project process still listened on the IPv6 wildcard, so the browser's `localhost` connection reached a different process than the prior `127.0.0.1` smoke test. A healthy IPv4 page did not prove that the hostname worked.
+
+The full navigation implementation now lives in `hankeluotsi/workflow_navigation.py`, and app.py imports it directly there. Presentation retains branding/display helpers. No alias, placeholder, import fallback or runtime reload was added. The actual app imports are checked in a fresh interpreter, and the cached-presentation UI regression explicitly lacks the navigation helper.
+
+Both existing project servers were verified against the project virtual environment and Streamlit command, stopped, and replaced by one cold server bound to `127.0.0.1:8501`. Only project servers were stopped; no database records or credentials were changed. To inspect listeners without stopping anything:
+
+```powershell
+netstat -ano | Select-String ':8501\s' | Select-String 'LISTENING'
+```
+
+Use one project server on this port. Stop old project instances in their original terminals before starting a new one; do not terminate unrelated Python processes. Binding `localhost` in this installed runtime did not expose a direct IPv6 listener in the isolated test. The verified setup therefore uses explicit IPv4 loopback. Edge successfully opens the normal hostname by falling back to it; direct `[::1]:8501` is intentionally not served. No wildcard binding, browser sandbox change or CORS/security relaxation was used.
+
+| Address | Before repair, real browser | After repair, real browser |
+| --- | --- | --- |
+| `http://localhost:8501` | Missing navigation import | Title/footer rendered, zero exceptions |
+| `http://127.0.0.1:8501` | Rendered in a different newer process | Title/footer rendered, zero exceptions |
+| `http://[::1]:8501` | Missing navigation import in old process | No listener; old process removed |
+
+The earlier port-8501 smoke evidence in this guide and the development log covered IPv4 only. It must not be read as a successful check of the hostname/IPv6 route. This follow-up explicitly checked the browser URL `localhost` before and after repair. Full follow-up results and session limits are in [workflow navigation](workflow_navigation.md).
+
 ## Verification and limits
 
 - Fresh-process regression imports all new workflow dependencies, verifies exception identity and confirms imports alone do not create a database. A separate child emulates the old cached API and verifies cold-process recovery.

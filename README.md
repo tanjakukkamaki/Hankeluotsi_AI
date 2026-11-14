@@ -22,13 +22,21 @@ streamlit run app.py
 
 ## Interface review
 
+Use the four numbered cards to switch between idea input, concept/PDF, checks/funding and Draft & Review. The active card is highlighted; saved-project selection and in-progress input stay available when returning to earlier steps. See [workflow navigation and verification](docs/workflow_navigation.md).
+
+Draft & Review ends with **Improve the draft** and **Approve and export**. AI review details and technical options start collapsed; explicit approval locks the version and reveals the approved Markdown download. Direct text editing is not available. See [finalization behavior and safeguards](docs/draft_review.md).
+
 Use the **Suomi / English** selector in the top-right header. English is the initial default; the choice persists during Streamlit reruns in the current session. New concept generation requests the selected language from the existing local Qwen model. Switching changes interface/PDF labels, never saved project text, JSON keys or IDs. Official funding content stays in its original language. See [bilingual support and review steps](docs/bilingual_support.md).
 
 For the completed Nordic UI, original logo, browser QA evidence and tomorrow's review checklist, see [UI verification](docs/ui_qa.md). Restart Streamlit after pulling or reviewing changes to Python modules/theme files; this avoids an old imported presentation module remaining in a long-running process. Run from the repository directory so the local theme configuration is loaded. The default database and UI assets are anchored to the project folder; an explicit `HANKELUOTSI_DB_PATH` override is respected.
 
 If Draft & Review reports a missing `StaleProjectError` import after updating files, fully stop and restart the Streamlit process. See [verified startup recovery and isolated demonstration commands](docs/startup_troubleshooting.md).
 
+For a missing navigation import, use the current app's `hankeluotsi.workflow_navigation` integration and one server on port8501. An older IPv6 listener can make `localhost` reach a different process from `127.0.0.1`; the [startup guide](docs/startup_troubleshooting.md) records the verified fix and exact hostname checks.
+
 ## Local model setup
+
+For the current Mistral offline checks, professional prompt versions, private planning-quality pilot and exact one-call smoke instructions, see the [Finnish readiness report](docs/mistral_readiness.md). On 14 November the owner reported working Mistral Large 4 authentication and live text generation after supplying a valid API key; the 32-token probe reported usage of 26/32/58 tokens and approximately 1.45 seconds, with completion still marked incomplete. This is owner-reported connectivity evidence, not a validated production ConceptPaper or a model-quality winner. The prepared minimal smoke now defaults to 256 output tokens, with zero retries; it has not been live-run by the agent. See [the exact evidence and limitations](docs/mistral_connectivity_2026-11-14.md). Do not run another paid smoke or comparison without separate explicit owner approval and applicable cost checks.
 
 Start the LM Studio local server at `http://127.0.0.1:1234/v1`, load `qwen3.5-4b`, and disable **Enable Thinking** in the model's inference settings. Local Qwen is the default. Optional Mistral Cloud requires explicit selection, environment configuration and fictional-data/cloud/cost consent; it never activates as a fallback. See [Mistral setup and safe testing](docs/mistral_setup.md). Use fictional information only.
 

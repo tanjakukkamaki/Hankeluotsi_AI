@@ -26,6 +26,8 @@ class GenerationResult:
     pydantic_valid: bool | None = None
     attempt_count: int = 1
     provider: str = "local"
+    reported_model: str | None = None
+    usage: dict[str, int | None] | None = None
 
 
 class GenerationError(ValueError):

@@ -1,6 +1,6 @@
 import os
 import uuid
-from contextlib import contextmanager, nullcontext
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterator
@@ -21,6 +21,7 @@ from hankeluotsi.mistral_client import CloudConsent, CloudError, check_configura
 from hankeluotsi.draft_ui import render_draft_review
 from hankeluotsi.i18n import language_code, localize
 from hankeluotsi.pdf_exporter import concept_pdf_filename, generate_concept_pdf
+from hankeluotsi.prompts import concept_generation_input
 from hankeluotsi.presentation import (
     ASSET_DIRECTORY,
     PROJECT_ROOT,
@@ -32,6 +33,7 @@ from hankeluotsi.presentation import (
 )
 from hankeluotsi.repository import ProjectRecord, ProjectRepository
 from hankeluotsi.schemas import ConceptPaper, ProjectIdea
+from hankeluotsi.workflow_navigation import render_workflow_navigation
 
 
 DEFAULT_DATABASE_PATH = Path(os.getenv("HANKELUOTSI_DB_PATH", str(PROJECT_ROOT / "hankeluotsi.sqlite3")))
@@ -47,6 +49,14 @@ def system_ui(message: str) -> str:
 
 def _locale_key(base: str) -> str:
     return base + ("_fi" if st.session_state.get("ui_language") == "fi" else "")
+
+
+def _open_idea_stage() -> None:
+    st.session_state["workflow_stage"] = "idea"
+
+
+def _remember_selected_project(widget_key: str) -> None:
+    st.session_state["pr5_selected_project_id"] = st.session_state.get(widget_key)
 
 
 def _date_display(value) -> str:
@@ -65,16 +75,7 @@ def _project_label(project: ProjectRecord, language: str = "en") -> str:
 
 
 def _concept_generation_input(idea: ProjectIdea, language: str = "en") -> str:
-    return (
-        "Fictional project idea:\n"
-        f"{idea.model_dump_json()}\n\n"
-        "Create a concise ConceptPaper with exactly one objective (O1), one preliminary "
-        "activity (A1) linked to O1, one expected result (R1) linked to A1, and one "
-        "measurable proposed indicator (I1) linked to R1. Use one target group. Keep "
-        "descriptions to one short sentence each. Use empty assumptions and open_questions.\n\n"
-        f"Write all human-readable text fields in {'Finnish' if language_code(language) == 'fi' else 'English'}. "
-        "Keep JSON field names, schema_version and O/A/R/I identifiers unchanged. Do not translate keys or IDs."
-    )
+    return concept_generation_input(idea, language_code(language))
 
 
 def _render_section_heading(title: str) -> None:
@@ -287,7 +288,7 @@ def _render_live_funding_calls(project: ProjectRecord) -> None:
 
 def _render_funding_research(project: ProjectRecord) -> None:
     anchor("funding-opportunities")
-    with st.expander(ui("Find Funding Opportunities (optional)"), expanded=False, key="funding_research"):
+    with st.expander(ui("Find Funding Opportunities (optional)"), expanded=True, key="funding_research"):
         st.caption(
             ui("Official live calls and preliminary programme research. "
             "This does not assess funding eligibility. Project information stays local.")
@@ -432,7 +433,6 @@ def _render_saved_project(project: ProjectRecord) -> None:
                 ("Objectives", "Activities", "Results", "Indicators"),
                 (len(concept.objectives), len(concept.preliminary_activities), len(concept.expected_results), len(concept.proposed_indicators))):
                 column.metric(ui(label), count)
-        _render_consistency_check(concept)
         with st.container(key="concept_body"):
             with _concept_section("Background"):
                 st.text(concept.background_need)
@@ -493,8 +493,18 @@ except Exception as error:
 project_by_id = {project.project_id: project for project in projects}
 project_options = [None, *project_by_id]
 pending_project_id = st.session_state.pop("pr5_pending_project_id", None)
+selected_project_key = _locale_key("open_project_id")
 if pending_project_id in project_by_id:
-    st.session_state[_locale_key("open_project_id")] = pending_project_id
+    st.session_state["pr5_selected_project_id"] = pending_project_id
+elif "pr5_selected_project_id" not in st.session_state:
+    st.session_state["pr5_selected_project_id"] = st.session_state.get(selected_project_key)
+remembered_project_id = st.session_state.get("pr5_selected_project_id")
+if remembered_project_id not in project_by_id:
+    remembered_project_id = None
+st.session_state["pr5_selected_project_id"] = remembered_project_id
+# A state transition changes the formatted option label. Restore the canonical
+# ID before registering the widget, rather than accepting its reset default.
+st.session_state[selected_project_key] = remembered_project_id
 anchor("project-workspace")
 with st.container(key="project_workspace"):
     idea_column, saved_column = st.columns([2.05, 1], gap="large")
@@ -513,7 +523,9 @@ with st.container(key="project_workspace"):
                     project_id: _project_label(project, st.session_state.get("ui_language", "en"))
                     for project_id, project in project_by_id.items()
                 }}.get,
-                key=_locale_key("open_project_id"),
+                key=selected_project_key,
+                on_change=_remember_selected_project,
+                args=(selected_project_key,),
             )
             if selected_project_id is not None:
                 current = project_by_id[selected_project_id]
@@ -521,8 +533,14 @@ with st.container(key="project_workspace"):
             else:
                 st.caption(ui("Reopen your work at any time. Your ideas stay in the local workspace."))
     with idea_column:
-        context = st.expander(ui("Start a new project idea"), expanded=False, key="new_idea") if selected_project_id is not None else nullcontext()
-        with context:
+        if selected_project_id is not None:
+            _render_project_context(project_by_id[selected_project_id])
+        else:
+            st.subheader(ui("Your planning workspace"))
+            st.caption(ui("Start in step 01 or open a saved project. Switching steps preserves your work in this session."))
+    idea_stage, concept_stage, explore_stage, draft_stage = render_workflow_navigation()
+    with idea_stage:
+        with st.container(key="idea_stage"):
             st.subheader(ui("New project idea"))
             provider = st.selectbox(
                 ui("Generation provider"), options=("local", "mistral"),
@@ -567,8 +585,6 @@ with st.container(key="project_workspace"):
                     funding_context = st.text_input(ui("Funding context (optional)"), key="idea_funding_context")
                 submitted = st.form_submit_button(ui("Generate concept"), type="primary", use_container_width=True,
                     disabled=provider == "mistral" and not cloud_ready)
-        if selected_project_id is not None:
-            _render_project_context(project_by_id[selected_project_id])
 
 success_message = st.session_state.pop("pr5_success_message", None)
 if success_message:
@@ -576,10 +592,32 @@ if success_message:
 info_message = st.session_state.pop("pr5_info_message", None)
 if info_message:
     st.info(ui(info_message))
-if selected_project_id is not None:
-    _render_saved_project(project_by_id[selected_project_id])
-    render_draft_review(repository, selected_project_id, st.session_state.get("ui_language", "en"))
-    _render_funding_research(project_by_id[selected_project_id])
+current_project = project_by_id.get(selected_project_id)
+with concept_stage:
+    if current_project is not None:
+        _render_saved_project(current_project)
+    else:
+        st.info(ui("Generate a concept in step 01 or open a saved project to view its ConceptPaper and PDF export."))
+    if current_project is None or current_project.concept is None:
+        st.button(ui("Go to step 01 — Shape the idea"), key="concept-open-idea", on_click=_open_idea_stage)
+with explore_stage:
+    if current_project is not None:
+        if current_project.concept is not None:
+            _render_consistency_check(current_project.concept)
+        else:
+            st.info(ui("Concept consistency checks require a generated concept. Funding research is already available for this saved idea."))
+            st.button(ui("Go to step 01 — Shape the idea"), key="explore-open-idea", on_click=_open_idea_stage)
+        _render_funding_research(current_project)
+    else:
+        st.info(ui("Open a saved project for consistency checks and funding opportunities. Start in step 01 if you have no saved idea yet."))
+        st.button(ui("Go to step 01 — Shape the idea"), key="explore-open-idea", on_click=_open_idea_stage)
+with draft_stage:
+    if current_project is not None:
+        render_draft_review(repository, current_project.project_id, st.session_state.get("ui_language", "en"))
+    else:
+        st.info(ui("Open a saved concept to generate an application draft and AI review."))
+    if current_project is None or current_project.concept is None:
+        st.button(ui("Go to step 01 — Shape the idea"), key="draft-open-idea", on_click=_open_idea_stage)
 
 if submitted:
     try:
@@ -641,6 +679,7 @@ if submitted:
                     operation_id=concept_operation_id,
                 )
             st.session_state["pr5_pending_project_id"] = saved_project.project_id
+            st.session_state["workflow_stage"] = "concept"
             st.session_state["pr5_success_message"] = (
                 f"Concept validated and saved for {saved_project.idea.title}. "
                 f"Model: {result.model}; prompt: {result.prompt_version}; "
@@ -656,9 +695,4 @@ if submitted:
         except Exception as error:
             st.error(ui(f"Concept generation or saving failed. Your valid saved data was preserved: {error}"))
 
-if selected_project_id is None:
-    anchor("concept-paper")
-    anchor("funding-opportunities")
-    anchor("draft-review")
-    st.caption(ui("Open a saved concept to generate an application draft and AI review."))
 st.markdown('<div class="workspace-footer"><span>HankeLuotsi AI · ' + ui('A clearer direction for project ideas.') + '</span><span>' + ui('Fictional data only · Human review required') + '</span></div>', unsafe_allow_html=True)

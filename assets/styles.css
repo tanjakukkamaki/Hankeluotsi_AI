@@ -39,14 +39,12 @@ p, label, input, textarea, button { font-family: "Segoe UI", -apple-system, Blin
 .disclaimer-note { display: flex; align-items: center; gap: .7rem; border: 1px solid #D5E5E8; border-radius: 10px; padding: .7rem .9rem; color: #375562; font-size: .76rem; line-height: 1.5; background: #ECF3F6; margin: .35rem 0 .55rem; }
 .disclaimer-note strong { font-weight: 650; color: var(--navy); }
 .disclaimer-symbol { display: grid; place-items: center; font-family: Georgia, serif; font-style: italic; font-weight: 700; border: 1px solid #8AA7B2; border-radius: 50%; min-width: 18px; height: 18px; color: #527582; }
-.workflow-strip { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .7rem; margin: .2rem 0 1rem; }
-.workflow-step { display: flex; align-items: center; gap: .65rem; min-height: 76px; padding: .8rem .85rem; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; color: var(--navy) !important; text-decoration: none !important; transition: border-color .15s, transform .15s; }
-.workflow-step.available:hover { border-color: var(--teal); transform: translateY(-1px); }
-.workflow-number { display: grid; place-items: center; flex-shrink: 0; width: 30px; height: 30px; border-radius: 9px; background: var(--soft-teal); color: var(--teal-dark); font-size: .68rem; font-weight: 700; }
-.workflow-step strong { display: block; font-size: .82rem; font-weight: 650; }
-.workflow-step small { display: block; font-size: .68rem; color: var(--muted); margin-top: .18rem; }
-.workflow-step.planned { background: #F0F4F7; border-style: dashed; }
-.workflow-step.planned .workflow-number { background: #E4EBF0; color: var(--muted); }
+.st-key-workflow_navigation [role="tablist"] { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .7rem; height: auto; padding: .2rem 0 .4rem; }
+.st-key-workflow_navigation [role="tab"] { justify-content: flex-start; text-align: left; white-space: normal; min-height: 82px !important; padding: .8rem .85rem; background: var(--paper); border: 1px solid var(--line); border-radius: 12px !important; color: var(--navy); height: 100%; }
+.st-key-workflow_navigation [role="tab"] p { font-size: .76rem; line-height: 1.5; margin: 0; }
+.st-key-workflow_navigation [role="tab"]:hover { border-color: var(--teal); }
+.st-key-workflow_navigation [role="tab"][aria-selected="true"] { border: 2px solid var(--teal-dark); background: var(--soft-teal); color: var(--navy); font-weight: 700; }
+.st-key-workflow_navigation [data-baseweb="tab-highlight"], .st-key-workflow_navigation [data-baseweb="tab-border"] { display: none; }
 .section-anchor { scroll-margin-top: 4.5rem; height: 0; }
 [data-testid="stForm"], [data-testid="stVerticalBlockBorderWrapper"] > div { border-color: var(--line) !important; }
 [data-testid="stForm"] { border-radius: 16px; padding: 1.1rem 1.3rem; background: var(--paper); box-shadow: 0 4px 20px rgba(21,51,74,.025); }
@@ -110,7 +108,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 .workspace-footer { display: flex; justify-content: space-between; gap: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .7rem; padding-top: .85rem; margin-top: 1.2rem; }
 @media (max-width: 900px) {
   [data-testid="stMainBlockContainer"] { padding: 3.2rem 1.3rem 2rem; }
-  .workflow-strip { grid-template-columns: repeat(2,minmax(0,1fr)); gap: .5rem; }
+  .st-key-workflow_navigation [role="tablist"] { grid-template-columns: repeat(2,minmax(0,1fr)); gap: .5rem; }
   .workspace-mode { font-size: .65rem; }
 }
 @media (max-width: 700px) {
@@ -126,10 +124,8 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
   .page-intro h2 { font-size: 1.9rem !important; }
   .page-intro > p:last-child { font-size: .85rem; line-height: 1.55; }
   .eyebrow { font-size: .58rem; letter-spacing: .1em; }
-  .workflow-step { min-height: 75px; padding: .6rem; gap: .45rem; }
-  .workflow-step strong { font-size: .76rem; }
-  .workflow-step small { font-size: .62rem; }
-  .workflow-number { width: 25px; height: 25px; border-radius: 7px; font-size: .62rem; }
+  .st-key-workflow_navigation [role="tab"] { min-height: 75px !important; padding: .6rem; }
+  .st-key-workflow_navigation [role="tab"] p { font-size: .72rem; }
   .disclaimer-note { align-items: flex-start; font-size: .7rem; padding: .65rem .7rem; }
   .st-key-project_workspace > div > [data-testid="stHorizontalBlock"] { flex-direction: column-reverse; }
   .st-key-project_workspace [data-testid="stColumn"] { min-width: 100% !important; width: 100% !important; }

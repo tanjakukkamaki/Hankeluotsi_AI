@@ -21,7 +21,7 @@ def test_fresh_process_imports_all_new_stage_dependencies_and_exception_identity
     result = child('''
 import importlib
 for module in ("repository", "draft_schemas", "draft_checks", "review_evidence", "draft_workflow",
-               "draft_exporter", "draft_ui", "mistral_client", "i18n", "presentation"):
+               "draft_exporter", "draft_ui", "mistral_client", "i18n", "presentation", "workflow_navigation"):
     importlib.import_module("hankeluotsi." + module)
 from hankeluotsi import repository, draft_workflow
 assert issubclass(repository.StaleProjectError, repository.RepositoryError)
@@ -33,6 +33,30 @@ print("cold-imports-ok")
     assert result.returncode == 0, result.stderr
     assert result.stdout.strip() == "cold-imports-ok"
     assert not (tmp_path / "fictional.sqlite3").exists()  # importing must not open/create the database
+
+
+def test_every_application_import_resolves_without_navigation_in_presentation(tmp_path):
+    result = child('''
+import ast
+import importlib
+from pathlib import Path
+from hankeluotsi import presentation
+from hankeluotsi.workflow_navigation import render_workflow_navigation
+assert not hasattr(presentation, "render_workflow_navigation")
+assert render_workflow_navigation.__module__ == "hankeluotsi.workflow_navigation"
+tree = ast.parse(Path("app.py").read_text(encoding="utf-8"))
+for node in ast.walk(tree):
+    if isinstance(node, ast.ImportFrom) and node.module and node.module.startswith("hankeluotsi."):
+        module = importlib.import_module(node.module)
+        for item in node.names:
+            assert hasattr(module, item.name), (node.module, item.name)
+            if item.name == "render_workflow_navigation":
+                assert node.module == "hankeluotsi.workflow_navigation"
+print("application-import-contract-ok")
+''', tmp_path)
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.strip() == "application-import-contract-ok"
+    assert not (tmp_path / "fictional.sqlite3").exists()
 
 
 def test_cached_old_repository_api_reproduces_error_but_fresh_process_recovers(tmp_path):

@@ -1,5 +1,7 @@
 # Qwen and Mistral comparison: exact operating procedure
 
+**13 November follow-up:** For the current production-contract FI/EN pilot, see [Mistral readiness and planning-quality benchmark](mistral_readiness.md). Its separate offline plan freezes8 stage-isolated requests per provider, including seeded-defect reviews, with concept_v2/draft_workflow_v2/review_workflow_v3 and unchanged persisted schemas. Planning inputs are hand-authored controls, not model outputs. It provides strict import and private A/B packets with separate unscored human/AI forms; it has no online batch collector. No live run was made. The older concept-only collector and historical evidence below remain separate and must not be mixed with the new protocol. A minimal one-call owner-run Mistral smoke is prepared in the readiness guide; account/model/pricing approval is still required.
+
 Prepared 11 November; updated 12 November 2026. An explicit Mistral collector is now implemented and tested offline; **no real cloud call or completed model comparison was performed**. Qwen/cloud execution is opt-in; preparation/import/review are offline. All benchmark data is fictional. Never use this as a route to send saved projects or private information to a provider. The implemented collector below supersedes the historical future-caller instructions retained later in this document.
 
 ## Implemented cloud collector — 12 November 2026

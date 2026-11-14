@@ -74,7 +74,7 @@ def test_benchmark_records_first_attempt_metadata_for_each_stage():
     assert all(call[3] == 1 for call in client.calls)
     assert all(attempt.first_attempt_success for attempt in report.attempts)
     assert {attempt.prompt_version for attempt in report.attempts} == {
-        "concept_v1",
+        "concept_v2",
         "draft_v1",
         "review_v1",
     }

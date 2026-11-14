@@ -44,6 +44,7 @@ def test_app_starts_and_reopens_saved_idea_with_older_presentation_module_cached
         "render_brand", "render_intro", "status_badge",
     ):
         setattr(cached_presentation, name, getattr(presentation, name))
+    assert not hasattr(cached_presentation, "render_workflow_navigation")
     monkeypatch.setitem(sys.modules, "hankeluotsi.presentation", cached_presentation)
     monkeypatch.setattr(hankeluotsi, "presentation", cached_presentation)
     path = tmp_path / "startup.sqlite3"
@@ -110,20 +111,24 @@ def test_ui_assets_load_when_app_is_started_outside_project_folder(tmp_path, mon
     assert any("data:image/svg+xml;base64," in item.value and "alt=" in item.value for item in app.markdown)
 
 
-def test_workflow_navigation_points_to_available_content(tmp_path, monkeypatch):
+def test_workflow_navigation_has_four_stateful_panels_instead_of_shared_hash_links(tmp_path, monkeypatch):
     path = tmp_path / "app.sqlite3"
     monkeypatch.setenv("HANKELUOTSI_DB_PATH", str(path))
     app = AppTest.from_file(str(PROJECT_ROOT / "app.py"), default_timeout=10).run()
-    navigation = next(item.value for item in app.markdown if 'aria-label="Planning workflow"' in item.value)
-    assert navigation.count('href="#project-workspace"') == 3
+    assert len(app.tabs) == 4
+    navigation = app.get("tab_container")[0].proto.tab_container
+    assert navigation.id.endswith("-workflow_navigation")
+    assert navigation.default_tab_index == 0
+    assert not any('href="#project-workspace"' in item.value for item in app.markdown)
     repository = ProjectRepository(path)
     project = repository.create_project(dict(title="Fictional navigation", development_need="Fictional need",
         target_groups=["Fictional volunteers"], expected_change="Fictional change", geography="Fictional Finland"), operation_id="navigation")
     app.run()
     app.selectbox(key="open_project_id").select(project.project_id).run()
-    navigation = next(item.value for item in app.markdown if 'aria-label="Planning workflow"' in item.value)
-    assert 'href="#concept-paper"' in navigation
-    assert 'href="#funding-opportunities"' in navigation
+    assert any("concept has not been generated" in item.value for item in app.tabs[1].info)
+    assert any("Funding research is already available" in item.value for item in app.tabs[2].info)
+    assert any("validated concept before" in item.value for item in app.tabs[3].info)
+    assert app.session_state["workflow_stage"] == "idea"
 
 
 def test_page_language_tracks_selector_and_reruns_without_using_project_text(tmp_path, monkeypatch):

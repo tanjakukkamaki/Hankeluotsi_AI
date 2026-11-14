@@ -76,9 +76,12 @@ def test_official_contract_defaults_validation_and_no_ambient_credentials(monkey
         "completion_tokens": 20, "total_tokens": 30, "prompt_tokens_details": {"cached_tokens": 0}}))
     result = generate()
     assert result.data == ConceptPaper.model_validate(concept())
-    assert result.provider == "mistral" and result.prompt_version == "concept_v1"
+    assert result.provider == "mistral" and result.prompt_version == "concept_v2"
     assert result.finish_reason == "stop" and not result.incomplete_output and result.attempt_count == 1
-    factory.assert_called_once_with(timeout=120, follow_redirects=False, trust_env=False)
+    assert factory.call_count == 1
+    settings = dict(factory.call_args.kwargs)
+    assert isinstance(settings.pop("transport"), httpx.HTTPTransport)
+    assert settings == dict(timeout=120, follow_redirects=False, trust_env=False)
     args, kwargs = client.post.call_args
     assert args == (m.ENDPOINT,)
     assert kwargs["headers"] == {"Authorization": "Bearer " + KEY}
@@ -101,7 +104,9 @@ def test_http_failures_are_safe_and_not_retried(monkeypatch, caplog, status, cod
     assert e.value.code == code and KEY not in str(e.value)
     assert e.value.http_status == status
     assert KEY not in caplog.text and client.post.call_count == 1
-    client.post.return_value.json.assert_not_called()
+    client.post.return_value.json.assert_called_once()
+    assert e.value.diagnostic["http_status"] == status
+    assert KEY not in json.dumps(e.value.__dict__)
 
 
 @pytest.mark.parametrize("error,code", [(httpx.ReadTimeout(KEY), "timeout"),
@@ -152,6 +157,166 @@ def test_direct_transport_and_client_cannot_bypass_consent(monkeypatch):
     with pytest.raises(m.CloudError, match="Confirm fictional"):
         m.MistralClient(m.CloudConsent()).generate("concept", "Fictional", ConceptPaper)
     client.post.assert_not_called()
+
+
+@pytest.mark.parametrize("nested", [False, True])
+def test_production_http400_preserves_only_safe_provider_fields(monkeypatch, caplog, capsys, nested):
+    private = "Confidential partner Alice alice@example.invalid C:/private/project.json"
+    error = {"object": "error", "message": "Unknown model: " + private + " Bearer " + KEY,
+        "type": "invalid_request_error", "param": "model", "code": "unknown_model",
+        "request": {"Authorization": "Bearer " + KEY, "body": private}}
+    _, client = transport(monkeypatch, status=400, body={"error": error} if nested else error)
+    with pytest.raises(m.CloudError) as raised:
+        generate()
+    failure = raised.value
+    assert failure.code == "bad_request" and failure.http_status == 400
+    assert failure.provider_error_code == "unknown_model" and failure.parameter == "model"
+    assert failure.sanitized_message == "Model not accepted: [value withheld]."
+    assert len(failure.sanitized_message) <= m.MAX_ERROR_MESSAGE_CHARS
+    assert failure.diagnostic["message_sanitization"] == "template_allowlist"
+    captured = capsys.readouterr()
+    exposed = json.dumps(failure.__dict__) + str(failure) + repr(failure) + repr(failure.args) + caplog.text + captured.out + captured.err
+    assert all(text not in exposed for text in (KEY, private, "alice@example.invalid", "Authorization", "Fictional idea"))
+    assert str(failure) == m.ERROR_MESSAGES["bad_request"] and failure.__suppress_context__
+    assert not hasattr(failure, "response") and not hasattr(failure, "request")
+    client.post.assert_called_once()
+    client.post.return_value.json.assert_called_once()
+
+
+@pytest.mark.parametrize("kind", ["malformed", "html", "non-object", "oversized", "parser-error"])
+def test_production_bad_error_bodies_keep_original_http_status_safely(monkeypatch, kind):
+    _, client = transport(monkeypatch, status=400, body=[] if kind == "non-object" else {"message": KEY})
+    response = client.post.return_value
+    if kind in {"malformed", "html"}:
+        response.content = ("<html>" + KEY + "</html>").encode()
+        response.json.side_effect = ValueError(KEY)
+    elif kind == "oversized":
+        response.content = b"x" * (m.MAX_ERROR_BODY_BYTES + 1)
+    elif kind == "parser-error":
+        response.json.side_effect = RuntimeError(KEY)
+    with pytest.raises(m.CloudError) as raised:
+        generate()
+    failure = raised.value
+    assert failure.code == "bad_request" and failure.http_status == 400
+    assert failure.diagnostic["reason"] == "request_rejected"
+    assert failure.provider_error_code is None and failure.parameter is None
+    assert KEY not in json.dumps(failure.__dict__)
+    client.post.assert_called_once()
+    if kind == "oversized":
+        response.json.assert_not_called()
+    else:
+        response.json.assert_called_once()
+
+
+def test_production_diagnostics_use_captured_key_even_if_environment_changes(monkeypatch):
+    monkeypatch.setenv("MISTRAL_API_KEY", "1500")
+    _, client = transport(monkeypatch, status=400, body={"code": "1500", "param": "max_tokens",
+        "message": "max_tokens must be at least 1500"})
+    response = client.post.return_value
+
+    def post(*args, **kwargs):
+        assert kwargs["headers"]["Authorization"] == "Bearer 1500"
+        monkeypatch.setenv("MISTRAL_API_KEY", "rotated-fictional-key")
+        return response
+
+    client.post.side_effect = post
+    with pytest.raises(m.CloudError) as raised:
+        generate()
+    assert "1500" not in json.dumps(raised.value.__dict__)
+    assert raised.value.provider_error_code is None and raised.value.parameter == "max_tokens"
+    assert raised.value.sanitized_message == "max_tokens was rejected: [details withheld]."
+    client.post.assert_called_once()
+
+
+def test_production_redacts_credential_before_clipping_provider_message(monkeypatch):
+    numeric_key = "8726451093" * 4
+    monkeypatch.setenv("MISTRAL_API_KEY", numeric_key)
+    prefix = "max_tokens must be at least "
+    # Leave five key digits before the diagnostic clip boundary.
+    text = prefix + " " * (2048 - len(prefix) - 5) + numeric_key
+    _, client = transport(monkeypatch, status=400, body={"message": text, "param": "max_tokens"})
+    with pytest.raises(m.CloudError) as raised:
+        generate()
+    assert raised.value.sanitized_message == "max_tokens was rejected: [details withheld]."
+    assert numeric_key[:5] not in json.dumps(raised.value.__dict__)
+
+
+def test_production_http_transport_explicitly_disables_retries(monkeypatch):
+    factory, client = transport(monkeypatch)
+    http_transport = Mock(return_value=object())
+    monkeypatch.setattr(m.httpx, "HTTPTransport", http_transport)
+    generate()
+    http_transport.assert_called_once_with(retries=0, trust_env=False)
+    assert factory.call_args.kwargs["transport"] is http_transport.return_value
+    client.post.assert_called_once()
+
+
+@pytest.mark.parametrize("body", [{"detail": "Invalid API Key " + KEY},
+    {"error": "Invalid API Key " + KEY}, {"message": {"detail": "Invalid API Key " + KEY}}])
+def test_error_detail_strings_are_sanitized_without_losing_recognizable_reason(body):
+    response = httpx.Response(400, json=body)
+    error = m._http_error(400, response=response, secret=KEY)
+    assert error.code == "bad_request" and error.diagnostic["reason"] == "authentication_context_rejected"
+    assert error.diagnostic["diagnostic_information"] == "recognized"
+    assert error.sanitized_message == "API authentication was rejected: [details withheld]."
+    assert KEY not in json.dumps(error.__dict__)
+
+
+def test_safe_response_metadata_never_preserves_header_values_or_private_message():
+    private = "Confidential employer plan alice@example.invalid"
+    response = httpx.Response(400, headers={"content-type": "application/json; charset=utf-8",
+        "x-request-id": KEY, "location": "https://private.invalid/?key=" + KEY,
+        "www-authenticate": "Bearer secret=" + KEY, "server": private},
+        extensions={"http_version": b"HTTP/2"},
+        json={"message": private, "code": "unknown-private-" + KEY, "param": private})
+    detail = m.request_error_diagnostic(response, secret=KEY)
+    assert detail["body_format"] == "json_object" and detail["diagnostic_information"] == "insufficient"
+    assert set(detail["withheld_fields"]) == {"provider_error_code", "parameter", "message"}
+    meta = detail["response_metadata"]
+    assert meta == {"content_type": "application/json", "http_version": "HTTP/2",
+        "buffered_body_bytes": len(response.content), "request_id_present": True,
+        "redirect_location_present": True, "authentication_challenge_present": True}
+    assert KEY not in json.dumps(detail) and private not in json.dumps(detail)
+
+
+@pytest.mark.parametrize("content_type,raw,body_format", [
+    ("text/html", b"<html>private project</html>", "non_json"),
+    ("text/plain", b"x" * (m.MAX_ERROR_BODY_BYTES + 1), "not_parsed_oversized")], ids=["html", "oversized"])
+def test_non_json_and_large_responses_state_diagnostic_limits(content_type, raw, body_format):
+    detail = m.request_error_diagnostic(httpx.Response(400, content=raw, headers={"content-type": content_type}))
+    assert detail["body_format"] == body_format and detail["diagnostic_information"] == "insufficient"
+    assert detail["response_metadata"]["content_type"] == content_type
+    assert detail["http_status"] == 400 and detail["next_step"]
+
+
+@pytest.mark.parametrize("model", ["bad model", "https://private.invalid/model", "model\nheader", ""])
+def test_malformed_model_identifier_stops_production_before_request(monkeypatch, model):
+    monkeypatch.setenv("MISTRAL_MODEL", model)
+    _, client = transport(monkeypatch)
+    with pytest.raises(m.CloudError) as error:
+        generate()
+    assert error.value.code == "missing_model" and not client.post.called
+
+
+def test_direct_runtime_dependencies_are_declared_and_verified_offline():
+    import ast
+    from importlib.metadata import version
+    import sys
+
+    root = Path(__file__).resolve().parents[1]
+    declarations = dict(line.strip().split("==", 1) for line in
+        (root / "requirements.txt").read_text(encoding="utf-8").splitlines() if "==" in line)
+    for name in ("httpx2", "certifi"):
+        assert declarations[name] == version(name)
+    imported = set()
+    for path in [root / "app.py", *(root / "hankeluotsi").glob("*.py")]:
+        for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+            if isinstance(node, ast.Import):
+                imported.update(alias.name.split(".")[0] for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module and not node.level:
+                imported.add(node.module.split(".")[0])
+    external = imported - sys.stdlib_module_names - {"hankeluotsi"}
+    assert external <= declarations.keys(), external - declarations.keys()
 
 
 def test_invalid_http_json_and_response_size_are_rejected(monkeypatch):
@@ -237,7 +402,10 @@ def test_cloud_stage_budgets_are_explicit_and_leave_concept_defaults_unchanged(m
     result = m.MistralClient(CONSENT).generate("draft", "Fictional draft instructions",
         ConceptPaper, max_attempts=1, max_tokens=4096, timeout_seconds=180)
     assert result.prompt_version == "draft_v1" and result.stage == "draft"
-    factory.assert_called_once_with(timeout=180, follow_redirects=False, trust_env=False)
+    assert factory.call_count == 1
+    settings = dict(factory.call_args.kwargs)
+    assert isinstance(settings.pop("transport"), httpx.HTTPTransport)
+    assert settings == dict(timeout=180, follow_redirects=False, trust_env=False)
     assert client.post.call_args.kwargs["json"]["max_tokens"] == 4096
     assert client.post.call_count == 1
 
@@ -255,3 +423,49 @@ def test_numeric_status_diagnostic_cannot_echo_untrusted_data():
     assert m.CloudError("http_error", http_status=KEY).http_status is None
     assert m.CloudError("http_error", http_status=True).http_status is None
     assert m.CloudError("http_error", http_status=999).http_status is None
+
+
+@pytest.mark.parametrize("content", [
+    [{"type": "text", "text": json.dumps(concept())}],
+    [{"type": "thinking", "thinking": [{"type": "text", "text": KEY}]},
+     {"type": "text", "text": json.dumps(concept())[:40]},
+     {"type": "text", "text": json.dumps(concept())[40:]}],
+])
+def test_documented_content_chunks_keep_only_final_text_and_usage(monkeypatch, content):
+    _, client = transport(monkeypatch, body=payload(content, usage={"prompt_tokens": 10, "completion_tokens": 20, "total_tokens": 30}))
+    result = generate()
+    assert result.data == ConceptPaper.model_validate(concept())
+    assert result.usage == {"prompt_tokens": 10, "completion_tokens": 20, "total_tokens": 30}
+    assert result.reported_model == "fictional-mistral-model"
+    assert KEY not in result.data.model_dump_json() and client.post.call_count == 1
+
+
+@pytest.mark.parametrize("content,finish,expected", [
+    (None, "length", "incomplete"), (None, "stop", "invalid_json"),
+    ([{"type": "thinking", "thinking": [{"type": "text", "text": json.dumps(concept())}]}], "stop", "invalid_json"),
+    ([{"type": "tool_call", "text": json.dumps(concept())}], "stop", "invalid_response"),
+    ([{"type": "text", "text": 42}], "stop", "invalid_response"),
+])
+def test_incomplete_or_nonanswer_content_is_not_promoted_to_a_concept(monkeypatch, content, finish, expected):
+    body = payload(finish=finish)
+    body["choices"][0]["message"]["content"] = content
+    _, client = transport(monkeypatch, body=body)
+    with pytest.raises(m.CloudError) as error:
+        generate()
+    assert error.value.code == expected and client.post.call_count == 1
+
+
+def test_boolean_attempt_count_is_not_an_execution_budget(monkeypatch):
+    _, client = transport(monkeypatch)
+    with pytest.raises(ValueError):
+        m.MistralClient(CONSENT).generate("concept", "Fictional", ConceptPaper, max_attempts=True)
+    client.post.assert_not_called()
+
+
+def test_credential_cannot_be_misconfigured_as_logged_model_metadata(monkeypatch):
+    monkeypatch.setenv("MISTRAL_MODEL", KEY)
+    _, client = transport(monkeypatch)
+    with pytest.raises(m.CloudError) as error:
+        generate()
+    assert error.value.code == "missing_model" and KEY not in str(error.value)
+    client.post.assert_not_called()

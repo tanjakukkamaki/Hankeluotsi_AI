@@ -13,7 +13,7 @@ import pytest
 
 from hankeluotsi.draft_schemas import ApplicationDraft, ReviewReport
 from hankeluotsi.draft_workflow import (
-    StageClient, WorkflowBusyError, WorkflowError, WorkflowService, project_operation_guard,
+    PROMPT_VERSIONS, StageClient, WorkflowBusyError, WorkflowError, WorkflowService, project_operation_guard,
 )
 from hankeluotsi.mistral_client import CloudConsent, CloudError
 from hankeluotsi.repository import ApprovedProjectLocked, InvalidTransition, ProjectRepository, ProjectState, StaleProjectError
@@ -52,7 +52,7 @@ class Client:
         data = self.data if self.data is not None else fixture("application_draft.json" if stage == "draft" else "review_report.json")
         if stage == "review" and self.data is None:
             data = selected_review_fixture(data, user_input)
-        return SimpleNamespace(data=data, model="fictional-qwen", provider="local", prompt_version=stage+"_workflow_v"+("2" if stage == "review" else "1"),
+        return SimpleNamespace(data=data, model="fictional-qwen", provider="local", prompt_version=PROMPT_VERSIONS[stage],
             finish_reason=self.finish, incomplete_output=self.finish != "stop", truncated=self.finish == "length")
 
 
@@ -108,7 +108,7 @@ def test_model_supplied_generation_provenance_is_overwritten(ready):
     data["generation_metadata"] = {"provider": "fake-approved-provider", "model": "fake", "prompt_version": "fake", "finish_reason": "stop", "incomplete_output": False}
     workflow, _ = service(repository, Client(data=data, finish="unknown"))
     saved = workflow.generate_draft(project.project_id, operation_id="draft")
-    assert saved.draft["generation_metadata"] == {"provider": "local", "model": "fictional-qwen", "prompt_version": "draft_workflow_v1", "finish_reason": "unknown", "incomplete_output": True}
+    assert saved.draft["generation_metadata"] == {"provider": "local", "model": "fictional-qwen", "prompt_version": "draft_workflow_v2", "finish_reason": "unknown", "incomplete_output": True}
 
 
 def test_invented_partner_cannot_be_persisted_as_provided_fact(ready):
